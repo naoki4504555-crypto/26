@@ -34,9 +34,9 @@ html,body{
 .menu{
   position:absolute;
   left:50%;
-  top:51.5%;
+  top:58%;
   transform:translate(-50%,-50%);
-  width:min(72vw,360px);
+  width:min(70vw,350px);
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -47,16 +47,16 @@ html,body{
 .burst{
   position:absolute;
   left:50%;
-  top:51.5%;
+  top:58%;
   transform:translate(-50%,-50%);
-  width:min(78vw,430px);
-  height:190px;
+  width:min(76vw,420px);
+  height:180px;
   background:repeating-conic-gradient(
     from 0deg,
     rgba(255,255,255,.22) 0deg 7deg,
     rgba(255,230,0,0) 7deg 15deg
   );
-  opacity:.45;
+  opacity:.42;
   z-index:3;
   pointer-events:none;
   -webkit-mask-image:radial-gradient(ellipse at center,#000 0 42%,transparent 72%);
@@ -134,13 +134,13 @@ html,body{
 }
 @media (max-width:430px){
   .menu{
-    top:51.5%;
-    width:70vw;
+    top:58.5%;
+    width:68vw;
     gap:10px;
   }
   .burst{
-    top:51.5%;
-    height:170px;
+    top:58.5%;
+    height:165px;
   }
   .hd-button{
     padding:10px 12px;
@@ -149,13 +149,13 @@ html,body{
 }
 @media (max-height:700px){
   .menu{
-    top:52%;
-    width:min(68vw,330px);
+    top:59%;
+    width:min(66vw,330px);
     gap:9px;
   }
   .burst{
-    top:52%;
-    height:155px;
+    top:59%;
+    height:150px;
   }
   .hd-button{
     padding:9px 12px;
