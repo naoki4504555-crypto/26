@@ -189,33 +189,58 @@ html,body{
   </nav>
 </main>
 
+
 <script>
-function playClick(){
-  const ctx = new (window.AudioContext||window.webkitAudioContext)();
-  const o = ctx.createOscillator();
-  const g = ctx.createGain();
-  o.type="square";
-  o.frequency.value=880;
-  o.connect(g);
-  g.connect(ctx.destination);
-  o.start();
-  g.gain.setValueAtTime(0.2, ctx.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.1);
-  o.stop(ctx.currentTime+0.1);
+let clickAudioCtx = null;
+
+function getClickAudioCtx() {
+  if (!clickAudioCtx) {
+    clickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (clickAudioCtx.state === "suspended") {
+    clickAudioCtx.resume();
+  }
+  return clickAudioCtx;
 }
 
-function goStory(){
+function playClick() {
+  try {
+    const ctx = getClickAudioCtx();
+    const now = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "square";
+    osc.frequency.setValueAtTime(880, now);
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.linearRampToValueAtTime(0.18, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.12);
+  } catch (e) {
+    // 音が鳴らない環境でもゲーム進行は止めない
+  }
+}
+
+function goStory() {
   playClick();
-  setTimeout(()=>{
+  setTimeout(() => {
     alert("ストーリーモード鋭意制作中　coming soon");
-  },100);
+  }, 120);
 }
 
-function goBattle(){
+function goBattle() {
   playClick();
-  setTimeout(()=>{
-    location.href='./freebattle.html?from=title';
-  },100);
+  sessionStorage.setItem("hd_from_title", "1");
+  setTimeout(() => {
+    location.href = "./freebattle.html";
+  }, 120);
 }
 </script>
 
