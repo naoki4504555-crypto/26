@@ -179,14 +179,45 @@ html,body{
   <div class="burst" aria-hidden="true"></div>
 
   <nav class="menu" aria-label="メインメニュー">
-    <button class="hd-button story" onclick="alert('ストーリーモードは近日開幕！')">
+    <button class="hd-button story" onclick="goStory()">
       <span class="button-inner">ストーリー<span class="button-sub">熱血編・準備中</span></span>
     </button>
 
-    <button class="hd-button free" onclick="location.href='./freebattle.html'">
+    <button class="hd-button free" onclick="goBattle()">
       <span class="button-inner">フリーバトル<span class="button-sub">今すぐ対戦！</span></span>
     </button>
   </nav>
 </main>
+
+<script>
+function playClick(){
+  const ctx = new (window.AudioContext||window.webkitAudioContext)();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type="square";
+  o.frequency.value=880;
+  o.connect(g);
+  g.connect(ctx.destination);
+  o.start();
+  g.gain.setValueAtTime(0.2, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.1);
+  o.stop(ctx.currentTime+0.1);
+}
+
+function goStory(){
+  playClick();
+  setTimeout(()=>{
+    alert("ストーリーモード鋭意制作中　coming soon");
+  },100);
+}
+
+function goBattle(){
+  playClick();
+  setTimeout(()=>{
+    location.href='./freebattle.html?from=title';
+  },100);
+}
+</script>
+
 </body>
 </html>
