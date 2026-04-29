@@ -34,42 +34,46 @@ html,body{
 .menu{
   position:absolute;
   left:50%;
-  top:56%;
+  top:51.5%;
   transform:translate(-50%,-50%);
-  width:min(86vw,560px);
+  width:min(72vw,360px);
   display:flex;
+  flex-direction:column;
+  align-items:center;
   justify-content:center;
-  gap:clamp(12px,3vw,24px);
+  gap:12px;
   z-index:10;
 }
 .burst{
   position:absolute;
   left:50%;
-  top:56%;
+  top:51.5%;
   transform:translate(-50%,-50%);
-  width:min(92vw,680px);
-  height:150px;
-  background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.22) 0deg 7deg,rgba(255,230,0,0) 7deg 15deg);
-  opacity:.55;
+  width:min(78vw,430px);
+  height:190px;
+  background:repeating-conic-gradient(
+    from 0deg,
+    rgba(255,255,255,.22) 0deg 7deg,
+    rgba(255,230,0,0) 7deg 15deg
+  );
+  opacity:.45;
   z-index:3;
   pointer-events:none;
-  -webkit-mask-image:radial-gradient(ellipse at center,#000 0 45%,transparent 72%);
-  mask-image:radial-gradient(ellipse at center,#000 0 45%,transparent 72%);
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 0 42%,transparent 72%);
+  mask-image:radial-gradient(ellipse at center,#000 0 42%,transparent 72%);
 }
 .hd-button{
   position:relative;
-  flex:1;
-  max-width:260px;
-  min-width:135px;
-  padding:clamp(12px,2.8vw,18px) clamp(10px,3vw,22px);
+  width:100%;
+  padding:clamp(11px,2.7vw,16px) clamp(14px,4vw,24px);
   border:0;
   border-radius:22px;
   cursor:pointer;
   color:white;
-  font-size:clamp(15px,4vw,24px);
+  font-size:clamp(17px,4.6vw,25px);
   font-weight:1000;
-  letter-spacing:.04em;
-  text-shadow:0 3px 0 rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.9);
+  letter-spacing:.05em;
+  text-shadow:0 3px 0 rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.95);
   box-shadow:
     0 8px 0 rgba(42,16,0,.95),
     0 13px 20px rgba(0,0,0,.65),
@@ -129,13 +133,34 @@ html,body{
   outline:3px solid #8ffcff;
 }
 @media (max-width:430px){
-  .menu{top:57%;width:92vw;gap:10px;}
-  .burst{top:57%;height:125px;}
-  .hd-button{min-width:0;padding:11px 8px;border-radius:17px;}
+  .menu{
+    top:51.5%;
+    width:70vw;
+    gap:10px;
+  }
+  .burst{
+    top:51.5%;
+    height:170px;
+  }
+  .hd-button{
+    padding:10px 12px;
+    border-radius:18px;
+  }
 }
-@media (max-height:650px){
-  .menu{top:58%;}
-  .burst{top:58%;height:120px;}
+@media (max-height:700px){
+  .menu{
+    top:52%;
+    width:min(68vw,330px);
+    gap:9px;
+  }
+  .burst{
+    top:52%;
+    height:155px;
+  }
+  .hd-button{
+    padding:9px 12px;
+    font-size:clamp(15px,4vw,21px);
+  }
 }
 </style>
 </head>
@@ -143,10 +168,12 @@ html,body{
 <main class="title-screen">
   <img class="title-image" src="title.png" alt="HEART & DAGGER MASTER タイトルイラスト">
   <div class="burst" aria-hidden="true"></div>
+
   <nav class="menu" aria-label="メインメニュー">
     <button class="hd-button story" onclick="alert('ストーリーモードは近日開幕！')">
       <span class="button-inner">ストーリー<span class="button-sub">熱血編・準備中</span></span>
     </button>
+
     <button class="hd-button free" onclick="location.href='./freebattle.html'">
       <span class="button-inner">フリーバトル<span class="button-sub">今すぐ対戦！</span></span>
     </button>
