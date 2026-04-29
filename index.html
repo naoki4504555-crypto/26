@@ -5,22 +5,152 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HEART & DAGGER MASTER</title>
 <style>
-html,body{margin:0;height:100%;background:#000;font-family:sans-serif;overflow:hidden}
-.wrap{position:relative;width:100vw;height:100vh}
-.bg{width:100%;height:100%;object-fit:contain}
-.menu{position:absolute;bottom:5%;width:100%;display:flex;justify-content:center;gap:16px}
-button{padding:10px 16px;border-radius:12px;border:none;color:#fff;font-weight:bold}
-.story{background:#2b6cff}
-.free{background:#ff2b6c}
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:#000;
+  overflow:hidden;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.title-screen{
+  position:relative;
+  width:100vw;
+  height:100svh;
+  min-height:100vh;
+  background:#000;
+  display:grid;
+  place-items:center;
+}
+.title-image{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center center;
+  display:block;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.menu{
+  position:absolute;
+  left:50%;
+  top:56%;
+  transform:translate(-50%,-50%);
+  width:min(86vw,560px);
+  display:flex;
+  justify-content:center;
+  gap:clamp(12px,3vw,24px);
+  z-index:10;
+}
+.burst{
+  position:absolute;
+  left:50%;
+  top:56%;
+  transform:translate(-50%,-50%);
+  width:min(92vw,680px);
+  height:150px;
+  background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.22) 0deg 7deg,rgba(255,230,0,0) 7deg 15deg);
+  opacity:.55;
+  z-index:3;
+  pointer-events:none;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 0 45%,transparent 72%);
+  mask-image:radial-gradient(ellipse at center,#000 0 45%,transparent 72%);
+}
+.hd-button{
+  position:relative;
+  flex:1;
+  max-width:260px;
+  min-width:135px;
+  padding:clamp(12px,2.8vw,18px) clamp(10px,3vw,22px);
+  border:0;
+  border-radius:22px;
+  cursor:pointer;
+  color:white;
+  font-size:clamp(15px,4vw,24px);
+  font-weight:1000;
+  letter-spacing:.04em;
+  text-shadow:0 3px 0 rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.9);
+  box-shadow:
+    0 8px 0 rgba(42,16,0,.95),
+    0 13px 20px rgba(0,0,0,.65),
+    inset 0 4px 0 rgba(255,255,255,.8),
+    inset 0 -6px 0 rgba(0,0,0,.28);
+  transform:skew(-8deg);
+  overflow:hidden;
+  outline-offset:3px;
+}
+.hd-button::before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border-radius:16px;
+  border:2px solid rgba(255,255,255,.88);
+  box-shadow:inset 0 0 0 2px rgba(0,0,0,.25),0 0 12px rgba(255,255,255,.28);
+  pointer-events:none;
+}
+.hd-button::after{
+  content:"";
+  position:absolute;
+  left:-35%;
+  top:-70%;
+  width:48%;
+  height:240%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);
+  transform:rotate(23deg);
+  opacity:.5;
+  pointer-events:none;
+}
+.hd-button:active{
+  transform:skew(-8deg) translateY(5px);
+  box-shadow:
+    0 3px 0 rgba(42,16,0,.95),
+    0 7px 12px rgba(0,0,0,.6),
+    inset 0 3px 0 rgba(255,255,255,.7),
+    inset 0 -4px 0 rgba(0,0,0,.28);
+}
+.button-inner{
+  display:block;
+  transform:skew(8deg);
+  line-height:1.05;
+}
+.button-sub{
+  display:block;
+  margin-top:4px;
+  font-size:.52em;
+  letter-spacing:.08em;
+  opacity:.94;
+}
+.story{
+  background:linear-gradient(135deg,#fff36a 0%,#ffae18 18%,#ff3158 56%,#8d0038 100%);
+  outline:3px solid #ffe45c;
+}
+.free{
+  background:linear-gradient(135deg,#89fbff 0%,#168cff 24%,#3421d9 58%,#14004f 100%);
+  outline:3px solid #8ffcff;
+}
+@media (max-width:430px){
+  .menu{top:57%;width:92vw;gap:10px;}
+  .burst{top:57%;height:125px;}
+  .hd-button{min-width:0;padding:11px 8px;border-radius:17px;}
+}
+@media (max-height:650px){
+  .menu{top:58%;}
+  .burst{top:58%;height:120px;}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-<img src="title.png" class="bg">
-<div class="menu">
-<button class="story" onclick="alert('ストーリー準備中')">ストーリー</button>
-<button class="free" onclick="location.href='game.html'">フリーバトル</button>
-</div>
-</div>
+<main class="title-screen">
+  <img class="title-image" src="title.png" alt="HEART & DAGGER MASTER タイトルイラスト">
+  <div class="burst" aria-hidden="true"></div>
+  <nav class="menu" aria-label="メインメニュー">
+    <button class="hd-button story" onclick="alert('ストーリーモードは近日開幕！')">
+      <span class="button-inner">ストーリー<span class="button-sub">熱血編・準備中</span></span>
+    </button>
+    <button class="hd-button free" onclick="location.href='./freebattle.html'">
+      <span class="button-inner">フリーバトル<span class="button-sub">今すぐ対戦！</span></span>
+    </button>
+  </nav>
+</main>
 </body>
 </html>
