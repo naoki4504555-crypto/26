@@ -34,149 +34,157 @@ html,body{
 .menu{
   position:absolute;
   left:50%;
-  top:58%;
+  top:60%;
   transform:translate(-50%,-50%);
+  width:min(72vw,430px);
   display:flex;
   flex-direction:row;
   align-items:center;
   justify-content:center;
-  gap:14px;
+  gap:12px;
   z-index:10;
 }
 .burst{
   position:absolute;
   left:50%;
-  top:58%;
+  top:60%;
   transform:translate(-50%,-50%);
-  width:210px;
+  width:min(78vw,480px);
   height:105px;
   background:repeating-conic-gradient(
     from 0deg,
     rgba(255,255,255,.2) 0deg 8deg,
     rgba(255,230,0,0) 8deg 16deg
   );
-  opacity:.34;
+  opacity:.32;
   z-index:3;
   pointer-events:none;
   -webkit-mask-image:radial-gradient(ellipse at center,#000 0 38%,transparent 72%);
   mask-image:radial-gradient(ellipse at center,#000 0 38%,transparent 72%);
 }
-.circle-button{
+.hd-button{
   position:relative;
-  width:82px;
-  height:82px;
+  flex:1;
+  max-width:205px;
+  min-width:128px;
+  padding:9px 12px;
   border:0;
-  border-radius:50%;
+  border-radius:16px;
   cursor:pointer;
   color:white;
+  font-size:clamp(13px,3.4vw,17px);
   font-weight:1000;
-  font-size:13px;
-  line-height:1.05;
-  letter-spacing:.02em;
+  letter-spacing:.04em;
   text-shadow:0 2px 0 rgba(0,0,0,.85),0 0 8px rgba(0,0,0,.95);
   box-shadow:
-    0 6px 0 rgba(28,10,0,.9),
-    0 10px 16px rgba(0,0,0,.62),
-    inset 0 4px 0 rgba(255,255,255,.82),
-    inset 0 -6px 0 rgba(0,0,0,.3),
-    0 0 14px rgba(255,255,255,.26);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
+    0 6px 0 rgba(42,16,0,.95),
+    0 10px 15px rgba(0,0,0,.62),
+    inset 0 3px 0 rgba(255,255,255,.8),
+    inset 0 -5px 0 rgba(0,0,0,.28);
+  transform:skew(-8deg);
   overflow:hidden;
+  outline-offset:3px;
 }
-.circle-button::before{
+.hd-button::before{
   content:"";
   position:absolute;
-  inset:6px;
-  border-radius:50%;
+  inset:4px;
+  border-radius:12px;
   border:2px solid rgba(255,255,255,.88);
-  box-shadow:inset 0 0 0 2px rgba(0,0,0,.22);
+  box-shadow:inset 0 0 0 2px rgba(0,0,0,.25),0 0 10px rgba(255,255,255,.24);
   pointer-events:none;
 }
-.circle-button::after{
+.hd-button::after{
   content:"";
   position:absolute;
-  left:8px;
-  top:7px;
-  width:28px;
-  height:18px;
-  border-radius:50%;
-  background:rgba(255,255,255,.55);
-  transform:rotate(-24deg);
-  filter:blur(.3px);
+  left:-35%;
+  top:-70%;
+  width:48%;
+  height:240%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);
+  transform:rotate(23deg);
+  opacity:.45;
   pointer-events:none;
 }
-.circle-button:active{
-  transform:translateY(4px) scale(.98);
+.hd-button:active{
+  transform:skew(-8deg) translateY(4px);
   box-shadow:
-    0 2px 0 rgba(28,10,0,.9),
+    0 2px 0 rgba(42,16,0,.95),
     0 5px 10px rgba(0,0,0,.6),
-    inset 0 3px 0 rgba(255,255,255,.72),
-    inset 0 -4px 0 rgba(0,0,0,.3);
+    inset 0 2px 0 rgba(255,255,255,.7),
+    inset 0 -3px 0 rgba(0,0,0,.28);
 }
-.circle-inner{
-  position:relative;
-  z-index:1;
+.button-inner{
   display:block;
+  transform:skew(8deg);
+  line-height:1.05;
+  white-space:nowrap;
+}
+.button-sub{
+  display:block;
+  margin-top:3px;
+  font-size:.52em;
+  letter-spacing:.07em;
+  opacity:.93;
 }
 .story{
-  background:
-    radial-gradient(circle at 35% 25%, #fff9a6 0%, #ffbd24 20%, #ff3158 58%, #810035 100%);
-  outline:3px solid #ffe35d;
+  background:linear-gradient(135deg,#fff36a 0%,#ffae18 18%,#ff3158 56%,#8d0038 100%);
+  outline:2px solid #ffe45c;
 }
 .free{
-  background:
-    radial-gradient(circle at 35% 25%, #b8ffff 0%, #1d9aff 25%, #3422d6 60%, #110047 100%);
-  outline:3px solid #8ffcff;
+  background:linear-gradient(135deg,#89fbff 0%,#168cff 24%,#3421d9 58%,#14004f 100%);
+  outline:2px solid #8ffcff;
 }
 @media (max-width:430px){
   .menu{
-    top:58.5%;
-    gap:12px;
+    top:60.5%;
+    width:76vw;
+    gap:9px;
   }
   .burst{
-    top:58.5%;
-    width:190px;
-    height:96px;
+    top:60.5%;
+    width:82vw;
+    height:92px;
   }
-  .circle-button{
-    width:72px;
-    height:72px;
-    font-size:11.5px;
+  .hd-button{
+    min-width:0;
+    padding:8px 8px;
+    border-radius:14px;
+    font-size:clamp(12px,3.1vw,15px);
+  }
+  .button-sub{
+    font-size:.48em;
   }
 }
 @media (max-height:700px){
   .menu{
-    top:59%;
-    gap:10px;
+    top:61%;
+    width:min(70vw,390px);
+    gap:9px;
   }
   .burst{
-    top:59%;
-    width:180px;
-    height:90px;
+    top:61%;
+    height:88px;
   }
-  .circle-button{
-    width:68px;
-    height:68px;
-    font-size:11px;
+  .hd-button{
+    padding:7px 9px;
+    font-size:clamp(12px,3vw,15px);
   }
 }
 </style>
 </head>
 <body>
 <main class="title-screen">
-  <img class="title-image" src="./heart-dagger-title-20260430-new.jpg?v=20260430-circle-buttons" alt="HEART & DAGGER MASTER タイトルイラスト">
+  <img class="title-image" src="./heart-dagger-title-20260430-new.jpg?v=20260430-small-horizontal" alt="HEART & DAGGER MASTER タイトルイラスト">
   <div class="burst" aria-hidden="true"></div>
 
   <nav class="menu" aria-label="メインメニュー">
-    <button class="circle-button story" onclick="alert('ストーリーモードは近日開幕！')">
-      <span class="circle-inner">ストーリー</span>
+    <button class="hd-button story" onclick="alert('ストーリーモードは近日開幕！')">
+      <span class="button-inner">ストーリー<span class="button-sub">熱血編・準備中</span></span>
     </button>
 
-    <button class="circle-button free" onclick="location.href='./freebattle.html'">
-      <span class="circle-inner">フリー<br>バトル</span>
+    <button class="hd-button free" onclick="location.href='./freebattle.html'">
+      <span class="button-inner">フリーバトル<span class="button-sub">今すぐ対戦！</span></span>
     </button>
   </nav>
 </main>
