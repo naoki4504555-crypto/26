@@ -190,6 +190,7 @@ html,body{
 </main>
 
 
+
 <script>
 let clickAudioCtx = null;
 
@@ -223,9 +224,7 @@ function playClick() {
 
     osc.start(now);
     osc.stop(now + 0.12);
-  } catch (e) {
-    // 音が鳴らない環境でもゲーム進行は止めない
-  }
+  } catch (e) {}
 }
 
 function goStory() {
@@ -237,7 +236,7 @@ function goStory() {
 
 function goBattle() {
   playClick();
-  sessionStorage.setItem("hd_from_title", "1");
+  sessionStorage.setItem("hd_freebattle_entry_time", String(Date.now()));
   setTimeout(() => {
     location.href = "./freebattle.html";
   }, 120);
