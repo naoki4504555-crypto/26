@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>HEART & DAGGER MASTER</title>
-<!-- story face buttons fixed: stage2 centered + stage8 mystery conditional -->
+<!-- story stage select remap: stage2 removed, stages shifted, doctor added to stage6 -->
 <style>
 :root{--stage-w: min(100vw, calc(100svh * 2 / 3));}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -120,7 +120,7 @@ function renderStages(){
     const b=document.createElement('button'); b.className='stage-card';
     const isMysteryStage8 = (i === 8 && clearedStage < 7);
     const imgName = isMysteryStage8 ? 'stage8-locked.png' : `stage${i}.png`;
-    b.style.backgroundImage = `url('./${imgName}?v=stage-face-fixed-20260502')`;
+    b.style.backgroundImage = `url('./${imgName}?v=stage-remap-20260503-v2')`;
     if(i<=clearedStage)b.classList.add('done');
     b.disabled=i>unlockedStage || isMysteryStage8;
     b.innerHTML=`<div class="stage-no">STAGE ${i}</div><div class="stage-name"></div><div class="stage-status">${isMysteryStage8?'???':i<=clearedStage?'CLEAR':i===unlockedStage?'PLAY':'LOCK'}</div>`;
