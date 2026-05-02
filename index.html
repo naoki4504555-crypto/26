@@ -63,6 +63,8 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   </div>
 </section>
 
+<audio id="storyBgm" src="./story-bgm.mp3" loop preload="auto"></audio>
+
 <script>
 let clickAudioCtx = null;
 let unlockedStage = Number(localStorage.getItem("hd_story_unlocked") || "1");
@@ -93,8 +95,23 @@ function playClick(){
     osc.stop(now+0.15);
   }catch(e){}
 }
-function showTitle(){playClick();document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');}
-function goStory(){playClick();renderStages();document.getElementById('titleScreen').classList.remove('active');document.getElementById('storyScreen').classList.add('active');}
+function startStoryBgm(){
+  const bgm=document.getElementById('storyBgm');
+  if(!bgm)return;
+  bgm.volume=0.42;
+  bgm.play().catch(()=>{
+    const retry=()=>{bgm.play().catch(()=>{});document.body.removeEventListener('pointerdown',retry);document.body.removeEventListener('click',retry);};
+    document.body.addEventListener('pointerdown',retry,{once:true});
+    document.body.addEventListener('click',retry,{once:true});
+  });
+}
+function stopStoryBgm(){
+  const bgm=document.getElementById('storyBgm');
+  if(!bgm)return;
+  bgm.pause();
+}
+function showTitle(){playClick();stopStoryBgm();document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');}
+function goStory(){playClick();renderStages();document.getElementById('titleScreen').classList.remove('active');document.getElementById('storyScreen').classList.add('active');startStoryBgm();}
 function goBattle(){playClick();sessionStorage.setItem("hd_freebattle_entry_time", String(Date.now()));setTimeout(()=>{location.href="./freebattle.html";},170);}
 function renderStages(){
   const names=["はじまりの短剣","盾の試練","心臓の読み合い","黒き挑戦者","速攻の一撃","博士の記録","宿命の決闘","マスターへの道"];
