@@ -46,14 +46,52 @@ body::after{content:"";position:fixed;inset:0;background:linear-gradient(to bott
  #text{font-size:clamp(12px,2.0vw,16px);line-height:1.20;height:calc(1.20em * 4);max-height:calc(1.20em * 4);}
  .nameplate{font-size:13px;padding:3px 11px;margin-bottom:4px;height:25px;line-height:15px;}
  .character{height:150%;max-width:min(38vw,380px);}
-}</style>
+}
+/* PNGを再保存・変換せず、CSSだけで自然な中央表示にする */
+.character-wrap{
+  position:absolute;
+  left:0;
+  right:0;
+  top:calc(8px + env(safe-area-inset-top));
+  bottom:0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  pointer-events:none;
+  overflow:hidden;
+}
+.character{
+  display:none;
+  height:min(112vh, 1120px);
+  max-height:none;
+  width:auto;
+  max-width:min(96vw, 720px);
+  object-fit:contain;
+  object-position:center top;
+  filter:drop-shadow(0 18px 24px rgba(0,0,0,.55));
+  user-select:none;
+  -webkit-user-drag:none;
+  animation:pop .16s ease-out;
+}
+.character.show{display:block;}
+#tsurugi,#mamoru{transform:translateX(0) scale(1);}
+@media (orientation:landscape){
+  .character-wrap{top:calc(2px + env(safe-area-inset-top)); bottom:0;}
+  .character{height:118vh; max-width:min(44vw, 520px);}
+  #tsurugi,#mamoru{transform:translateX(0) scale(1);}
+}
+@media (max-width:520px) and (orientation:portrait){
+  .character{height:108vh; max-width:98vw;}
+  #tsurugi,#mamoru{transform:translateX(0) scale(1);}
+}
+</style>
 </head>
 <body>
 <button class="back" onclick="backToStory(event)">← ステージ選択</button>
 <div class="scene" id="scene">
   <div class="character-wrap">
-    <img id="tsurugi" class="character" src="./tsurugi.png?v=transparent-bg-20260503" alt="ツルギ">
-    <img id="mamoru" class="character" src="./mamoru.png?v=transparent-bg-20260503" alt="マモル">
+    <img id="tsurugi" class="character" src="./tsurugi.png?v=pngonly-20260503b" alt="ツルギ">
+    <img id="mamoru" class="character" src="./mamoru.png?v=pngonly-20260503b" alt="マモル">
   </div>
   <div class="textbox" id="textbox">
     <div id="name" class="nameplate tsurugi">ツルギ</div>
@@ -67,23 +105,24 @@ const lines = [
   {speaker:'ツルギ', text:`よお！俺の名前はツルギ！`},
   {speaker:'ツルギ', text:`超絶シンプル読み合いバトル！「ハート＆ダガー」で天下をとる男だ！`},
   {speaker:'ツルギ', text:`全国のハーダガリストをなぎ倒して、必ずハーダガマスターになってやる！`},
-  {speaker:'マモル', text:`相変わらずでかい独り言だな。ツルギ。`},
+  {speaker:'マモル', text:`相変わらずでかい独り言だな。`},
+  {speaker:'マモル', text:`ツルギ。`},
   {speaker:'ツルギ', text:`げっ！いたのかマモル！`},
-  {speaker:'マモル', text:`少しよからぬ情報を入手してな。
-ハーダガ四天王が本格的にこの街を制圧しようとしているらしい。
-なんとしてもヤツらを止めねばならん。`},
-  {speaker:'ツルギ', text:`ハーダガ四天王ってあのめちゃくちゃ強い4人組だろ？？
-俺もいっしょに行くぜ！`},
-  {speaker:'マモル', text:`ふん。
-ハーダガリストが馴れ合いとは笑わせてくれるな。
-あいつらは俺1人で止めてみせる。`},
-  {speaker:'ツルギ', text:`ちぇっ！
-かわいげのないやつ！`},
-  {speaker:'マモル', text:`だがお前と久々に勝負してやらんこともないぞ。
-ツルギも四天王もまとめて倒す。
-ハーダガマスターになるのはこの俺だ。`},
-  {speaker:'ツルギ', text:`おもしれーじゃん！！
-早速勝負しようぜ！`}
+  {speaker:'マモル', text:`少しよからぬ情報を入手してな。`},
+  {speaker:'マモル', text:`ハーダガ四天王が本格的にこの街を制圧しようとしているらしい。`},
+  {speaker:'マモル', text:`なんとしてもヤツらを止めねばならん。`},
+  {speaker:'ツルギ', text:`ハーダガ四天王ってあのめちゃくちゃ強い4人組だろ？？`},
+  {speaker:'ツルギ', text:`俺もいっしょに行くぜ！`},
+  {speaker:'マモル', text:`ふん。`},
+  {speaker:'マモル', text:`ハーダガリストが馴れ合いとは笑わせてくれるな。`},
+  {speaker:'マモル', text:`あいつらは俺1人で止めてみせる。`},
+  {speaker:'ツルギ', text:`ちぇっ！`},
+  {speaker:'ツルギ', text:`かわいげのないやつ！`},
+  {speaker:'マモル', text:`だがお前と久々に勝負してやらんこともないぞ。`},
+  {speaker:'マモル', text:`ツルギも四天王もまとめて倒す。`},
+  {speaker:'マモル', text:`ハーダガマスターになるのはこの俺だ。`},
+  {speaker:'ツルギ', text:`おもしれーじゃん！！`},
+  {speaker:'ツルギ', text:`早速勝負しようぜ！`}
 ];
 let idx = 0;
 let clickAudioCtx = null;
