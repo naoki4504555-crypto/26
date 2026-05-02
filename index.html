@@ -12,11 +12,11 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 .screen.active{display:block;}
 .title-scroll{width:100vw;height:100svh;min-height:100vh;overflow:auto;display:flex;justify-content:center;align-items:center;background:#000;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
 .title-stage{position:relative;width:var(--stage-w);aspect-ratio:2/3;flex:0 0 auto;}
-.title-stage img{width:100%;height:100%;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none;}
-.hotspot{position:absolute;border:0;background:transparent;cursor:pointer;padding:0;}
+.title-stage img{width:100%;height:100%;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none;image-rendering:auto;}
+.hotspot{position:absolute;border:0;background:transparent;cursor:pointer;padding:0;touch-action:manipulation;}
 .hotspot:focus-visible{outline:3px solid rgba(255,255,255,.9);border-radius:18px;}
-.hotspot.story{left:12.5%;top:57.35%;width:36.7%;height:6.2%;}
-.hotspot.free{left:50.3%;top:57.35%;width:36.7%;height:6.2%;}
+.hotspot.story{left:12.5%;top:60.1%;width:36.7%;height:6.2%;}
+.hotspot.free{left:50.3%;top:60.1%;width:36.7%;height:6.2%;}
 @media (orientation: landscape){
   :root{--stage-w:min(100vw,1024px);}
   .title-scroll{align-items:flex-start;}
@@ -42,7 +42,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 <main id="titleScreen" class="screen active">
   <div class="title-scroll" aria-label="タイトル画面">
     <div class="title-stage">
-      <img src="./title-buttons-baked.jpg?v=20260502-lower" alt="HEART & DAGGER MASTER タイトル">
+      <img src="./title-buttons-baked.png?v=20260502-rebaked-v4" alt="HEART & DAGGER MASTER タイトル">
       <button class="hotspot story" aria-label="ストーリー" onclick="goStory()"></button>
       <button class="hotspot free" aria-label="フリーバトル" onclick="goBattle()"></button>
     </div>
@@ -77,18 +77,25 @@ function getClickAudioCtx(){
 }
 function playClick(){
   try{
-    const ctx=getClickAudioCtx(), now=ctx.currentTime;
-    const osc=ctx.createOscillator(), gain=ctx.createGain();
-    osc.type="square"; osc.frequency.setValueAtTime(880,now);
+    const ctx=getClickAudioCtx();
+    const now=ctx.currentTime;
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.type="square";
+    osc.frequency.setValueAtTime(980,now);
+    osc.frequency.exponentialRampToValueAtTime(1460,now+0.055);
     gain.gain.setValueAtTime(0.0001,now);
-    gain.gain.linearRampToValueAtTime(0.18,now+0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001,now+0.11);
-    osc.connect(gain); gain.connect(ctx.destination); osc.start(now); osc.stop(now+0.12);
+    gain.gain.exponentialRampToValueAtTime(0.34,now+0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001,now+0.14);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now+0.15);
   }catch(e){}
 }
 function showTitle(){playClick();document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');}
 function goStory(){playClick();renderStages();document.getElementById('titleScreen').classList.remove('active');document.getElementById('storyScreen').classList.add('active');}
-function goBattle(){playClick();sessionStorage.setItem("hd_freebattle_entry_time", String(Date.now()));setTimeout(()=>{location.href="./freebattle.html";},120);}
+function goBattle(){playClick();sessionStorage.setItem("hd_freebattle_entry_time", String(Date.now()));setTimeout(()=>{location.href="./freebattle.html";},170);}
 function renderStages(){
   const names=["はじまりの短剣","盾の試練","心臓の読み合い","黒き挑戦者","速攻の一撃","博士の記録","宿命の決闘","マスターへの道"];
   const grid=document.getElementById('stageGrid'); grid.innerHTML='';
