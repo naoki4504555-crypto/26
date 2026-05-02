@@ -63,31 +63,33 @@ body::after{content:"";position:fixed;inset:0;background:linear-gradient(to bott
 </div>
 <script>
 const lines = [
-  {speaker:'ツルギ', text:'たった一本のダガーをハートに秘めているか？'},
-  {speaker:'ツルギ', text:'よお！俺の名前はツルギ！'},
-  {speaker:'ツルギ', text:'超絶シンプル読み合いバトル！「ハート＆ダガー」で天下をとる男だ！'},
-  {speaker:'ツルギ', text:'全国のハーダガリストをなぎ倒して、必ずハーダガマスターになってやる！'},
-  {speaker:'マモル', text:'相変わらずでかい独り言だな。ツルギ。'},
-  {speaker:'ツルギ', text:'げっ！いたのかマモル！'},
-  {speaker:'マモル', text:'少しよからぬ情報を入手してな。
+  {speaker:'ツルギ', text:`たった一本のダガーをハートに秘めているか？`},
+  {speaker:'ツルギ', text:`よお！俺の名前はツルギ！`},
+  {speaker:'ツルギ', text:`超絶シンプル読み合いバトル！「ハート＆ダガー」で天下をとる男だ！`},
+  {speaker:'ツルギ', text:`全国のハーダガリストをなぎ倒して、必ずハーダガマスターになってやる！`},
+  {speaker:'マモル', text:`相変わらずでかい独り言だな。ツルギ。`},
+  {speaker:'ツルギ', text:`げっ！いたのかマモル！`},
+  {speaker:'マモル', text:`少しよからぬ情報を入手してな。
 ハーダガ四天王が本格的にこの街を制圧しようとしているらしい。
-なんとしてもヤツらを止めねばならん。'},
-  {speaker:'ツルギ', text:'ハーダガ四天王ってあのめちゃくちゃ強い4人組だろ？？
-俺もいっしょに行くぜ！'},
-  {speaker:'マモル', text:'ふん。
+なんとしてもヤツらを止めねばならん。`},
+  {speaker:'ツルギ', text:`ハーダガ四天王ってあのめちゃくちゃ強い4人組だろ？？
+俺もいっしょに行くぜ！`},
+  {speaker:'マモル', text:`ふん。
 ハーダガリストが馴れ合いとは笑わせてくれるな。
-あいつらは俺1人で止めてみせる。'},
-  {speaker:'ツルギ', text:'ちぇっ！
-かわいげのないやつ！'},
-  {speaker:'マモル', text:'だがお前と久々に勝負してやらんこともないぞ。
+あいつらは俺1人で止めてみせる。`},
+  {speaker:'ツルギ', text:`ちぇっ！
+かわいげのないやつ！`},
+  {speaker:'マモル', text:`だがお前と久々に勝負してやらんこともないぞ。
 ツルギも四天王もまとめて倒す。
-ハーダガマスターになるのはこの俺だ。'},
-  {speaker:'ツルギ', text:'おもしれーじゃん！！
-早速勝負しようぜ！'}
+ハーダガマスターになるのはこの俺だ。`},
+  {speaker:'ツルギ', text:`おもしれーじゃん！！
+早速勝負しようぜ！`}
 ];
 let idx = 0;
 let clickAudioCtx = null;
-let locked = false;
+let inputLocked = false;
+let lastAdvanceAt = 0;
+
 function getClickAudioCtx(){
   if(!clickAudioCtx) clickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if(clickAudioCtx.state === 'suspended') clickAudioCtx.resume();
@@ -97,13 +99,19 @@ function playClick(){
   try{
     const ctx=getClickAudioCtx(); const now=ctx.currentTime;
     const osc=ctx.createOscillator(); const gain=ctx.createGain();
-    osc.type='square'; osc.frequency.setValueAtTime(980,now); osc.frequency.exponentialRampToValueAtTime(1460,now+0.055);
-    gain.gain.setValueAtTime(0.0001,now); gain.gain.exponentialRampToValueAtTime(0.36,now+0.008); gain.gain.exponentialRampToValueAtTime(0.0001,now+0.14);
-    osc.connect(gain); gain.connect(ctx.destination); osc.start(now); osc.stop(now+0.15);
+    osc.type='square';
+    osc.frequency.setValueAtTime(980,now);
+    osc.frequency.exponentialRampToValueAtTime(1460,now+0.055);
+    gain.gain.setValueAtTime(0.0001,now);
+    gain.gain.exponentialRampToValueAtTime(0.36,now+0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001,now+0.14);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(now); osc.stop(now+0.15);
   }catch(e){}
 }
 function renderLine(){
   const line = lines[idx];
+  if(!line) return;
   const isT = line.speaker === 'ツルギ';
   const tsurugi = document.getElementById('tsurugi');
   const mamoru = document.getElementById('mamoru');
@@ -113,24 +121,45 @@ function renderLine(){
   name.textContent = line.speaker;
   name.className = 'nameplate ' + (isT ? 'tsurugi' : 'mamoru');
   document.getElementById('text').textContent = line.text;
-  document.getElementById('textbox').scrollTop = 0;
 }
-function nextLine(){
-  if(locked) return;
-  locked = true;
+function advanceStory(){
+  const now = Date.now();
+  if(inputLocked || now - lastAdvanceAt < 140) return;
+  inputLocked = true;
+  lastAdvanceAt = now;
   playClick();
-  idx++;
+  idx += 1;
   if(idx >= lines.length){
     sessionStorage.setItem('hd_story_stage','1');
     setTimeout(()=>{ location.href='./freebattle.html'; },170);
-  }else{
-    renderLine();
-    setTimeout(()=>{ locked = false; },80);
+    return;
   }
+  renderLine();
+  setTimeout(()=>{ inputLocked = false; },80);
 }
-function backToStory(e){ if(e) e.stopPropagation(); playClick(); setTimeout(()=>{ location.href='./index.html#story'; },150); }
-window.addEventListener('DOMContentLoaded', renderLine);
-document.getElementById('scene').addEventListener('click', nextLine);
+function backToStory(e){
+  if(e){ e.preventDefault(); e.stopPropagation(); }
+  playClick();
+  setTimeout(()=>{ location.href='./index.html#story'; },150);
+}
+window.addEventListener('DOMContentLoaded', () => {
+  renderLine();
+  // pointerup is stable across PC, tablet, and smartphone browsers.
+  document.body.addEventListener('pointerup', (e) => {
+    if(e.target && e.target.closest && e.target.closest('.back')) return;
+    advanceStory();
+  });
+  // Fallback for very old iOS/Safari where pointer events may be incomplete.
+  document.body.addEventListener('touchend', (e) => {
+    if(e.target && e.target.closest && e.target.closest('.back')) return;
+    e.preventDefault();
+    advanceStory();
+  }, {passive:false});
+  document.body.addEventListener('click', (e) => {
+    if(e.target && e.target.closest && e.target.closest('.back')) return;
+    advanceStory();
+  });
+});
 </script>
 </body>
 </html>
