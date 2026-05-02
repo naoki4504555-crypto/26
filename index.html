@@ -124,7 +124,7 @@ function renderStages(){
     if(i<=clearedStage)b.classList.add('done');
     b.disabled=i>unlockedStage || isMysteryStage8;
     b.innerHTML=`<div class="stage-no">STAGE ${i}</div><div class="stage-name"></div><div class="stage-status">${isMysteryStage8?'???':i<=clearedStage?'CLEAR':i===unlockedStage?'PLAY':'LOCK'}</div>`;
-    b.onclick=()=>clearStage(i); grid.appendChild(b);
+    b.onclick=()=>{ if(i===1){ playClick(); setTimeout(()=>{location.href='./story1.html';},160); } else { clearStage(i); } }; grid.appendChild(b);
   }
 }
 function clearStage(i){
@@ -137,6 +137,15 @@ function clearStage(i){
   document.getElementById('clearMsg').textContent = i===8 ? "全ステージクリア！" : `STAGE ${i} CLEAR！ 次のステージが解放された！`;
   renderStages();
 }
+
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(location.hash === '#story'){
+    renderStages();
+    document.getElementById('titleScreen').classList.remove('active');
+    document.getElementById('storyScreen').classList.add('active');
+  }
+});
 </script>
 </body>
 </html>
