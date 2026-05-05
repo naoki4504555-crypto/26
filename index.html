@@ -52,6 +52,70 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 .stage-status{position:absolute;right:9px;bottom:8px;font-size:11px;background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.55);border-radius:999px;padding:4px 8px;text-shadow:0 2px 0 #000;}
 .clear-msg{margin-top:16px;min-height:34px;text-align:center;font-size:18px;font-weight:1000;color:#fff36a;text-shadow:0 2px 0 #000;}
 @media (min-width:680px){.stage-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}.stage-card{position:relative;aspect-ratio:16/9;border:3px solid rgba(255,255,255,.82);border-radius:18px;background:#111 center/cover no-repeat;box-shadow:0 7px 0 rgba(0,0,0,.55),0 0 18px rgba(255,47,152,.24),inset 0 0 0 2px rgba(0,0,0,.22);color:#fff;padding:0;overflow:hidden;font-weight:1000;cursor:pointer;touch-action:manipulation;}}
+
+.story-actions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:10px 0 16px;
+}
+.howto-btn{
+  border:3px solid #111;
+  border-radius:999px;
+  background:#fff7d7;
+  color:#1b1208;
+  font-weight:900;
+  font-size:16px;
+  padding:10px 18px;
+  box-shadow:0 5px 0 #111;
+  cursor:pointer;
+}
+.howto-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #111;}
+.howto-modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+  background:rgba(0,0,0,.58);
+  padding:18px;
+}
+.howto-modal.active{display:flex;}
+.howto-panel{
+  width:min(720px, 94vw);
+  max-height:82vh;
+  overflow:auto;
+  background:#fffdf5;
+  color:#1b1208;
+  border:5px solid #111;
+  border-radius:22px;
+  box-shadow:0 14px 0 rgba(0,0,0,.35);
+  padding:22px;
+  line-height:1.75;
+}
+.howto-panel h2{
+  margin:0 0 12px;
+  font-size:26px;
+  text-align:center;
+}
+.howto-panel ul{
+  margin:10px 0;
+  padding-left:1.4em;
+}
+.howto-close{
+  display:block;
+  margin:18px auto 0;
+  border:3px solid #111;
+  border-radius:999px;
+  background:#fff;
+  color:#111;
+  font-weight:900;
+  font-size:16px;
+  padding:9px 20px;
+  cursor:pointer;
+}
+
 </style>
 </head>
 <body>
@@ -73,11 +137,29 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
         <button class="back-btn" onclick="showTitle()">タイトルへ</button>
       </div>
       <p class="story-sub">キャラクターを選んでステージを進めよう。タップするとクリア扱いで次へ進めます。</p>
+      <div class="story-actions"><button class="howto-btn" onclick="openHowto()">ハート＆ダガーの遊び方</button></div>
       <div id="stageGrid" class="stage-grid"></div>
       <div id="clearMsg" class="clear-msg"></div>
     </div>
   </div>
 </section>
+
+
+<div id="howtoModal" class="howto-modal" onclick="closeHowto(event)">
+  <div class="howto-panel" onclick="event.stopPropagation()">
+    <h2>ハート＆ダガーの遊び方</h2>
+    <p>お互いにカードを1枚ずつ出して勝負します。相手の心臓を短剣で刺せば1ポイント獲得です。</p>
+    <ul>
+      <li>短剣 VS 心臓：短剣側が1ポイント</li>
+      <li>短剣 VS 盾：ポイントなし</li>
+      <li>心臓 VS 盾：ポイントなし</li>
+      <li>同じカード同士：ポイントなし</li>
+    </ul>
+    <p>最後まで戦ってポイントが多い方の勝ち。引き分けが確定したと思ったら「ハート＆ダガーコール！」も重要です。</p>
+    <button class="howto-close" onclick="closeHowto()">閉じる</button>
+  </div>
+</div>
+
 
 <audio id="storyBgm" src="./story-bgm.mp3" loop preload="auto"></audio>
 
@@ -114,9 +196,16 @@ function playClick(){
 function startStoryBgm(){
   const bgm=document.getElementById('storyBgm');
   if(!bgm)return;
+  bgm.pause();
+  try{ bgm.currentTime = 0; }catch(e){}
   bgm.volume=0.42;
   bgm.play().catch(()=>{
-    const retry=()=>{bgm.play().catch(()=>{});document.body.removeEventListener('pointerdown',retry);document.body.removeEventListener('click',retry);};
+    const retry=()=>{
+      try{ bgm.currentTime = 0; }catch(e){}
+      bgm.play().catch(()=>{});
+      document.body.removeEventListener('pointerdown',retry);
+      document.body.removeEventListener('click',retry);
+    };
     document.body.addEventListener('pointerdown',retry,{once:true});
     document.body.addEventListener('click',retry,{once:true});
   });
@@ -125,7 +214,20 @@ function stopStoryBgm(){
   const bgm=document.getElementById('storyBgm');
   if(!bgm)return;
   bgm.pause();
+  try{ bgm.currentTime = 0; }catch(e){}
 }
+
+function openHowto(){
+  playClick();
+  const modal=document.getElementById('howtoModal');
+  if(modal)modal.classList.add('active');
+}
+function closeHowto(event){
+  if(event && event.target && event.currentTarget && event.target!==event.currentTarget)return;
+  const modal=document.getElementById('howtoModal');
+  if(modal)modal.classList.remove('active');
+}
+
 function showTitle(){playClick();stopStoryBgm();document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');}
 function goStory(){playClick();renderStages();document.getElementById('titleScreen').classList.remove('active');document.getElementById('storyScreen').classList.add('active');startStoryBgm();}
 function goBattle(){playClick();sessionStorage.setItem("hd_freebattle_entry_time", String(Date.now()));setTimeout(()=>{location.href="./freebattle.html";},170);}
