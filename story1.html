@@ -21,85 +21,129 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>STAGE 1 - ツルギ VS マモル</title>
-<style>*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--textbox-h:96px;--safe-bottom:env(safe-area-inset-bottom);}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:#000;color:white;overscroll-behavior:none;}
-body::before{content:"";position:fixed;inset:0;background:url('./bg_stage1_city.png?v=fixed-ui-20260503') center/cover no-repeat;z-index:0;}
-body::after{content:"";position:fixed;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,.04),rgba(0,0,0,.10) 44%,rgba(0,0,0,.46));z-index:1;pointer-events:none;}
-.scene{position:fixed;inset:0;z-index:2;width:100vw;height:100dvh;min-height:100svh;overflow:hidden;padding:calc(48px + env(safe-area-inset-top)) 0 calc(var(--textbox-h) + 24px + env(safe-area-inset-bottom));}
-.character-wrap{position:absolute;left:0;right:0;top:calc(38px + env(safe-area-inset-top));bottom:calc(var(--textbox-h) + 26px + env(safe-area-inset-bottom));display:flex;align-items:flex-start;justify-content:center;pointer-events:none;overflow:hidden;}
-.character{display:none;height:124%;max-height:none;max-width:min(88vw,650px);object-fit:contain;filter:drop-shadow(0 18px 24px rgba(0,0,0,.55));user-select:none;-webkit-user-drag:none;animation:pop .16s ease-out;}
-.character.show{display:block;}
-#tsurugi{transform:translateX(-2vw) scale(1.00);}
-#mamoru{transform:translateX(2vw) scale(1.00);}
-.textbox{position:fixed;z-index:5;left:clamp(10px,3vw,30px);right:clamp(10px,3vw,30px);bottom:calc(14px + env(safe-area-inset-bottom));width:auto;height:var(--textbox-h);min-height:var(--textbox-h);max-height:var(--textbox-h);overflow:hidden;padding:10px 16px 28px;border:3px solid rgba(255,255,255,.88);border-radius:18px;background:rgba(0,0,0,.82);box-shadow:0 8px 0 rgba(0,0,0,.45),0 0 28px rgba(80,190,255,.22);}
-.nameplate{display:inline-block;min-width:104px;height:32px;line-height:18px;margin:0 0 6px;padding:5px 15px;border-radius:999px;border:2px solid #fff;font-size:18px;font-weight:1000;text-align:center;text-shadow:0 2px 0 #000;box-shadow:0 4px 0 rgba(0,0,0,.5);}
-.nameplate.tsurugi{background:linear-gradient(#ff5a3d,#a40000);}
-.nameplate.mamoru{background:linear-gradient(#6b42ff,#251067);}
-#text{font-size:clamp(15px,3.2vw,21px);font-weight:900;line-height:1.28;white-space:pre-line;text-shadow:0 2px 0 #000;overflow-wrap:anywhere;height:calc(1.28em * 4);max-height:calc(1.28em * 4);overflow:hidden;}
-.next{position:absolute;right:18px;bottom:9px;font-size:13px;font-weight:900;color:#fff7a6;animation:blink .9s infinite alternate;}
-.back{position:fixed;left:12px;top:calc(12px + env(safe-area-inset-top));z-index:8;border:2px solid rgba(255,255,255,.85);background:rgba(0,0,0,.60);color:#fff;border-radius:999px;padding:9px 14px;font-weight:1000;}
-@keyframes blink{from{opacity:.35}to{opacity:1}}
-@keyframes pop{from{opacity:.25;transform:translateY(8px) scale(.99)}to{opacity:1}}
-@media (orientation:landscape){
- .scene{padding-top:calc(34px + env(safe-area-inset-top));}
- .character-wrap{top:calc(28px + env(safe-area-inset-top));bottom:calc(var(--textbox-h) + 22px + env(safe-area-inset-bottom));}
- .character{height:142%;max-width:min(42vw,460px);}
- #tsurugi{transform:translateX(-1vw) scale(1.0);} #mamoru{transform:translateX(1vw) scale(1.0);}
- .textbox{left:clamp(8px,4vw,42px);right:clamp(8px,4vw,42px);bottom:calc(10px + env(safe-area-inset-bottom));height:var(--textbox-h);min-height:var(--textbox-h);max-height:var(--textbox-h);padding:9px 14px 27px;border-radius:16px;}
- .nameplate{height:28px;line-height:16px;margin-bottom:5px;padding:4px 13px;font-size:16px;min-width:90px;}
- #text{font-size:clamp(13px,2.05vw,17px);line-height:1.22;height:calc(1.22em * 4);max-height:calc(1.22em * 4);}
- .next{bottom:8px;font-size:12px;}
- .back{top:calc(8px + env(safe-area-inset-top));padding:7px 12px;font-size:13px;}
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --safe-bottom:env(safe-area-inset-bottom);
+  --textbox-h:86px;
 }
-@media (max-width:520px) and (orientation:portrait){
- .character{height:120%;max-width:92vw;}
- #tsurugi{transform:translateX(-4vw) scale(1.05);} #mamoru{transform:translateX(3vw) scale(1.05);}
- .textbox{height:var(--textbox-h);min-height:var(--textbox-h);max-height:var(--textbox-h);}
+html,body{
+  margin:0;width:100%;height:100%;overflow:hidden;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+  background:#000;color:white;overscroll-behavior:none;
 }
-@media (max-height:430px){
- :root{--textbox-h:96px;}
- .textbox{height:var(--textbox-h);min-height:var(--textbox-h);max-height:var(--textbox-h);}
- #text{font-size:clamp(12px,2.0vw,16px);line-height:1.20;height:calc(1.20em * 4);max-height:calc(1.20em * 4);}
- .nameplate{font-size:13px;padding:3px 11px;margin-bottom:4px;height:25px;line-height:15px;}
- .character{height:150%;max-width:min(38vw,380px);}
+body::before{
+  content:"";position:fixed;inset:0;
+  background:url('./bg_stage1_city.png?v=story-final-lines-20260506') center/cover no-repeat;
+  z-index:0;
 }
-/* PNGを再保存・変換せず、CSSだけで自然な中央表示にする */
-.character-wrap{
-  position:absolute;
-  left:0;
-  right:0;
-  top:calc(8px + env(safe-area-inset-top));
-  bottom:0;
-  display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  pointer-events:none;
+body::after{
+  content:"";position:fixed;inset:0;
+  background:linear-gradient(to bottom,rgba(255,255,255,.04),rgba(0,0,0,.10) 44%,rgba(0,0,0,.46));
+  z-index:1;pointer-events:none;
+}
+.scene{
+  position:fixed;inset:0;z-index:2;width:100vw;height:100dvh;min-height:100svh;
   overflow:hidden;
+  padding:calc(34px + env(safe-area-inset-top)) 0 calc(var(--textbox-h) + 16px + env(safe-area-inset-bottom));
+}
+.character-wrap{
+  position:absolute;left:0;right:0;
+  top:calc(8px + env(safe-area-inset-top));
+  bottom:calc(var(--textbox-h) + 16px + env(safe-area-inset-bottom));
+  display:flex;align-items:flex-start;justify-content:center;
+  pointer-events:none;overflow:hidden;
 }
 .character{
-  display:none;
-  height:min(112vh, 1120px);
-  max-height:none;
-  width:auto;
-  max-width:min(96vw, 720px);
-  object-fit:contain;
-  object-position:center top;
+  display:none;height:min(112vh,1120px);max-height:none;width:auto;max-width:min(96vw,720px);
+  object-fit:contain;object-position:center top;
   filter:drop-shadow(0 18px 24px rgba(0,0,0,.55));
-  user-select:none;
-  -webkit-user-drag:none;
-  animation:pop .16s ease-out;
+  user-select:none;-webkit-user-drag:none;animation:pop .16s ease-out;
 }
 .character.show{display:block;}
 #tsurugi,#mamoru{transform:translateX(0) scale(1);}
+.textbox{
+  position:fixed;z-index:5;
+  left:clamp(10px,3vw,30px);right:clamp(10px,3vw,30px);
+  bottom:calc(10px + env(safe-area-inset-bottom));
+  height:var(--textbox-h);min-height:var(--textbox-h);max-height:var(--textbox-h);
+  padding:7px 12px 10px;
+  border:3px solid rgba(255,255,255,.88);border-radius:15px;
+  background:rgba(0,0,0,.82);
+  box-shadow:0 5px 0 rgba(0,0,0,.45),0 0 18px rgba(80,190,255,.18);
+  overflow:hidden;
+}
+.dialog-main{
+  display:grid;
+  grid-template-rows:20px 1fr;
+  gap:4px;
+  height:100%;
+  padding-right:52px;
+}
+.nameplate{
+  justify-self:start;
+  display:inline-flex;align-items:center;justify-content:center;
+  height:20px;min-width:58px;
+  margin:0;padding:1px 9px;
+  border-radius:999px;border:2px solid #fff;
+  font-size:11px;line-height:1;font-weight:1000;text-align:center;
+  text-shadow:0 1px 0 #000;box-shadow:0 1px 0 rgba(0,0,0,.5);
+}
+.nameplate.tsurugi{background:linear-gradient(#ff5a3d,#a40000);}
+.nameplate.mamoru{background:linear-gradient(#6b42ff,#251067);}
+.nameplate.mystery{background:linear-gradient(#777,#222);}
+#text{
+  display:block;
+  height:calc(1.22em * 2);
+  max-height:calc(1.22em * 2);
+  overflow:hidden;
+  font-size:clamp(12px,2.9vw,17px);
+  line-height:1.22;
+  font-weight:900;
+  white-space:pre-line;
+  overflow-wrap:anywhere;
+  text-shadow:0 2px 0 #000;
+}
+.next{
+  position:absolute;right:12px;bottom:7px;
+  font-size:10px;line-height:1;font-weight:900;color:#fff7a6;
+  animation:blink .9s infinite alternate;
+}
+.back{
+  position:fixed;left:12px;top:calc(12px + env(safe-area-inset-top));z-index:8;
+  border:2px solid rgba(255,255,255,.85);background:rgba(0,0,0,.60);color:#fff;
+  border-radius:999px;padding:9px 14px;font-weight:1000;
+}
+@keyframes blink{from{opacity:.35}to{opacity:1}}
+@keyframes pop{from{opacity:.25;transform:translateY(8px) scale(.99)}to{opacity:1}}
 @media (orientation:landscape){
-  .character-wrap{top:calc(2px + env(safe-area-inset-top)); bottom:0;}
-  .character{height:118vh; max-width:min(44vw, 520px);}
-  #tsurugi,#mamoru{transform:translateX(0) scale(1);}
+  :root{--textbox-h:80px;}
+  .scene{padding-top:calc(26px + env(safe-area-inset-top));padding-bottom:calc(var(--textbox-h) + 12px + env(safe-area-inset-bottom));}
+  .character-wrap{top:calc(2px + env(safe-area-inset-top));bottom:calc(var(--textbox-h) + 12px + env(safe-area-inset-bottom));}
+  .character{height:118vh;max-width:min(44vw,520px);}
+  .textbox{bottom:calc(7px + env(safe-area-inset-bottom));padding:6px 11px 9px;}
+  .dialog-main{grid-template-rows:18px 1fr;gap:3px;padding-right:48px;}
+  .nameplate{height:18px;min-width:54px;font-size:10px;padding:1px 8px;}
+  #text{font-size:clamp(11px,1.8vw,15px);line-height:1.18;height:calc(1.18em * 2);max-height:calc(1.18em * 2);}
+  .next{bottom:6px;font-size:9px;}
+  .back{top:calc(8px + env(safe-area-inset-top));padding:7px 12px;font-size:13px;}
 }
 @media (max-width:520px) and (orientation:portrait){
-  .character{height:108vh; max-width:98vw;}
-  #tsurugi,#mamoru{transform:translateX(0) scale(1);}
+  :root{--textbox-h:84px;}
+  .textbox{left:9px;right:9px;padding:6px 10px 9px;}
+  .dialog-main{grid-template-rows:19px 1fr;gap:3px;padding-right:48px;}
+  .nameplate{height:19px;font-size:10px;min-width:54px;}
+  #text{font-size:clamp(12px,3.35vw,15px);line-height:1.18;height:calc(1.18em * 2);max-height:calc(1.18em * 2);}
+  .character{height:108vh;max-width:98vw;}
+}
+@media (max-height:430px){
+  :root{--textbox-h:76px;}
+  .textbox{padding:5px 10px 8px;}
+  .dialog-main{grid-template-rows:16px 1fr;gap:2px;padding-right:44px;}
+  .nameplate{height:16px;font-size:9px;min-width:50px;border-width:1px;}
+  #text{font-size:clamp(10px,1.7vw,13px);line-height:1.12;height:calc(1.12em * 2);max-height:calc(1.12em * 2);}
+  .next{bottom:5px;font-size:8px;}
+  .character{height:118vh;max-width:min(40vw,430px);}
 }
 </style>
 </head>
@@ -111,35 +155,37 @@ body::after{content:"";position:fixed;inset:0;background:linear-gradient(to bott
     <img id="mamoru" class="character" src="./mamoru.png?v=pngonly-20260503b" alt="マモル">
   </div>
   <div class="textbox" id="textbox">
-    <div id="name" class="nameplate tsurugi">ツルギ</div>
-    <div id="text"></div>
+    <div class="dialog-main">
+      <div id="name" class="nameplate mystery">？？？</div>
+      <div id="text"></div>
+    </div>
     <div class="next">TAP ▶</div>
   </div>
 </div>
 <script>
 const lines = [
-  {speaker:'ツルギ', text:`たった一本のダガーをハートに秘めているか？`},
-  {speaker:'ツルギ', text:`よお！俺の名前はツルギ！`},
-  {speaker:'ツルギ', text:`超絶シンプル読み合いバトル！「ハート＆ダガー」で天下をとる男だ！`},
-  {speaker:'ツルギ', text:`全国のハーダガリストをなぎ倒して、必ずハーダガマスターになってやる！`},
-  {speaker:'マモル', text:`相変わらずでかい独り言だな。`},
-  {speaker:'マモル', text:`ツルギ。`},
-  {speaker:'ツルギ', text:`げっ！いたのかマモル！`},
-  {speaker:'マモル', text:`少しよからぬ情報を入手してな。`},
-  {speaker:'マモル', text:`ハーダガ四天王が本格的にこの街を制圧しようとしているらしい。`},
-  {speaker:'マモル', text:`なんとしてもヤツらを止めねばならん。`},
-  {speaker:'ツルギ', text:`ハーダガ四天王ってあのめちゃくちゃ強い4人組だろ？？`},
-  {speaker:'ツルギ', text:`俺もいっしょに行くぜ！`},
-  {speaker:'マモル', text:`ふん。`},
-  {speaker:'マモル', text:`ハーダガリストが馴れ合いとは笑わせてくれるな。`},
-  {speaker:'マモル', text:`あいつらは俺1人で止めてみせる。`},
-  {speaker:'ツルギ', text:`ちぇっ！`},
-  {speaker:'ツルギ', text:`かわいげのないやつ！`},
-  {speaker:'マモル', text:`だがお前と久々に勝負してやらんこともないぞ。`},
-  {speaker:'マモル', text:`ツルギも四天王もまとめて倒す。`},
-  {speaker:'マモル', text:`ハーダガマスターになるのはこの俺だ。`},
-  {speaker:'ツルギ', text:`おもしれーじゃん！！`},
-  {speaker:'ツルギ', text:`早速勝負しようぜ！`}
+  {speaker:'？？？', text:`たった一本のダガーをハートに秘めているか？`, char:'tsurugi'},
+  {speaker:'ツルギ', text:`よお！俺の名前はツルギ！`, char:'tsurugi'},
+  {speaker:'ツルギ', text:`超絶シンプル読み合いバトル！「ハート＆ダガー」で天下をとる男だ！`, char:'tsurugi'},
+  {speaker:'ツルギ', text:`全国のハーダガリストをなぎ倒して、必ずハーダガマスターになってやる！`, char:'tsurugi'},
+  {speaker:'マモル', text:`相変わらずでかい独り言だな。
+ツルギ。`, char:'mamoru'},
+  {speaker:'ツルギ', text:`げっ！いたのかマモル！`, char:'tsurugi'},
+  {speaker:'マモル', text:`少しよからぬ情報を入手してな。`, char:'mamoru'},
+  {speaker:'マモル', text:`ハーダガ四天王が本格的にこの街を制圧しようとしているらしい。`, char:'mamoru'},
+  {speaker:'マモル', text:`なんとしてもヤツらを止めねばならん。`, char:'mamoru'},
+  {speaker:'ツルギ', text:`ハーダガ四天王ってあのめちゃくちゃ強い4人組だろ？
+俺もいっしょに行くぜ！`, char:'tsurugi'},
+  {speaker:'マモル', text:`ふん。
+ハーダガリストが馴れ合いとは笑わせてくれるな。`, char:'mamoru'},
+  {speaker:'マモル', text:`あいつらは俺1人で止めてみせる。`, char:'mamoru'},
+  {speaker:'ツルギ', text:`ちぇっ！
+かわいげのないやつ！`, char:'tsurugi'},
+  {speaker:'マモル', text:`だがお前と久々に勝負してやらんこともないぞ。
+ツルギも四天王もまとめて倒す。`, char:'mamoru'},
+  {speaker:'マモル', text:`ハーダガマスターになるのはこの俺だ。`, char:'mamoru'},
+  {speaker:'ツルギ', text:`おもしれーじゃん！！
+早速勝負しようぜ！`, char:'tsurugi'}
 ];
 let idx = 0;
 let clickAudioCtx = null;
@@ -168,14 +214,15 @@ function playClick(){
 function renderLine(){
   const line = lines[idx];
   if(!line) return;
-  const isT = line.speaker === 'ツルギ';
+  const currentChar = line.char || (line.speaker === 'マモル' ? 'mamoru' : 'tsurugi');
+  const isT = currentChar === 'tsurugi';
   const tsurugi = document.getElementById('tsurugi');
   const mamoru = document.getElementById('mamoru');
   tsurugi.classList.toggle('show', isT);
   mamoru.classList.toggle('show', !isT);
   const name = document.getElementById('name');
   name.textContent = line.speaker;
-  name.className = 'nameplate ' + (isT ? 'tsurugi' : 'mamoru');
+  name.className = 'nameplate ' + (line.speaker === 'マモル' ? 'mamoru' : line.speaker === 'ツルギ' ? 'tsurugi' : 'mystery');
   document.getElementById('text').textContent = line.text;
 }
 function advanceStory(){
