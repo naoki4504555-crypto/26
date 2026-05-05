@@ -130,6 +130,9 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   padding-left:0 !important;
   margin-left:0 !important;
 }
+
+/* HDG story subtitle permanently hidden */
+.story-sub{display:none!important;}
 </style>
 </head>
 <body>
@@ -150,8 +153,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
         <h1 class="story-title">STORY</h1>
         <button class="back-btn" onclick="showTitle()">タイトルへ</button>
       </div>
-      <p class="story-sub">キャラクターを選んでステージを進めよう。タップするとクリア扱いで次へ進めます。</p>
-      <div class="story-actions"><button class="howto-btn" onclick="openHowto()">ハート＆ダガーの遊び方</button></div>
+<div class="story-actions"><button class="howto-btn" onclick="openHowto()">ハート＆ダガーの遊び方</button></div>
       <div id="stageGrid" class="stage-grid"></div>
       <div id="clearMsg" class="clear-msg"></div>
     </div>
@@ -273,7 +275,14 @@ function closeHowto(event){
 }
 
 function showTitle(){playClick();stopStoryBgm();document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');}
-function goStory(){playClick();renderStages();document.getElementById('titleScreen').classList.remove('active');document.getElementById('storyScreen').classList.add('active');startStoryBgm();}
+function goStory(){
+  playClick();
+  if(location.hash !== '#story'){ history.pushState({screen:'story'}, '', '#story'); }
+  renderStages();
+  document.getElementById('titleScreen').classList.remove('active');
+  document.getElementById('storyScreen').classList.add('active');
+  startStoryBgm();
+}
 function goBattle(){playClick();sessionStorage.setItem("hd_freebattle_entry_time", String(Date.now()));setTimeout(()=>{location.href="./freebattle.html";},170);}
 function renderStages(){
   const grid=document.getElementById('stageGrid'); grid.innerHTML='';
@@ -284,7 +293,9 @@ function renderStages(){
     b.style.backgroundImage = `url('./${imgName}?v=stage-remap-20260503-v2')`;
     if(i<=clearedStage)b.classList.add('done');
     b.disabled=i>unlockedStage || isMysteryStage8;
-    b.innerHTML=`<div class="stage-no">STAGE ${i}</div><div class="stage-name"></div><div class="stage-status">${isMysteryStage8?'???':i<=clearedStage?'CLEAR':i===unlockedStage?'PLAY':'LOCK'}</div>`;
+    const stageNoText = isMysteryStage8 ? '' : `STAGE ${i}`;
+    const statusText = isMysteryStage8 ? 'LOCK' : (i<=clearedStage?'CLEAR':i===unlockedStage?'PLAY':'LOCK');
+    b.innerHTML=`<div class="stage-no">${stageNoText}</div><div class="stage-name"></div><div class="stage-status">${statusText}</div>`;
     b.onclick=()=>{ if(i===1){ playClick(); setTimeout(()=>{location.href='./story1.html';},160); } else { clearStage(i); } }; grid.appendChild(b);
   }
 }
@@ -300,6 +311,28 @@ function clearStage(i){
 }
 
 
+
+function showStoryScreenFromHash(){
+  renderStages();
+  document.getElementById('titleScreen').classList.remove('active');
+  document.getElementById('storyScreen').classList.add('active');
+  startStoryBgm();
+}
+window.addEventListener('pageshow',()=>{
+  if(location.hash === '#story'){
+    showStoryScreenFromHash();
+  }
+});
+window.addEventListener('hashchange',()=>{
+  if(location.hash === '#story'){
+    showStoryScreenFromHash();
+  }else{
+    stopStoryBgm();
+    document.getElementById('storyScreen').classList.remove('active');
+    document.getElementById('titleScreen').classList.add('active');
+  }
+});
+
 window.addEventListener('DOMContentLoaded',()=>{
   if(window.__HD_RELOADED__){
     if(location.hash){
@@ -311,10 +344,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     return;
   }
   if(location.hash === '#story'){
-    renderStages();
-    document.getElementById('titleScreen').classList.remove('active');
-    document.getElementById('storyScreen').classList.add('active');
-    startStoryBgm();
+    showStoryScreenFromHash();
   }
 });
 </script>
