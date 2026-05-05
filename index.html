@@ -15,13 +15,6 @@
   }
   window.__HD_RELOADED__ = isReload();
 })();
-
-/* HDG return BGM final retry */
-window.addEventListener('focus',()=>{
-  if(location.hash === '#story' && sessionStorage.getItem('hd_return_story_select') === '1'){
-    startStoryBgmReturn();
-  }
-});
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -140,6 +133,173 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 
 /* HDG story subtitle permanently hidden */
 .story-sub{display:none!important;}
+
+/* HDG single-page novel screen */
+#novelScreen{
+  position:fixed;
+  inset:0;
+  display:none;
+  z-index:30;
+  background:#000;
+  color:#fff;
+  overflow:hidden;
+}
+#novelScreen.active{display:block;}
+#novelScreen::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:url('./bg_stage1_city.png?v=single-page-novel') center/cover no-repeat;
+  z-index:0;
+}
+#novelScreen::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:linear-gradient(to bottom,rgba(255,255,255,.04),rgba(0,0,0,.10) 44%,rgba(0,0,0,.46));
+  z-index:1;
+  pointer-events:none;
+}
+.novel-back{
+  position:fixed;
+  left:12px;
+  top:calc(12px + env(safe-area-inset-top));
+  z-index:38;
+  border:2px solid rgba(255,255,255,.85);
+  background:rgba(0,0,0,.60);
+  color:#fff;
+  border-radius:999px;
+  padding:9px 14px;
+  font-weight:1000;
+}
+.novel-scene{
+  position:fixed;
+  inset:0;
+  z-index:32;
+  width:100vw;
+  height:100dvh;
+  min-height:100svh;
+  overflow:hidden;
+  padding:calc(34px + env(safe-area-inset-top)) 0 calc(86px + 16px + env(safe-area-inset-bottom));
+}
+.novel-character-wrap{
+  position:absolute;
+  left:0;
+  right:0;
+  top:calc(132px + env(safe-area-inset-top));
+  bottom:calc(86px - 74px + env(safe-area-inset-bottom));
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  pointer-events:none;
+  overflow:hidden;
+}
+.novel-character{
+  display:none;
+  height:min(112vh,1120px);
+  max-height:none;
+  width:auto;
+  max-width:min(96vw,720px);
+  object-fit:contain;
+  object-position:center top;
+  filter:drop-shadow(0 18px 24px rgba(0,0,0,.55));
+  user-select:none;
+  -webkit-user-drag:none;
+  animation:pop .16s ease-out;
+}
+.novel-character.show{display:block;}
+.novel-textbox{
+  position:fixed;
+  z-index:35;
+  left:clamp(10px,3vw,30px);
+  right:clamp(10px,3vw,30px);
+  bottom:calc(10px + env(safe-area-inset-bottom));
+  height:86px;
+  min-height:86px;
+  max-height:86px;
+  padding:7px 12px 10px;
+  border:3px solid rgba(255,255,255,.88);
+  border-radius:15px;
+  background:rgba(0,0,0,.82);
+  box-shadow:0 5px 0 rgba(0,0,0,.45),0 0 18px rgba(80,190,255,.18);
+  overflow:hidden;
+}
+.novel-dialog-main{
+  display:grid;
+  grid-template-rows:20px 1fr;
+  gap:4px;
+  height:100%;
+  padding-right:8px;
+}
+.novel-nameplate{
+  justify-self:start;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:20px;
+  min-width:58px;
+  margin:0;
+  padding:1px 9px;
+  border-radius:999px;
+  border:2px solid #fff;
+  font-size:11px;
+  line-height:1;
+  font-weight:1000;
+  text-align:center;
+  text-shadow:0 1px 0 #000;
+  box-shadow:0 1px 0 rgba(0,0,0,.5);
+}
+.novel-nameplate.tsurugi{background:linear-gradient(#ff5a3d,#a40000);}
+.novel-nameplate.mamoru{background:linear-gradient(#6b42ff,#251067);}
+.novel-nameplate.mystery{background:linear-gradient(#777,#222);}
+#novelText{
+  display:block;
+  height:calc(1.22em * 2);
+  max-height:calc(1.22em * 2);
+  overflow:hidden;
+  font-size:clamp(12px,2.9vw,17px);
+  line-height:1.22;
+  font-weight:900;
+  white-space:pre-line;
+  overflow-wrap:anywhere;
+  text-shadow:0 2px 0 #000;
+}
+.novel-next{
+  position:absolute;
+  right:8px;
+  bottom:3px;
+  font-size:10px;
+  line-height:1;
+  font-weight:900;
+  color:#fff7a6;
+  animation:blink .9s infinite alternate;
+}
+@media (orientation:landscape){
+  .novel-scene{padding-top:calc(26px + env(safe-area-inset-top));padding-bottom:calc(80px + 12px + env(safe-area-inset-bottom));}
+  .novel-character-wrap{
+    top:calc(58px + env(safe-area-inset-top));
+    bottom:calc(80px - 58px + env(safe-area-inset-bottom));
+  }
+  .novel-character{height:118vh;max-width:min(44vw,520px);}
+  .novel-textbox{height:80px;min-height:80px;max-height:80px;bottom:calc(7px + env(safe-area-inset-bottom));padding:6px 11px 9px;}
+  .novel-dialog-main{grid-template-rows:18px 1fr;gap:3px;padding-right:8px;}
+  .novel-nameplate{height:18px;min-width:54px;font-size:10px;padding:1px 8px;}
+  #novelText{font-size:clamp(11px,1.8vw,15px);line-height:1.18;height:calc(1.18em * 2);max-height:calc(1.18em * 2);}
+  .novel-next{bottom:3px;font-size:9px;}
+  .novel-back{top:calc(8px + env(safe-area-inset-top));padding:7px 12px;font-size:13px;}
+}
+@media (max-width:520px) and (orientation:portrait){
+  .novel-character-wrap{
+    top:calc(132px + env(safe-area-inset-top));
+    bottom:calc(84px - 74px + env(safe-area-inset-bottom));
+  }
+  .novel-textbox{height:84px;min-height:84px;max-height:84px;left:9px;right:9px;padding:6px 10px 9px;}
+  .novel-dialog-main{grid-template-rows:19px 1fr;gap:3px;padding-right:8px;}
+  .novel-nameplate{height:19px;font-size:10px;min-width:54px;}
+  #novelText{font-size:clamp(12px,3.35vw,15px);line-height:1.18;height:calc(1.18em * 2);max-height:calc(1.18em * 2);}
+  .novel-character{height:108vh;max-width:98vw;}
+}
+
 </style>
 </head>
 <body>
@@ -214,6 +374,24 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 </div>
 
 
+
+<section id="novelScreen">
+  <button class="novel-back" onclick="backToStageSelectFromNovel(event)">← ステージ選択</button>
+  <div class="novel-scene">
+    <div class="novel-character-wrap">
+      <img id="novelTsurugi" class="novel-character" src="./tsurugi.png?v=single-page-novel" alt="ツルギ">
+      <img id="novelMamoru" class="novel-character" src="./mamoru.png?v=single-page-novel" alt="マモル">
+    </div>
+    <div class="novel-textbox" id="novelTextbox">
+      <div class="novel-dialog-main">
+        <div id="novelName" class="novel-nameplate mystery">？？？</div>
+        <div id="novelText"></div>
+      </div>
+      <div class="novel-next">TAP ▶</div>
+    </div>
+  </div>
+</section>
+
 <audio id="storyBgm" src="./story-bgm.mp3" loop preload="auto"></audio>
 
 <script>
@@ -282,7 +460,7 @@ function closeHowto(event){
   if(modal)modal.classList.remove('active');
 }
 
-function showTitle(){playClick();stopStoryBgm();document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');}
+function showTitle(){playClick();stopStoryBgm();document.getElementById('novelScreen')?.classList.remove('active');document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');}
 function goStory(){
   playClick();
   if(location.hash !== '#story'){ history.pushState({screen:'story'}, '', '#story'); }
@@ -292,6 +470,113 @@ function goStory(){
   startStoryBgm();
 }
 function goBattle(){playClick();sessionStorage.setItem("hd_freebattle_entry_time", String(Date.now()));setTimeout(()=>{location.href="./freebattle.html";},170);}
+
+const novelLinesByStage = {
+  1: [
+  {speaker:'？？？', text:`たった一本のダガーをハートに秘めているか？`, char:'none'},
+  {speaker:'ツルギ', text:`よお！俺の名前はツルギ！`, char:'tsurugi'},
+  {speaker:'ツルギ', text:`超絶シンプル読み合いバトル！「ハート＆ダガー」で天下をとる男だ！`, char:'tsurugi'},
+  {speaker:'ツルギ', text:`全国のハーダガリストをなぎ倒して、必ずハーダガマスターになってやる！`, char:'tsurugi'},
+  {speaker:'マモル', text:`相変わらずでかい独り言だな。
+ツルギ。`, char:'mamoru'},
+  {speaker:'ツルギ', text:`げっ！いたのかマモル！`, char:'tsurugi'},
+  {speaker:'マモル', text:`少しよからぬ情報を入手してな。`, char:'mamoru'},
+  {speaker:'マモル', text:`ハーダガ四天王が本格的にこの街を制圧しようとしているらしい。`, char:'mamoru'},
+  {speaker:'マモル', text:`なんとしてもヤツらを止めねばならん。`, char:'mamoru'},
+  {speaker:'ツルギ', text:`ハーダガ四天王ってあのめちゃくちゃ強い4人組だろ？
+俺もいっしょに行くぜ！`, char:'tsurugi'},
+  {speaker:'マモル', text:`ふん。
+ハーダガリストが馴れ合いとは笑わせてくれるな。`, char:'mamoru'},
+  {speaker:'マモル', text:`あいつらは俺1人で止めてみせる。`, char:'mamoru'},
+  {speaker:'ツルギ', text:`ちぇっ！
+かわいげのないやつ！`, char:'tsurugi'},
+  {speaker:'マモル', text:`だがお前と久々に勝負してやらんこともないぞ。
+ツルギも四天王もまとめて倒す。`, char:'mamoru'},
+  {speaker:'マモル', text:`ハーダガマスターになるのはこの俺だ。`, char:'mamoru'},
+  {speaker:'ツルギ', text:`おもしれーじゃん！！
+早速勝負しようぜ！`, char:'tsurugi'}
+]
+};
+let novelIdx = 0;
+let currentNovelStage = 1;
+let novelInputLocked = false;
+let novelLastAdvanceAt = 0;
+
+function hideAllScreens(){
+  document.getElementById('titleScreen').classList.remove('active');
+  document.getElementById('storyScreen').classList.remove('active');
+  const novel=document.getElementById('novelScreen');
+  if(novel)novel.classList.remove('active');
+}
+
+function openNovelStage(stage){
+  playClick();
+  currentNovelStage = stage;
+  novelIdx = 0;
+  novelInputLocked = false;
+  novelLastAdvanceAt = 0;
+  hideAllScreens();
+  stopStoryBgm();
+  document.getElementById('novelScreen').classList.add('active');
+  renderNovelLine();
+}
+
+function backToStageSelectFromNovel(e){
+  if(e){ e.preventDefault(); e.stopPropagation(); }
+  playClick();
+  hideAllScreens();
+  renderStages();
+  document.getElementById('storyScreen').classList.add('active');
+  startStoryBgm();
+}
+
+function renderNovelLine(){
+  const lines = novelLinesByStage[currentNovelStage] || [];
+  const line = lines[novelIdx];
+  if(!line)return;
+  const currentChar = line.char || (line.speaker === 'マモル' ? 'mamoru' : 'tsurugi');
+  const tsurugi = document.getElementById('novelTsurugi');
+  const mamoru = document.getElementById('novelMamoru');
+  if(currentChar === 'none'){
+    tsurugi.classList.remove('show');
+    mamoru.classList.remove('show');
+  }else{
+    const isT = currentChar === 'tsurugi';
+    tsurugi.classList.toggle('show', isT);
+    mamoru.classList.toggle('show', !isT);
+  }
+  const name = document.getElementById('novelName');
+  name.textContent = line.speaker;
+  name.className = 'novel-nameplate ' + (line.speaker === 'マモル' ? 'mamoru' : line.speaker === 'ツルギ' ? 'tsurugi' : 'mystery');
+  document.getElementById('novelText').textContent = line.text;
+}
+
+function advanceNovel(){
+  const novel=document.getElementById('novelScreen');
+  if(!novel || !novel.classList.contains('active'))return;
+  const now = Date.now();
+  if(novelInputLocked || now - novelLastAdvanceAt < 140)return;
+  novelInputLocked = true;
+  novelLastAdvanceAt = now;
+  playClick();
+  const lines = novelLinesByStage[currentNovelStage] || [];
+  novelIdx += 1;
+  if(novelIdx >= lines.length){
+    sessionStorage.setItem('hd_story_stage', String(currentNovelStage));
+    setTimeout(()=>{ location.href='./freebattle.html'; },170);
+    return;
+  }
+  renderNovelLine();
+  setTimeout(()=>{ novelInputLocked = false; },80);
+}
+
+document.addEventListener('pointerup',(e)=>{
+  const novel=document.getElementById('novelScreen');
+  if(!novel || !novel.classList.contains('active'))return;
+  if(e.target && e.target.closest && e.target.closest('.novel-back'))return;
+  advanceNovel();
+});
+
 function renderStages(){
   const grid=document.getElementById('stageGrid'); grid.innerHTML='';
   for(let i=1;i<=8;i++){
@@ -304,7 +589,7 @@ function renderStages(){
     const stageNoText = `STAGE ${i}`;
     const statusText = isMysteryStage8 ? 'LOCK' : (i<=clearedStage?'CLEAR':i===unlockedStage?'PLAY':'LOCK');
     b.innerHTML=`<div class="stage-no">${stageNoText}</div><div class="stage-name"></div><div class="stage-status">${statusText}</div>`;
-    b.onclick=()=>{ if(i===1){ playClick(); setTimeout(()=>{location.href='./story1.html';},160); } else { clearStage(i); } }; grid.appendChild(b);
+    b.onclick=()=>{ if(i===1){ openNovelStage(1); } else { clearStage(i); } }; grid.appendChild(b);
   }
 }
 function clearStage(i){
@@ -322,31 +607,7 @@ function clearStage(i){
 
 
 
-function startStoryBgmReturn(){
-  const bgm=document.getElementById('storyBgm');
-  if(!bgm)return;
-  const attempt=()=>{
-    bgm.volume=0.42;
-    bgm.play().then(()=>{
-      sessionStorage.removeItem('hd_return_story_select');
-    }).catch(()=>{});
-  };
-  attempt();
-  const retry=()=>{
-    if(location.hash === '#story' && sessionStorage.getItem('hd_return_story_select') === '1'){
-      attempt();
-    }
-  };
-  document.body.addEventListener('pointerdown',retry,{once:true,capture:true});
-  document.body.addEventListener('touchstart',retry,{once:true,capture:true});
-  document.body.addEventListener('click',retry,{once:true,capture:true});
-}
 
-function consumeReturnStorySelectBgmFlag(){
-  if(sessionStorage.getItem('hd_return_story_select') === '1'){
-    startStoryBgmReturn();
-  }
-}
 
 function showStoryScreenFromHash(){
   renderStages();
@@ -358,33 +619,6 @@ function showStoryScreenFromHash(){
     startStoryBgm();
   }
 }
-window.addEventListener('pageshow',()=>{
-  if(location.hash === '#story'){
-    showStoryScreenFromHash();
-  }
-});
-window.addEventListener('hashchange',()=>{
-  if(location.hash === '#story'){
-    showStoryScreenFromHash();
-  }else{
-    stopStoryBgm();
-    document.getElementById('storyScreen').classList.remove('active');
-    document.getElementById('titleScreen').classList.add('active');
-  }
-});
-
-
-window.addEventListener('pointerdown',()=>{
-  if(location.hash === '#story' && sessionStorage.getItem('hd_return_story_select') === '1'){
-    consumeReturnStorySelectBgmFlag();
-  }
-},{capture:true});
-window.addEventListener('click',()=>{
-  if(location.hash === '#story' && sessionStorage.getItem('hd_return_story_select') === '1'){
-    consumeReturnStorySelectBgmFlag();
-  }
-},{capture:true});
-
 window.addEventListener('DOMContentLoaded',()=>{
   if(window.__HD_RELOADED__){
     if(location.hash){
