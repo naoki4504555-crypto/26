@@ -2,16 +2,19 @@
 <html lang="ja">
 <head>
 <script>
-(function () {
-  function navigationType() {
-    try {
-      const nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
-      return nav ? nav.type : "";
-    } catch (e) { return ""; }
+(function(){
+  function isReload(){
+    try{
+      var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+      if(nav && nav.type === "reload") return true;
+    }catch(e){}
+    try{
+      if(performance.navigation && performance.navigation.type === 1) return true;
+    }catch(e){}
+    return false;
   }
-  // フリーバトル画面を直接リロードした時はタイトルへ戻す。
-  if (navigationType() === "reload") {
-    location.replace("index.html");
+  if(isReload()){
+    location.replace("./index.html");
   }
 })();
 </script>

@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<script>
+(function(){
+  function isReload(){
+    try{
+      var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+      if(nav && nav.type === "reload") return true;
+    }catch(e){}
+    try{
+      if(performance.navigation && performance.navigation.type === 1) return true;
+    }catch(e){}
+    return false;
+  }
+  window.__HD_RELOADED__ = isReload();
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>HEART & DAGGER MASTER</title>
@@ -140,6 +155,15 @@ function clearStage(i){
 
 
 window.addEventListener('DOMContentLoaded',()=>{
+  if(window.__HD_RELOADED__){
+    if(location.hash){
+      history.replaceState(null, '', location.pathname);
+    }
+    stopStoryBgm();
+    document.getElementById('storyScreen').classList.remove('active');
+    document.getElementById('titleScreen').classList.add('active');
+    return;
+  }
   if(location.hash === '#story'){
     renderStages();
     document.getElementById('titleScreen').classList.remove('active');
