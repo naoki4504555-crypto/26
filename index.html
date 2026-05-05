@@ -15,6 +15,13 @@
   }
   window.__HD_RELOADED__ = isReload();
 })();
+
+/* HDG return BGM final retry */
+window.addEventListener('focus',()=>{
+  if(location.hash === '#story' && sessionStorage.getItem('hd_return_story_select') === '1'){
+    startStoryBgmReturn();
+  }
+});
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -271,6 +278,7 @@ function openHowto(){
 function closeHowto(event){
   if(event && event.target && event.currentTarget && event.target!==event.currentTarget)return;
   const modal=document.getElementById('howtoModal');
+  if(modal && modal.classList.contains('active')) playClick();
   if(modal)modal.classList.remove('active');
 }
 
@@ -313,10 +321,30 @@ function clearStage(i){
 
 
 
+
+function startStoryBgmReturn(){
+  const bgm=document.getElementById('storyBgm');
+  if(!bgm)return;
+  const attempt=()=>{
+    bgm.volume=0.42;
+    bgm.play().then(()=>{
+      sessionStorage.removeItem('hd_return_story_select');
+    }).catch(()=>{});
+  };
+  attempt();
+  const retry=()=>{
+    if(location.hash === '#story' && sessionStorage.getItem('hd_return_story_select') === '1'){
+      attempt();
+    }
+  };
+  document.body.addEventListener('pointerdown',retry,{once:true,capture:true});
+  document.body.addEventListener('touchstart',retry,{once:true,capture:true});
+  document.body.addEventListener('click',retry,{once:true,capture:true});
+}
+
 function consumeReturnStorySelectBgmFlag(){
   if(sessionStorage.getItem('hd_return_story_select') === '1'){
-    sessionStorage.removeItem('hd_return_story_select');
-    startStoryBgm();
+    startStoryBgmReturn();
   }
 }
 
@@ -324,8 +352,11 @@ function showStoryScreenFromHash(){
   renderStages();
   document.getElementById('titleScreen').classList.remove('active');
   document.getElementById('storyScreen').classList.add('active');
-  startStoryBgm();
-  consumeReturnStorySelectBgmFlag();
+  if(sessionStorage.getItem('hd_return_story_select') === '1'){
+    startStoryBgmReturn();
+  }else{
+    startStoryBgm();
+  }
 }
 window.addEventListener('pageshow',()=>{
   if(location.hash === '#story'){

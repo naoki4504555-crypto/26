@@ -286,7 +286,13 @@ function backToStory(e){
   if(e){ e.preventDefault(); e.stopPropagation(); }
   playClick();
   sessionStorage.setItem('hd_return_story_select','1');
-  setTimeout(()=>{ location.href='./index.html#story'; },150);
+  setTimeout(()=>{
+    if(history.length > 1){
+      history.back();
+    }else{
+      location.href='./index.html#story';
+    }
+  },150);
 }
 window.addEventListener('DOMContentLoaded', () => {
   renderLine();
