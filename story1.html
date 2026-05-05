@@ -169,6 +169,19 @@ body::after{
   }
 }
 
+
+/* HDG portrait character lower final */
+@media (orientation:portrait){
+  .character-wrap{
+    top:calc(132px + env(safe-area-inset-top)) !important;
+    bottom:calc(var(--textbox-h) - 74px + env(safe-area-inset-bottom)) !important;
+  }
+  .character{
+    height:min(112vh,1120px) !important;
+    object-position:center top !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -273,13 +286,7 @@ function backToStory(e){
   if(e){ e.preventDefault(); e.stopPropagation(); }
   playClick();
   sessionStorage.setItem('hd_return_story_select','1');
-  setTimeout(()=>{
-    if(document.referrer && document.referrer.includes('index.html')){
-      history.back();
-    }else{
-      location.href='./index.html#story';
-    }
-  },150);
+  setTimeout(()=>{ location.href='./index.html#story'; },150);
 }
 window.addEventListener('DOMContentLoaded', () => {
   renderLine();
