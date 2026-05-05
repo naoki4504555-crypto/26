@@ -145,6 +145,30 @@ body::after{
   .next{bottom:3px;font-size:8px;}
   .character{height:118vh;max-width:min(40vw,430px);}
 }
+
+/* HDG character lower placement */
+.character-wrap{
+  top:calc(42px + env(safe-area-inset-top)) !important;
+  bottom:calc(var(--textbox-h) - 18px + env(safe-area-inset-bottom)) !important;
+  align-items:flex-start !important;
+}
+.character{
+  height:min(112vh,1120px) !important;
+  object-position:center top !important;
+}
+@media (orientation:landscape){
+  .character-wrap{
+    top:calc(28px + env(safe-area-inset-top)) !important;
+    bottom:calc(var(--textbox-h) - 22px + env(safe-area-inset-bottom)) !important;
+  }
+}
+@media (max-width:520px) and (orientation:portrait){
+  .character-wrap{
+    top:calc(50px + env(safe-area-inset-top)) !important;
+    bottom:calc(var(--textbox-h) - 20px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
 </style>
 </head>
 <body>
