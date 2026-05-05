@@ -1923,50 +1923,27 @@ body.sokkoo-special-shake {
 #hdBackTitleBtn:active{transform:translateY(1px) scale(.98);}
 
 
-/* HDG fix: keep player remaining-card icons visible during Sokkoo effects */
+/* HDG fix: smartphone Sokkoo effect must not shake bottom remaining-card UI */
 @media (max-width: 767px){
+  body.sokkoo-special-shake{
+    animation:none !important;
+    transform:none !important;
+  }
   .controls{
-    z-index: 20050 !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateZ(0) !important;
-    backface-visibility: hidden !important;
-    will-change: transform;
-    isolation: isolate;
+    transform:none !important;
+    opacity:1 !important;
+    visibility:visible !important;
   }
   .controls .card-btn,
   .controls .card-btn img,
   .controls .card-btn span{
-    opacity: 1 !important;
-    visibility: visible !important;
+    opacity:1 !important;
+    visibility:visible !important;
   }
-  .sokkoo-overlay{
-    z-index: 900 !important;
-    pointer-events: none !important;
+  .battle.sokkoo-special-shake-local{
+    animation:sokkooSpecialShake .42s ease-in-out 1;
+    transform-origin:center center;
   }
-  body.sokkoo-win-flash .controls,
-  body.sokkoo-lose-flash .controls{
-    z-index: 20050 !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: grid !important;
-  }
-  body.sokkoo-win-flash .controls.sokkoo-layout,
-  body.sokkoo-lose-flash .controls.sokkoo-layout{
-    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-  }
-  body.sokkoo-win-flash .controls.normal-layout,
-  body.sokkoo-lose-flash .controls.normal-layout{
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-}
-
-
-.controls.sokkoo-controls-guard{
-  z-index:20050 !important;
-  opacity:1 !important;
-  visibility:visible !important;
-  transform:translateZ(0) !important;
 }
 
 </style>
@@ -2254,28 +2231,7 @@ function setCardEmptyState(){
   });
 }
 
-
-function guardPlayerControlsDuringSokkooEffect(){
-  const controls = document.querySelector(".controls");
-  if(!controls) return;
-  controls.classList.add("sokkoo-controls-guard");
-  controls.style.opacity = "1";
-  controls.style.visibility = "visible";
-  controls.style.zIndex = "20050";
-  controls.style.transform = "translateZ(0)";
-  controls.querySelectorAll(".card-btn, .card-btn img, .card-btn span").forEach(el=>{
-    el.style.opacity = "1";
-    el.style.visibility = "visible";
-  });
-  setTimeout(()=>{
-    controls.classList.remove("sokkoo-controls-guard");
-    forceMobileRemainCardFrameSize();
-    setCardEmptyState();
-  }, 1250);
-}
-
 function triggerSokkooEffect(kind){
-  guardPlayerControlsDuringSokkooEffect();
   const body = document.body;
   const resultBox = document.getElementById("resultText");
 
@@ -2458,6 +2414,24 @@ function logBattle(pCard, eCard, result){
 }
 
 
+
+function triggerSokkooShakeSafely(){
+  const isMobile = window.matchMedia("(max-width: 767px)").matches;
+  const battle = document.querySelector(".battle");
+  if(isMobile && battle){
+    document.body.classList.remove("sokkoo-special-shake");
+    battle.classList.remove("sokkoo-special-shake-local");
+    void battle.offsetWidth;
+    battle.classList.add("sokkoo-special-shake-local");
+    setTimeout(() => battle.classList.remove("sokkoo-special-shake-local"), 500);
+    return;
+  }
+  document.body.classList.remove("sokkoo-special-shake");
+  void document.body.offsetWidth;
+  document.body.classList.add("sokkoo-special-shake");
+  setTimeout(() => document.body.classList.remove("sokkoo-special-shake"), 500);
+}
+
 function triggerSokkooFinishSpecial(kind){
   const overlay = document.getElementById("sokkooFinishOverlay");
   if(overlay){
@@ -2469,10 +2443,7 @@ function triggerSokkooFinishSpecial(kind){
     }, 950);
   }
 
-  document.body.classList.remove("sokkoo-special-shake");
-  void document.body.offsetWidth;
-  document.body.classList.add("sokkoo-special-shake");
-  setTimeout(() => document.body.classList.remove("sokkoo-special-shake"), 500);
+  triggerSokkooShakeSafely();
 
   const p = document.getElementById("playerResultLabel");
   const e = document.getElementById("enemyResultLabel");
@@ -2502,6 +2473,8 @@ function finishSokkoo(kind, pCard, eCard){
   triggerSokkooEffect(kind);
   showBattleResultLabels(kind);
   triggerSokkooFinishSpecial(kind);
+  forceMobileRemainCardFrameSize();
+  setCardEmptyState();
   logBattle(pCard, eCard, result);
   updateUI();
 }
