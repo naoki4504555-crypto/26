@@ -514,10 +514,12 @@ unlockedStage = Math.max(1, Math.min(8, unlockedStage));
 clearedStage = Math.max(0, Math.min(8, clearedStage));
 
 function getClickAudioCtx(){
-  if(!clickAudioCtx){clickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();}
-  if(clickAudioCtx.state === "suspended"){clickAudioCtx.resume();}
+  if(!clickAudioCtx){
+    clickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
   return clickAudioCtx;
 }
+
 
 function playReliablePico(){
   try{
@@ -542,7 +544,7 @@ function playReliablePico(){
     if(ctx.state === "suspended"){
       const p = ctx.resume();
       if(p && p.then){ p.then(fire).catch(()=>{}); }
-      else { fire(); }
+      else fire();
     }else{
       fire();
     }
@@ -810,6 +812,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   if(window.__HD_RELOADED__){
     sessionStorage.removeItem('hd_title_unlocked');
+    sessionStorage.removeItem('hd_return_title_bgm');
     hdTitleUnlocked = false;
     if(location.hash){
       history.replaceState(null, '', location.pathname);
@@ -832,6 +835,9 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   if(hdTitleUnlocked){
     if(gate)gate.classList.add('hidden');
+    document.getElementById('novelScreen')?.classList.remove('active');
+    document.getElementById('storyScreen').classList.remove('active');
+    document.getElementById('titleScreen').classList.add('active');
     startTitleBgm();
   }
 

@@ -2104,22 +2104,18 @@ function unlockAudio(){
   try{
     const ctx = getAudioContext();
     if(ctx.state === "suspended"){
-      ctx.resume();
+      const p = ctx.resume();
+      if(p && p.catch) p.catch(()=>{});
     }
-    // 無音の極短音を鳴らしてiOS/Safariの音声ロックを解除しやすくする
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    gain.gain.value = 0.0001;
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.01);
     audioUnlocked = true;
   } catch(e){
     audioCtx = null;
   }
 }
 
+
+
+let hdLastPicoAt = 0;
 
 function playReliableButtonPico(){
   try{
@@ -2144,7 +2140,7 @@ function playReliableButtonPico(){
     if(ctx.state === "suspended"){
       const p = ctx.resume();
       if(p && p.then){ p.then(fire).catch(()=>{}); }
-      else { fire(); }
+      else fire();
     }else{
       fire();
     }
@@ -2156,20 +2152,19 @@ function playReliableButtonPico(){
 
 function buttonTap(){
   unlockAudio();
+  const now = Date.now();
+  if(now - hdLastPicoAt < 170) return;
+  hdLastPicoAt = now;
   playReliableButtonPico();
 }
 
-
-
-/* HDG unified reliable pico fallback */
+/* HDG final: all freebattle buttons use exactly one pico on pointerdown */
 document.addEventListener("pointerdown", (e)=>{
   const btn = e.target && e.target.closest ? e.target.closest("button") : null;
   if(!btn || btn.disabled) return;
-  unlockAudio();
-  if(!btn.getAttribute("onclick")){
-    buttonTap();
-  }
+  buttonTap();
 }, {capture:true, passive:true});
+
 
 function clearBattleResultLabels(){
   const p = document.getElementById("playerResultLabel");
@@ -2928,12 +2923,6 @@ window.addEventListener("focus", () => {
   resumeAudioIfNeeded();
 });
 
-["touchstart", "pointerdown", "click"].forEach(eventName => {
-  document.addEventListener(eventName, () => {
-    unlockAudio();
-  }, { passive: true });
-});
-
 function openRules(){
   document.getElementById("rulesModal").classList.remove("hidden");
 }
@@ -2941,28 +2930,6 @@ function openRules(){
 function closeRules(){
   document.getElementById("rulesModal").classList.add("hidden");
 }
-
-
-function warmAudioOnFirstTap(){
-  try{
-    const ctx = getAudioContext();
-    if(ctx.state === "suspended"){
-      ctx.resume();
-    }
-    // iOS/Safari対策：極小音で音声エンジンを起こす
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    gain.gain.value = 0.0001;
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.01);
-  }catch(e){}
-}
-
-["touchstart", "pointerdown", "click"].forEach(eventName => {
-  document.addEventListener(eventName, warmAudioOnFirstTap, { passive: true });
-});
 
 
 window.addEventListener("resize", forceMobileRemainCardFrameSize);
@@ -3116,7 +3083,6 @@ window.addEventListener("load", updateBgmButtons);
     btn.dataset.ready = '1';
     btn.addEventListener('click', function(ev){
       ev.preventDefault();
-      buttonTap();
       sessionStorage.setItem('hd_title_unlocked','1');
       sessionStorage.setItem('hd_return_title_bgm','1');
       sessionStorage.removeItem('hd_freebattle_entry_time');
