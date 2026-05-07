@@ -26,10 +26,11 @@ document.addEventListener("pointerdown", ()=>{ ensureBattleBgm(); }, {capture:tr
 document.addEventListener("click", ()=>{ ensureBattleBgm(); }, {capture:true, passive:true});
 
 
-/* HDG iframe auto BGM from parent */
+
+/* HDG child BGM disabled; parent owns freebattle BGM */
 window.addEventListener("message", (ev)=>{
-  if(ev && ev.data && ev.data.type === "HDG_START_FREE_BGM"){
-    ensureBattleBgm(true);
+  if(ev && ev.data && ev.data.type === "HDG_STOP_FREE_BGM"){
+    try{ stopBgm(); }catch(e){}
   }
 });
 </script>
@@ -2180,9 +2181,7 @@ function buttonTap(){
   const nowMs = Date.now();
   if(nowMs - hdLastPicoAt < 130) return;
   hdLastPicoAt = nowMs;
-
-  ensureBattleBgm(true);
-  const ctx = unlockAudio();
+const ctx = unlockAudio();
   if(!ctx) return;
 
   const fire = () => {
@@ -3047,7 +3046,7 @@ function ensureBattleBgm(forceUnlock){
 function startBgm(){ ensureBattleBgm(true); }
 
 function stopBgm(){
-  const audio = getBgmAudio();
+  const audio = getBgmAudio ? getBgmAudio() : document.getElementById("bgm");
   bgmEnabled = false;
   if(audio){
     audio.pause();

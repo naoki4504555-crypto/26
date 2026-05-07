@@ -424,6 +424,29 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 }
 
 
+
+/* HDG iPhone Safari bottom toolbar guard for iframe */
+@media (max-width: 859px){
+  #freeBattleScreen{
+    top:0 !important;
+    bottom:auto !important;
+    height:calc(100svh - 86px) !important;
+    max-height:calc(100svh - 86px) !important;
+    overflow:hidden !important;
+    background:#000 !important;
+  }
+  #freeBattleFrame{
+    height:100% !important;
+    min-height:0 !important;
+  }
+}
+@media (display-mode: standalone){
+  #freeBattleScreen{
+    height:100svh !important;
+    max-height:100svh !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -531,6 +554,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 
 <audio id="picoSe" src="./pico.wav" preload="auto"></audio>
 <audio id="titleBgm" src="./taiko-thunder.mp3" preload="auto" loop></audio>
+<audio id="freeBattleBgm" src="./mailbox-marimba.mp3" preload="auto" loop></audio>
 <audio id="storyBgm" src="./story-bgm.mp3" loop preload="auto"></audio>
 
 <script>
@@ -607,6 +631,7 @@ function playClick(){
 }
 
 function startTitleBgm(){
+  stopFreeBattleBgm();
   unlockHdAudio();
   const bgm = document.getElementById('titleBgm');
   const story = document.getElementById('storyBgm');
@@ -664,7 +689,37 @@ function unlockTitleStart(event){
   return false;
 }
 
+
+function startFreeBattleBgm(){
+  stopTitleBgm();
+  stopStoryBgm();
+  const bgm=document.getElementById('freeBattleBgm');
+  if(!bgm)return;
+  bgm.loop=true;
+  bgm.volume=0.18;
+  const p=bgm.play();
+  if(p && p.catch){
+    p.catch(()=>{
+      const retry=()=>{
+        bgm.play().catch(()=>{});
+        window.removeEventListener('pointerdown',retry);
+        window.removeEventListener('click',retry);
+      };
+      window.addEventListener('pointerdown',retry,{once:true});
+      window.addEventListener('click',retry,{once:true});
+    });
+  }
+}
+
+function stopFreeBattleBgm(){
+  const bgm=document.getElementById('freeBattleBgm');
+  if(!bgm)return;
+  bgm.pause();
+  try{bgm.currentTime=0;}catch(e){}
+}
+
 function startStoryBgm(){
+  stopFreeBattleBgm();
   stopTitleBgm();
   const bgm=document.getElementById('storyBgm');
   if(!bgm)return;
@@ -735,6 +790,7 @@ function showTitle(){
   if(gate)gate.classList.add('hidden');
 
   stopStoryBgm();
+  stopFreeBattleBgm();
 
   const free=document.getElementById('freeBattleScreen');
   const frame=document.getElementById('freeBattleFrame');
@@ -786,13 +842,13 @@ function returnFromFreeBattle(){
   const gate=document.getElementById('tapStartScreen');
   if(gate)gate.classList.add('hidden');
 
+  stopFreeBattleBgm();
   startTitleBgm();
 }
 
 function goBattle(){
   playClick();
-  stopTitleBgm();
-  stopStoryBgm();
+  startFreeBattleBgm();
 
   document.getElementById('titleScreen').classList.remove('active');
   document.getElementById('storyScreen').classList.remove('active');
@@ -802,30 +858,14 @@ function goBattle(){
   const frame=document.getElementById('freeBattleFrame');
   if(screen)screen.classList.add('active');
 
-  const startFreeBgm = ()=>{
-    try{
-      if(frame && frame.contentWindow){
-        if(typeof frame.contentWindow.unlockAudio === 'function') frame.contentWindow.unlockAudio();
-        if(typeof frame.contentWindow.ensureBattleBgm === 'function') frame.contentWindow.ensureBattleBgm(true);
-        frame.contentWindow.postMessage({type:'HDG_START_FREE_BGM'}, '*');
-      }
-    }catch(e){}
-  };
-
   if(frame){
     if(!frame.src || frame.src === 'about:blank'){
-      frame.onload = ()=>{
-        startFreeBgm();
-        setTimeout(startFreeBgm, 120);
-        setTimeout(startFreeBgm, 450);
-      };
       frame.dataset.loaded = '1';
       frame.src = './freebattle.html?v=preload';
     }
-    startFreeBgm();
-    setTimeout(startFreeBgm, 80);
-    setTimeout(startFreeBgm, 220);
-    setTimeout(startFreeBgm, 520);
+    try{
+      frame.contentWindow.postMessage({type:'HDG_STOP_FREE_BGM'}, '*');
+    }catch(e){}
   }
 }
 let novelIdx = 0;
