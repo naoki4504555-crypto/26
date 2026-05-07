@@ -407,7 +407,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 </head>
 <body>
 
-<div id="tapStartScreen" onclick="unlockTitleStart(event)" ontouchstart="unlockTitleStart(event)">
+<div id="tapStartScreen" onpointerdown="unlockTitleStart(event)">
   <div class="tap-start-logo">HEART & DAGGER</div>
   <div class="tap-start-text">TAP TO START</div>
   <div class="tap-start-sub">画面をタップして開始</div>
@@ -518,6 +518,29 @@ function getClickAudioCtx(){
   if(clickAudioCtx.state === "suspended"){clickAudioCtx.resume();}
   return clickAudioCtx;
 }
+
+function playReliablePico(){
+  try{
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC)return;
+    const ctx = window.__hdReliablePicoCtx || (window.__hdReliablePicoCtx = new AC());
+    if(ctx.state === 'suspended')ctx.resume();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(980, now);
+    osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.15);
+  }catch(e){}
+}
+
 function playClick(){
   try{
     const ctx=getClickAudioCtx();
@@ -552,6 +575,7 @@ function unlockTitleStart(event){
     gate.classList.add('starting');
     setTimeout(()=>gate.classList.add('hidden'),950);
   }
+  playReliablePico();
   playClick();
 
   const flash=document.createElement('div');
@@ -791,19 +815,27 @@ function showStoryScreenFromHash(){
 }
 window.addEventListener('DOMContentLoaded',()=>{
   const gate=document.getElementById('tapStartScreen');
-  if(hdTitleUnlocked){
-    if(gate)gate.classList.add('hidden');
-    startTitleBgm();
-  }
+
   if(window.__HD_RELOADED__){
+    sessionStorage.removeItem('hd_title_unlocked');
+    hdTitleUnlocked = false;
     if(location.hash){
       history.replaceState(null, '', location.pathname);
     }
+    stopTitleBgm();
     stopStoryBgm();
+    if(gate)gate.classList.remove('hidden','starting');
+    document.getElementById('novelScreen')?.classList.remove('active');
     document.getElementById('storyScreen').classList.remove('active');
     document.getElementById('titleScreen').classList.add('active');
     return;
   }
+
+  if(hdTitleUnlocked){
+    if(gate)gate.classList.add('hidden');
+    startTitleBgm();
+  }
+
   if(location.hash === '#story'){
     showStoryScreenFromHash();
   }
