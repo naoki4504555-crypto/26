@@ -2178,7 +2178,7 @@ return ctx;
 
 
 function ensureBattleBgm(forceUnlock){
-  /* child iframe BGM disabled: parent page owns Free Battle BGM */
+  /* disabled: parent page owns Free Battle BGM */
 }
 
 function buttonTap(){
@@ -3047,20 +3047,19 @@ function ensureBattleBgm(forceUnlock){
 }
 
 function startBgm(){
-  /* child iframe BGM disabled */
+  /* disabled: parent page owns Free Battle BGM */
 }
 
 function stopBgm(){
   const audio = document.getElementById("bgm");
-  bgmEnabled = false;
   if(audio){
     audio.pause();
-    try{ audio.currentTime = 0; }catch(e){}
+    try{audio.currentTime=0;}catch(e){}
   }
 }
 
 function toggleBgm(){
-  /* child iframe BGM disabled */
+  /* disabled: parent page owns Free Battle BGM */
 }
 
 </script>

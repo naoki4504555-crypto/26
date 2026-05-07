@@ -609,14 +609,19 @@ function playClick(){
 }
 
 function startTitleBgm(){
-  stopFreeBattleBgm();
-  unlockHdAudio();
-  const bgm = document.getElementById('titleBgm');
+  const free=document.getElementById('freeBattleBgm');
+  if(free){
+    free.pause();
+    try{free.currentTime=0;}catch(e){}
+  }
   const story = document.getElementById('storyBgm');
   if(story){
     story.pause();
     try{ story.currentTime = 0; }catch(e){}
   }
+
+  unlockHdAudio();
+  const bgm = document.getElementById('titleBgm');
   if(!bgm) return;
   bgm.volume = 0.42;
   const p = bgm.play();
@@ -677,7 +682,9 @@ function startFreeBattleBgm(){
 
   bgm.loop=true;
   bgm.volume=0.18;
-  try{ bgm.currentTime = 0; }catch(e){}
+  // すでに鳴っている時はリスタートせず、二重感を出さない
+  if(!bgm.paused) return;
+
   const p=bgm.play();
   if(p && p.catch){
     p.catch(()=>{
@@ -700,8 +707,13 @@ function stopFreeBattleBgm(){
 }
 
 function startStoryBgm(){
-  stopFreeBattleBgm();
   stopTitleBgm();
+  const free=document.getElementById('freeBattleBgm');
+  if(free){
+    free.pause();
+    try{free.currentTime=0;}catch(e){}
+  }
+
   const bgm=document.getElementById('storyBgm');
   if(!bgm)return;
   bgm.pause();
