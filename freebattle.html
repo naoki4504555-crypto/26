@@ -1974,7 +1974,7 @@ body.sokkoo-special-shake {
 
   <div class="howto-area">
     <button class="howto-btn" onclick="buttonTap(); openRules()">遊び方</button>
-    <button id="bgmBtnTop" class="howto-btn bgm-toggle-btn" onclick="buttonTap(); toggleBgm()">BGM OFF</button>
+    
   </div>
 
   <div id="startScreen" class="start-screen">
@@ -2113,11 +2113,24 @@ function unlockAudio(){
       if(p && p.catch) p.catch(()=>{});
     }
     audioUnlocked = true;
+    ensureBattleBgm();
     return ctx;
   } catch(e){
     audioCtx = null;
     return null;
   }
+}
+
+
+function ensureBattleBgm(){
+  try{
+    if(typeof bgmAudio !== 'undefined' && bgmAudio){
+      bgmAudio.loop = true;
+      bgmAudio.volume = 0.35;
+      const p = bgmAudio.play();
+      if(p && p.catch) p.catch(()=>{});
+    }
+  }catch(e){}
 }
 
 function buttonTap(){
@@ -2231,6 +2244,7 @@ function clearHistoryLog(){
 }
 
 function startGame(){
+  ensureBattleBgm();
   clearHistoryLog();
 clearEnemyCallTimer();
   player = makeHand();
@@ -2992,16 +3006,7 @@ function stopBgm(){
   updateBgmButtons();
 }
 
-function toggleBgm(){
-  const audio = getBgmAudio();
-  if(!audio) return;
 
-  if(audio.paused || !bgmEnabled){
-    startBgm();
-  } else {
-    stopBgm();
-  }
-}
 
 document.addEventListener("visibilitychange", () => {
   if(!document.hidden && bgmEnabled){
