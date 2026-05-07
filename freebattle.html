@@ -32,6 +32,14 @@ try{
   }
 }catch(e){}
 
+
+/* HDG iframe-mode marker */
+try{
+  if(window.parent && window.parent !== window){
+    document.documentElement.classList.add("hdg-iframe-mode");
+  }
+}catch(e){}
+
 </script>
 
 <meta charset="UTF-8">
@@ -1985,6 +1993,32 @@ body.sokkoo-special-shake {
 
 
 
+
+/* HDG iframe scroll-safe controls */
+@media (max-width: 859px){
+  html.hdg-iframe-mode,
+  html.hdg-iframe-mode body{
+    height:auto !important;
+    min-height:100% !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  html.hdg-iframe-mode body{
+    padding-bottom: calc(18px + env(safe-area-inset-bottom)) !important;
+  }
+
+  html.hdg-iframe-mode .controls{
+    position:relative !important;
+    left:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    width:100% !important;
+    margin:12px 0 calc(18px + env(safe-area-inset-bottom)) !important;
+    padding:9px !important;
+    transform:none !important;
+  }
+}
 
 </style>
 </head>
