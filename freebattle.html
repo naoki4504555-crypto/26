@@ -2014,6 +2014,131 @@ body{
   }
 }
 
+
+/* HDG restart bottom safe space + card icon unification */
+.restart-area{
+  margin: 10px auto calc(112px + env(safe-area-inset-bottom)) !important;
+}
+
+/* 自分のカードボタンと相手残りカードの外枠・カード画像・文字を統一 */
+.controls .card-btn,
+.panel.enemy .mini-card{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-width:0 !important;
+  min-height:92px !important;
+  padding:6px !important;
+  border-radius:14px !important;
+  box-sizing:border-box !important;
+}
+
+.controls .card-btn img,
+.panel.enemy .mini-card img{
+  height:58px !important;
+  width:auto !important;
+  max-width:100% !important;
+  aspect-ratio:63 / 89 !important;
+  object-fit:cover !important;
+  border-radius:6px !important;
+  display:block !important;
+  margin:0 auto 3px !important;
+}
+
+.controls .card-btn span,
+.panel.enemy .mini-card span{
+  display:block !important;
+  font-size:17px !important;
+  line-height:1.05 !important;
+  font-weight:900 !important;
+  text-align:center !important;
+  white-space:normal !important;
+}
+
+.controls .card-btn span b,
+.panel.enemy .mini-card span b,
+.panel.enemy .mini-card b{
+  display:inline !important;
+  margin-left:3px !important;
+  color:#ffe784 !important;
+  font-size:1em !important;
+  font-weight:1000 !important;
+  line-height:1.05 !important;
+}
+
+/* 相手残りカード欄の並びも自分ボタンと同じ比率に */
+.panel.enemy .counts{
+  display:grid !important;
+  grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+  gap:7px !important;
+}
+
+.panel.enemy.sokkoo-enemy .counts{
+  grid-template-columns:repeat(5, minmax(0, 1fr)) !important;
+}
+
+/* ソッコーモードでも自分ボタンと相手表示の高さを揃える */
+.controls.sokkoo-layout .card-btn,
+.panel.enemy.sokkoo-enemy .mini-card{
+  min-height:92px !important;
+}
+
+/* PC/広い画面では大きめに統一 */
+@media (min-width:860px){
+  .restart-area{
+    margin-bottom:24px !important;
+  }
+
+  .controls .card-btn,
+  .panel.enemy .mini-card{
+    min-height:128px !important;
+    padding:8px !important;
+    border-radius:16px !important;
+  }
+
+  .controls .card-btn img,
+  .panel.enemy .mini-card img{
+    height:84px !important;
+    border-radius:8px !important;
+    margin-bottom:5px !important;
+  }
+
+  .controls .card-btn span,
+  .panel.enemy .mini-card span{
+    font-size:18px !important;
+  }
+
+  .panel.enemy .counts{
+    max-width:760px !important;
+    margin:0 auto !important;
+  }
+}
+
+/* 小さめスマホでも見切れにくくする */
+@media (max-width:390px){
+  .restart-area{
+    margin-bottom:calc(124px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .controls .card-btn,
+  .panel.enemy .mini-card{
+    min-height:86px !important;
+    padding:5px !important;
+  }
+
+  .controls .card-btn img,
+  .panel.enemy .mini-card img{
+    height:52px !important;
+  }
+
+  .controls .card-btn span,
+  .panel.enemy .mini-card span{
+    font-size:16px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2115,7 +2240,7 @@ body{
 
 <div id="log" class="log"></div>
 
-<div style="text-align:center">
+<div class="restart-area" style="text-align:center">
       <button class="big-btn" style="font-size:20px;padding:12px 28px" onclick="buttonTap(); startGame()">もう一度はじめる</button>
     </div>
 
