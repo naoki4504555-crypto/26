@@ -1992,6 +1992,23 @@ body.sokkoo-special-shake {
   box-shadow:0 4px 0 rgba(0,0,0,.36);
 }
 
+
+
+/* HDG Safari UI collapse helper: keep the original controls size, but allow page scroll */
+@media (max-width: 859px){
+  html,
+  body{
+    height:auto !important;
+    min-height:100svh !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+  .wrap{
+    min-height:calc(100svh + 80px) !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2153,7 +2170,7 @@ function unlockAudio(){
       if(p && p.catch) p.catch(()=>{});
     }
     audioUnlocked = true;
-    ensureBattleBgm();
+    ensureBattleBgm(false);
     return ctx;
   } catch(e){
     audioCtx = null;
@@ -2170,17 +2187,12 @@ function ensureBattleBgm(forceUnlock){
     audio.loop = true;
     audio.volume = 0.18;
 
-    if(forceUnlock){
-      try{ unlockAudio(); }catch(e){}
-    }
-
     const p = audio.play();
 
     if(p && p.catch){
       p.catch(()=>{
         const retry = ()=>{
           try{
-            unlockAudio();
             audio.play().catch(()=>{});
           }catch(e){}
         };
