@@ -1949,6 +1949,7 @@ body.sokkoo-special-shake {
 </style>
 </head>
 <body>
+<audio id="picoSe" src="./pico.wav" preload="auto"></audio>
 
 <button id="hdBackTitleBtn" type="button">← タイトル</button>
 
@@ -2123,9 +2124,22 @@ function buttonTap(){
   const nowMs = Date.now();
   if(nowMs - hdLastPicoAt < 120) return;
   hdLastPicoAt = nowMs;
+
+  const se = document.getElementById('picoSe');
+  if(se){
+    try{
+      se.pause();
+      se.currentTime = 0;
+      const p = se.play();
+      if(p && p.catch) p.catch(()=>{});
+      unlockAudio();
+      return;
+    }catch(e){}
+  }
+
   const ctx = unlockAudio();
   if(!ctx) return;
-  const fire = ()=>{
+  try{
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -2138,13 +2152,6 @@ function buttonTap(){
     gain.connect(ctx.destination);
     osc.start(now);
     osc.stop(now+0.1);
-  };
-  try{
-    if(ctx.state==='suspended'){
-      ctx.resume().then(fire);
-    }else{
-      fire();
-    }
   }catch(e){}
 }
 
@@ -2155,6 +2162,13 @@ document.addEventListener("pointerdown", (e)=>{
   buttonTap();
 }, {capture:true, passive:true});
 
+
+/* HDG file pico route */
+document.addEventListener("pointerdown", (e)=>{
+  const btn = e.target && e.target.closest ? e.target.closest("button") : null;
+  if(!btn || btn.disabled) return;
+  buttonTap();
+}, {capture:true, passive:true});
 
 function clearBattleResultLabels(){
   const p = document.getElementById("playerResultLabel");
@@ -3055,7 +3069,13 @@ window.addEventListener("load", updateBgmButtons);
       sessionStorage.setItem('hd_title_unlocked','1');
       sessionStorage.setItem('hd_return_title_bgm','1');
       sessionStorage.removeItem('hd_freebattle_entry_time');
-      setTimeout(function(){ location.href = './index.html'; }, 120);
+      setTimeout(function(){
+        if(document.referrer && document.referrer.indexOf('index.html') !== -1 && history.length > 1){
+          history.back();
+        }else{
+          location.href = './index.html';
+        }
+      }, 120);
     });
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupBackButton);

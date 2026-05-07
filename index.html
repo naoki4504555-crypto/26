@@ -503,6 +503,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 </section>
 
 
+<audio id="picoSe" src="./pico.wav" preload="auto"></audio>
 <audio id="titleBgm" src="./taiko-thunder.mp3" preload="auto" loop></audio>
 <audio id="storyBgm" src="./story-bgm.mp3" loop preload="auto"></audio>
 
@@ -534,9 +535,21 @@ function playClick(){
   const nowMs = Date.now();
   if(nowMs - hdLastPicoAt < 120) return;
   hdLastPicoAt = nowMs;
+
+  const se = document.getElementById('picoSe');
+  if(se){
+    try{
+      se.pause();
+      se.currentTime = 0;
+      const p = se.play();
+      if(p && p.catch) p.catch(()=>{});
+      return;
+    }catch(e){}
+  }
+
   const ctx = unlockHdAudio();
   if(!ctx) return;
-  const fire = ()=>{
+  try{
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -549,13 +562,6 @@ function playClick(){
     gain.connect(ctx.destination);
     osc.start(now);
     osc.stop(now+0.1);
-  };
-  try{
-    if(ctx.state==='suspended'){
-      ctx.resume().then(fire);
-    }else{
-      fire();
-    }
   }catch(e){}
 }
 
@@ -668,9 +674,7 @@ function goStory(){
 function goBattle(){
   playClick();
   sessionStorage.setItem('hd_freebattle_entry_time', String(Date.now()));
-  setTimeout(()=>{
-    location.href='./freebattle.html';
-  },170);
+  setTimeout(()=>{ location.href='./freebattle.html'; },170);
 };
 let novelIdx = 0;
 let currentNovelStage = 1;
@@ -794,6 +798,21 @@ function showStoryScreenFromHash(){
     startStoryBgm();
   }
 }
+
+window.addEventListener('pageshow',()=>{
+  if(sessionStorage.getItem('hd_return_title_bgm') === '1'){
+    sessionStorage.removeItem('hd_return_title_bgm');
+    sessionStorage.setItem('hd_title_unlocked','1');
+    hdTitleUnlocked = true;
+    const gate=document.getElementById('tapStartScreen');
+    if(gate)gate.classList.add('hidden');
+    document.getElementById('novelScreen')?.classList.remove('active');
+    document.getElementById('storyScreen').classList.remove('active');
+    document.getElementById('titleScreen').classList.add('active');
+    startTitleBgm();
+  }
+});
+
 window.addEventListener('DOMContentLoaded',()=>{
   const tapGate=document.getElementById('tapStartScreen');
   if(tapGate){
