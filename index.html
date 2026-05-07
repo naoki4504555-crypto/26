@@ -507,52 +507,82 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 <audio id="storyBgm" src="./story-bgm.mp3" loop preload="auto"></audio>
 
 <script>
-let clickAudioCtx = null;
-let unlockedStage = Number(localStorage.getItem("hd_story_unlocked") || "1");
-let clearedStage = Number(localStorage.getItem("hd_story_cleared") || "0");
-unlockedStage = Math.max(1, Math.min(8, unlockedStage));
-clearedStage = Math.max(0, Math.min(8, clearedStage));
 
-function getClickAudioCtx(){
-  if(!clickAudioCtx){
-    clickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let hdAudioCtx = null;
+let hdLastPicoAt = 0;
+
+function getHdAudioCtx(){
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC) return null;
+  if(!hdAudioCtx || hdAudioCtx.state === "closed"){
+    hdAudioCtx = new AC();
   }
-  return clickAudioCtx;
+  return hdAudioCtx;
 }
 
-
-function playReliablePico(){
-  try{
-    const ctx = getClickAudioCtx();
-    const fire = () => {
-      try{
-        const now = ctx.currentTime;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "square";
-        osc.frequency.setValueAtTime(980, now);
-        osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.15);
-      }catch(e){}
-    };
-    if(ctx.state === "suspended"){
-      const p = ctx.resume();
-      if(p && p.then){ p.then(fire).catch(()=>{}); }
-      else fire();
-    }else{
-      fire();
-    }
-  }catch(e){}
+function unlockHdAudio(){
+  const ctx = getHdAudioCtx();
+  if(!ctx) return null;
+  if(ctx.state === "suspended"){
+    const p = ctx.resume();
+    if(p && p.catch) p.catch(()=>{});
+  }
+  return ctx;
 }
 
 function playClick(){
-  playReliablePico();
+  const nowMs = Date.now();
+  if(nowMs - hdLastPicoAt < 140) return;
+  hdLastPicoAt = nowMs;
+
+  const ctx = unlockHdAudio();
+  if(!ctx) return;
+
+  const fire = () => {
+    try{
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "square";
+      osc.frequency.setValueAtTime(980, now);
+      osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.15);
+    }catch(e){}
+  };
+
+  if(ctx.state === "suspended"){
+    const p = ctx.resume();
+    if(p && p.then) p.then(fire).catch(()=>{});
+  }else{
+    fire();
+  }
+}
+
+function startTitleBgm(){
+  unlockHdAudio();
+  const bgm = document.getElementById('titleBgm');
+  const story = document.getElementById('storyBgm');
+  if(story){
+    story.pause();
+    try{ story.currentTime = 0; }catch(e){}
+  }
+  if(!bgm) return;
+  bgm.volume = 0.42;
+  const p = bgm.play();
+  if(p && p.catch) p.catch(()=>{});
+}
+
+function stopTitleBgm(){
+  const bgm = document.getElementById('titleBgm');
+  if(!bgm) return;
+  bgm.pause();
+  try{ bgm.currentTime = 0; }catch(e){}
 }
 
 
@@ -564,12 +594,14 @@ function unlockTitleStart(event){
   }
   if(hdTitleUnlocked)return;
   hdTitleUnlocked = true;
-  const gate = document.getElementById('tapStartScreen');
   sessionStorage.setItem('hd_title_unlocked','1');
+
+  const gate = document.getElementById('tapStartScreen');
   if(gate){
     gate.classList.add('starting');
     setTimeout(()=>gate.classList.add('hidden'),950);
   }
+
   playClick();
 
   const flash=document.createElement('div');
@@ -579,40 +611,16 @@ function unlockTitleStart(event){
 
   startTitleBgm();
 
-  setTimeout(()=>{
-    flash.classList.add('show');
-  },20);
-
+  setTimeout(()=>{ flash.classList.add('show'); },20);
   setTimeout(()=>{
     flash.classList.remove('show');
     setTimeout(()=>flash.remove(),600);
   },1800);
 }
 
-function startTitleBgm(){
-  const bgm = document.getElementById('titleBgm');
-  const story = document.getElementById('storyBgm');
-  if(story){
-    story.pause();
-    story.currentTime = 0;
-  }
-  if(!bgm) return;
-  bgm.volume = 0.42;
-  try{ bgm.currentTime = 0; }catch(e){}
-  const p = bgm.play();
-  if(p && p.catch) p.catch(()=>{});
-}
-
-function stopTitleBgm(){
-  const bgm = document.getElementById('titleBgm');
-  if(!bgm) return;
-  bgm.pause();
-  bgm.currentTime = 0;
-}
-
 function startStoryBgm(){
   stopTitleBgm();
-  const bgm=document.getElementById('storyBgm');
+const bgm=document.getElementById('storyBgm');
   if(!bgm)return;
   bgm.pause();
   try{ bgm.currentTime = 0; }catch(e){}
@@ -657,7 +665,7 @@ function goStory(){
   document.getElementById('storyScreen').classList.add('active');
   startStoryBgm();
 }
-function goBattle(){playClick();sessionStorage.setItem("hd_freebattle_entry_time", String(Date.now()));setTimeout(()=>{location.href="./freebattle.html";},170);}
+function goBattle(){playClick();sessionStorage.setItem('hd_freebattle_entry_time', String(Date.now()));setTimeout(()=>{location.href='./freebattle.html';},170);},170);}
 
 const novelLinesByStage = {
   1: [

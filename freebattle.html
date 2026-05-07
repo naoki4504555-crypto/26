@@ -2100,6 +2100,9 @@ function cardLabel(card){
 }
 
 
+
+let hdLastPicoAt = 0;
+
 function unlockAudio(){
   try{
     const ctx = getAudioContext();
@@ -2108,57 +2111,48 @@ function unlockAudio(){
       if(p && p.catch) p.catch(()=>{});
     }
     audioUnlocked = true;
+    return ctx;
   } catch(e){
     audioCtx = null;
-  }
-}
-
-
-
-let hdLastPicoAt = 0;
-
-function playReliableButtonPico(){
-  try{
-    const ctx = getAudioContext();
-    const fire = () => {
-      try{
-        const now = ctx.currentTime;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "square";
-        osc.frequency.setValueAtTime(980, now);
-        osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.15);
-      }catch(e){}
-    };
-    if(ctx.state === "suspended"){
-      const p = ctx.resume();
-      if(p && p.then){ p.then(fire).catch(()=>{}); }
-      else fire();
-    }else{
-      fire();
-    }
-    audioUnlocked = true;
-  }catch(e){
-    audioCtx = null;
+    return null;
   }
 }
 
 function buttonTap(){
-  unlockAudio();
-  const now = Date.now();
-  if(now - hdLastPicoAt < 170) return;
-  hdLastPicoAt = now;
-  playReliableButtonPico();
+  const nowMs = Date.now();
+  if(nowMs - hdLastPicoAt < 140) return;
+  hdLastPicoAt = nowMs;
+
+  const ctx = unlockAudio();
+  if(!ctx) return;
+
+  const fire = () => {
+    try{
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "square";
+      osc.frequency.setValueAtTime(980, now);
+      osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.15);
+    }catch(e){}
+  };
+
+  if(ctx.state === "suspended"){
+    const p = ctx.resume();
+    if(p && p.then) p.then(fire).catch(()=>{});
+  }else{
+    fire();
+  }
 }
 
-/* HDG final: all freebattle buttons use exactly one pico on pointerdown */
+/* HDG audio refactor: one pointerdown route for buttons, onclick buttonTap is debounced */
 document.addEventListener("pointerdown", (e)=>{
   const btn = e.target && e.target.closest ? e.target.closest("button") : null;
   if(!btn || btn.disabled) return;
@@ -3056,27 +3050,6 @@ window.addEventListener("load", updateBgmButtons);
 
 <script>
 (function(){
-  function playBackPico(){
-    try{
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if(!AC) return;
-      const ctx = window.__hdBackAudioCtx || (window.__hdBackAudioCtx = new AC());
-      if(ctx.state === 'suspended') ctx.resume();
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(980, now);
-      osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.15);
-    }catch(e){}
-  }
   function setupBackButton(){
     const btn = document.getElementById('hdBackTitleBtn');
     if(!btn || btn.dataset.ready === '1') return;
@@ -3086,7 +3059,7 @@ window.addEventListener("load", updateBgmButtons);
       sessionStorage.setItem('hd_title_unlocked','1');
       sessionStorage.setItem('hd_return_title_bgm','1');
       sessionStorage.removeItem('hd_freebattle_entry_time');
-      setTimeout(function(){ location.href = './index.html'; }, 170);
+      setTimeout(function(){ location.href = './index.html'; }, 120);
     });
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupBackButton);
