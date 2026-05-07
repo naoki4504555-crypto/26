@@ -350,6 +350,59 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   to{transform:scale(1.045);opacity:1}
 }
 
+
+/* HDG epic start */
+#tapStartScreen.starting{
+  animation:hdGateFade .95s ease forwards;
+}
+@keyframes hdGateFade{
+  0%{opacity:1;transform:scale(1)}
+  45%{opacity:1;transform:scale(1.04)}
+  100%{opacity:0;transform:scale(1.12)}
+}
+#hdStartFlash{
+  position:fixed;
+  inset:0;
+  z-index:100000;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  pointer-events:none;
+  opacity:0;
+  background:
+    radial-gradient(circle at center, rgba(255,220,120,.18), rgba(0,0,0,.92) 60%),
+    linear-gradient(to bottom, rgba(255,255,255,.08), rgba(0,0,0,.95));
+  transition:opacity .35s ease;
+}
+#hdStartFlash.show{opacity:1;}
+.hd-start-main{
+  font-size:clamp(40px,9vw,96px);
+  font-weight:1000;
+  color:#ffe7a8;
+  letter-spacing:.08em;
+  text-shadow:0 0 14px #000,0 0 42px rgba(255,220,120,.75);
+  animation:hdLogoBoom 1.4s ease-out forwards;
+}
+.hd-start-sub{
+  font-size:clamp(16px,3vw,30px);
+  font-weight:900;
+  color:#fff;
+  letter-spacing:.22em;
+  opacity:.9;
+  animation:hdSubRise 1.2s ease-out forwards;
+}
+@keyframes hdLogoBoom{
+  0%{transform:scale(.7);opacity:0;filter:blur(10px)}
+  18%{transform:scale(1.12);opacity:1;filter:blur(0)}
+  100%{transform:scale(1);opacity:1}
+}
+@keyframes hdSubRise{
+  0%{transform:translateY(18px);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
+
 </style>
 </head>
 <body>
@@ -485,7 +538,7 @@ function playClick(){
 }
 
 
-let hdTitleUnlocked = false;
+let hdTitleUnlocked = sessionStorage.getItem('hd_title_unlocked') === '1';
 function unlockTitleStart(event){
   if(event){
     event.preventDefault();
@@ -494,9 +547,28 @@ function unlockTitleStart(event){
   if(hdTitleUnlocked)return;
   hdTitleUnlocked = true;
   const gate = document.getElementById('tapStartScreen');
-  if(gate)gate.classList.add('hidden');
+  sessionStorage.setItem('hd_title_unlocked','1');
+  if(gate){
+    gate.classList.add('starting');
+    setTimeout(()=>gate.classList.add('hidden'),950);
+  }
   playClick();
+
+  const flash=document.createElement('div');
+  flash.id='hdStartFlash';
+  flash.innerHTML='<div class="hd-start-main">HEART & DAGGER</div><div class="hd-start-sub">A LEGEND BEGINS...</div>';
+  document.body.appendChild(flash);
+
   startTitleBgm();
+
+  setTimeout(()=>{
+    flash.classList.add('show');
+  },20);
+
+  setTimeout(()=>{
+    flash.classList.remove('show');
+    setTimeout(()=>flash.remove(),600);
+  },1800);
 }
 
 function startTitleBgm(){
@@ -557,7 +629,7 @@ function closeHowto(event){
   if(modal)modal.classList.remove('active');
 }
 
-function showTitle(){playClick();stopStoryBgm();document.getElementById('novelScreen')?.classList.remove('active');document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');startTitleBgm();}
+function showTitle(){playClick();sessionStorage.setItem('hd_title_unlocked','1');const gate=document.getElementById('tapStartScreen');if(gate)gate.classList.add('hidden');stopStoryBgm();document.getElementById('novelScreen')?.classList.remove('active');document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');startTitleBgm();}
 function goStory(){
   stopTitleBgm();
   playClick();
@@ -718,6 +790,11 @@ function showStoryScreenFromHash(){
   }
 }
 window.addEventListener('DOMContentLoaded',()=>{
+  const gate=document.getElementById('tapStartScreen');
+  if(hdTitleUnlocked){
+    if(gate)gate.classList.add('hidden');
+    startTitleBgm();
+  }
   if(window.__HD_RELOADED__){
     if(location.hash){
       history.replaceState(null, '', location.pathname);
