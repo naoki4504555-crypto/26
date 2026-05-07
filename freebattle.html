@@ -32,17 +32,6 @@ window.addEventListener("message", (ev)=>{
     ensureBattleBgm(true);
   }
 });
-/* HDG freebattle auto BGM boot */
-window.addEventListener("DOMContentLoaded", ()=>{ ensureBattleBgm(); });
-window.addEventListener("load", ()=>{ ensureBattleBgm(); });
-window.addEventListener("pageshow", ()=>{ ensureBattleBgm(); });
-document.addEventListener("pointerdown", ()=>{ ensureBattleBgm(); }, {capture:true, passive:true});
-
-
-/* HDG freebattle autoplay recovery */
-window.addEventListener("DOMContentLoaded", ()=>{ ensureBattleBgm(false); });
-window.addEventListener("pageshow", ()=>{ ensureBattleBgm(false); });
-document.addEventListener("pointerdown", ()=>{ ensureBattleBgm(true); }, {capture:true, passive:true});
 </script>
 
 <meta charset="UTF-8">
@@ -1994,21 +1983,6 @@ body.sokkoo-special-shake {
 
 
 
-/* HDG Safari UI collapse helper: keep the original controls size, but allow page scroll */
-@media (max-width: 859px){
-  html,
-  body{
-    height:auto !important;
-    min-height:100svh !important;
-    overflow-x:hidden !important;
-    overflow-y:auto !important;
-    -webkit-overflow-scrolling:touch !important;
-  }
-  .wrap{
-    min-height:calc(100svh + 80px) !important;
-  }
-}
-
 </style>
 </head>
 <body>
@@ -2170,8 +2144,7 @@ function unlockAudio(){
       if(p && p.catch) p.catch(()=>{});
     }
     audioUnlocked = true;
-    ensureBattleBgm(false);
-    return ctx;
+return ctx;
   } catch(e){
     audioCtx = null;
     return null;
@@ -2208,6 +2181,7 @@ function buttonTap(){
   if(nowMs - hdLastPicoAt < 130) return;
   hdLastPicoAt = nowMs;
 
+  ensureBattleBgm(true);
   const ctx = unlockAudio();
   if(!ctx) return;
 
@@ -3043,7 +3017,8 @@ setTimeout(forceMobileRemainCardFrameSize, 100);
 
 
 
-let bgmEnabled = true;
+
+let bgmEnabled = false;
 
 function getBgmAudio(){
   const audio = document.getElementById("bgm");
@@ -3056,10 +3031,11 @@ function getBgmAudio(){
 
 function updateBgmButtons(){}
 
-function ensureBattleBgm(){
+function ensureBattleBgm(forceUnlock){
   try{
     const audio = getBgmAudio();
     if(!audio) return;
+
     bgmEnabled = true;
     const p = audio.play();
     if(p && p.catch){
@@ -3068,28 +3044,18 @@ function ensureBattleBgm(){
   }catch(e){}
 }
 
-function startBgm(){ ensureBattleBgm(); }
+function startBgm(){ ensureBattleBgm(true); }
 
-function stopBgm(){ /* BGM is always on in freebattle */ }
+function stopBgm(){
+  const audio = getBgmAudio();
+  bgmEnabled = false;
+  if(audio){
+    audio.pause();
+    try{ audio.currentTime = 0; }catch(e){}
+  }
+}
 
-function toggleBgm(){ ensureBattleBgm(); }
-
-document.addEventListener("visibilitychange", () => {
-  if(!document.hidden) ensureBattleBgm();
-});
-
-window.addEventListener("pageshow", () => {
-  ensureBattleBgm();
-});
-
-window.addEventListener("load", () => {
-  ensureBattleBgm();
-});
-
-document.addEventListener("pointerdown", () => {
-  ensureBattleBgm();
-}, {capture:true, passive:true});
-
+function toggleBgm(){ ensureBattleBgm(true); }
 
 </script>
 <div id="sokkooOverlay" class="sokkoo-overlay"></div>
