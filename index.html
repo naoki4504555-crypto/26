@@ -509,6 +509,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 
 <script>
 
+
 let hdAudioCtx = null;
 let hdLastPicoAt = 0;
 
@@ -531,11 +532,7 @@ function unlockHdAudio(){
   return ctx;
 }
 
-function playClick(){
-  const nowMs = Date.now();
-  if(nowMs - hdLastPicoAt < 120) return;
-  hdLastPicoAt = nowMs;
-
+function playTapStartPico(){
   const se = document.getElementById('picoSe');
   if(se){
     try{
@@ -546,23 +543,41 @@ function playClick(){
       return;
     }catch(e){}
   }
+  playClick();
+}
+
+function playClick(){
+  const nowMs = Date.now();
+  if(nowMs - hdLastPicoAt < 130) return;
+  hdLastPicoAt = nowMs;
 
   const ctx = unlockHdAudio();
   if(!ctx) return;
-  try{
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type='square';
-    osc.frequency.value=1200;
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.25, now+0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now+0.09);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now+0.1);
-  }catch(e){}
+
+  const fire = () => {
+    try{
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "square";
+      osc.frequency.setValueAtTime(980, now);
+      osc.frequency.exponentialRampToValueAtTime(1460, now + 0.05);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.26, now + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.085);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.09);
+    }catch(e){}
+  };
+
+  if(ctx.state === "suspended"){
+    const p = ctx.resume();
+    if(p && p.then) p.then(fire).catch(()=>{});
+  }else{
+    fire();
+  }
 }
 
 function startTitleBgm(){
@@ -604,7 +619,7 @@ function unlockTitleStart(event){
     setTimeout(()=>gate.classList.add('hidden'),900);
   }
 
-  playClick();
+  playTapStartPico();
 
   const flash=document.createElement('div');
   flash.id='hdStartFlash';
@@ -663,11 +678,10 @@ function showTitle(){playClick();sessionStorage.setItem('hd_title_unlocked','1')
 function goStory(){
   stopTitleBgm();
   playClick();
-  if(location.hash !== '#story'){
-    history.pushState({screen:'story'}, '', '#story');
-  }
   renderStages();
+  history.replaceState({screen:'story'}, '', '#story');
   document.getElementById('titleScreen').classList.remove('active');
+  document.getElementById('novelScreen')?.classList.remove('active');
   document.getElementById('storyScreen').classList.add('active');
   startStoryBgm();
 }
@@ -675,7 +689,7 @@ function goBattle(){
   playClick();
   sessionStorage.setItem('hd_freebattle_entry_time', String(Date.now()));
   setTimeout(()=>{ location.href='./freebattle.html'; },170);
-};
+}
 let novelIdx = 0;
 let currentNovelStage = 1;
 let novelInputLocked = false;

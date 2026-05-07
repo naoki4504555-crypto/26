@@ -1949,7 +1949,6 @@ body.sokkoo-special-shake {
 </style>
 </head>
 <body>
-<audio id="picoSe" src="./pico.wav" preload="auto"></audio>
 
 <button id="hdBackTitleBtn" type="button">← タイトル</button>
 
@@ -2102,8 +2101,8 @@ function cardLabel(card){
 
 
 
+
 let hdLastPicoAt = 0;
-document.addEventListener("pointerdown", ()=>{ unlockAudio(); }, {passive:true});
 
 function unlockAudio(){
   try{
@@ -2122,53 +2121,38 @@ function unlockAudio(){
 
 function buttonTap(){
   const nowMs = Date.now();
-  if(nowMs - hdLastPicoAt < 120) return;
+  if(nowMs - hdLastPicoAt < 130) return;
   hdLastPicoAt = nowMs;
-
-  const se = document.getElementById('picoSe');
-  if(se){
-    try{
-      se.pause();
-      se.currentTime = 0;
-      const p = se.play();
-      if(p && p.catch) p.catch(()=>{});
-      unlockAudio();
-      return;
-    }catch(e){}
-  }
 
   const ctx = unlockAudio();
   if(!ctx) return;
-  try{
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type='square';
-    osc.frequency.value=1200;
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.25, now+0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now+0.09);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now+0.1);
-  }catch(e){}
+
+  const fire = () => {
+    try{
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "square";
+      osc.frequency.setValueAtTime(980, now);
+      osc.frequency.exponentialRampToValueAtTime(1460, now + 0.05);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.26, now + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.085);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.09);
+    }catch(e){}
+  };
+
+  if(ctx.state === "suspended"){
+    const p = ctx.resume();
+    if(p && p.then) p.then(fire).catch(()=>{});
+  }else{
+    fire();
+  }
 }
 
-/* HDG audio refactor: one pointerdown route for buttons, onclick buttonTap is debounced */
-document.addEventListener("pointerdown", (e)=>{
-  const btn = e.target && e.target.closest ? e.target.closest("button") : null;
-  if(!btn || btn.disabled) return;
-  buttonTap();
-}, {capture:true, passive:true});
-
-
-/* HDG file pico route */
-document.addEventListener("pointerdown", (e)=>{
-  const btn = e.target && e.target.closest ? e.target.closest("button") : null;
-  if(!btn || btn.disabled) return;
-  buttonTap();
-}, {capture:true, passive:true});
 
 function clearBattleResultLabels(){
   const p = document.getElementById("playerResultLabel");
@@ -3066,16 +3050,13 @@ window.addEventListener("load", updateBgmButtons);
     btn.dataset.ready = '1';
     btn.addEventListener('click', function(ev){
       ev.preventDefault();
+      buttonTap();
       sessionStorage.setItem('hd_title_unlocked','1');
       sessionStorage.setItem('hd_return_title_bgm','1');
       sessionStorage.removeItem('hd_freebattle_entry_time');
       setTimeout(function(){
-        if(document.referrer && document.referrer.indexOf('index.html') !== -1 && history.length > 1){
-          history.back();
-        }else{
-          location.href = './index.html';
-        }
-      }, 120);
+        location.href = './index.html';
+      }, 170);
     });
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupBackButton);
