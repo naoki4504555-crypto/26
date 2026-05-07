@@ -2102,6 +2102,7 @@ function cardLabel(card){
 
 
 let hdLastPicoAt = 0;
+document.addEventListener("pointerdown", ()=>{ unlockAudio(); }, {passive:true});
 
 function unlockAudio(){
   try{
@@ -2120,36 +2121,31 @@ function unlockAudio(){
 
 function buttonTap(){
   const nowMs = Date.now();
-  if(nowMs - hdLastPicoAt < 140) return;
+  if(nowMs - hdLastPicoAt < 120) return;
   hdLastPicoAt = nowMs;
-
   const ctx = unlockAudio();
   if(!ctx) return;
-
-  const fire = () => {
-    try{
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "square";
-      osc.frequency.setValueAtTime(980, now);
-      osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.15);
-    }catch(e){}
+  const fire = ()=>{
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type='square';
+    osc.frequency.value=1200;
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.25, now+0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now+0.09);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now+0.1);
   };
-
-  if(ctx.state === "suspended"){
-    const p = ctx.resume();
-    if(p && p.then) p.then(fire).catch(()=>{});
-  }else{
-    fire();
-  }
+  try{
+    if(ctx.state==='suspended'){
+      ctx.resume().then(fire);
+    }else{
+      fire();
+    }
+  }catch(e){}
 }
 
 /* HDG audio refactor: one pointerdown route for buttons, onclick buttonTap is debounced */

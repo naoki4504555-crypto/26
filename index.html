@@ -532,36 +532,31 @@ function unlockHdAudio(){
 
 function playClick(){
   const nowMs = Date.now();
-  if(nowMs - hdLastPicoAt < 140) return;
+  if(nowMs - hdLastPicoAt < 120) return;
   hdLastPicoAt = nowMs;
-
   const ctx = unlockHdAudio();
   if(!ctx) return;
-
-  const fire = () => {
-    try{
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "square";
-      osc.frequency.setValueAtTime(980, now);
-      osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.15);
-    }catch(e){}
+  const fire = ()=>{
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type='square';
+    osc.frequency.value=1200;
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.25, now+0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now+0.09);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now+0.1);
   };
-
-  if(ctx.state === "suspended"){
-    const p = ctx.resume();
-    if(p && p.then) p.then(fire).catch(()=>{});
-  }else{
-    fire();
-  }
+  try{
+    if(ctx.state==='suspended'){
+      ctx.resume().then(fire);
+    }else{
+      fire();
+    }
+  }catch(e){}
 }
 
 function startTitleBgm(){
@@ -662,39 +657,20 @@ function showTitle(){playClick();sessionStorage.setItem('hd_title_unlocked','1')
 function goStory(){
   stopTitleBgm();
   playClick();
-  if(location.hash !== '#story'){ history.pushState({screen:'story'}, '', '#story'); }
+  if(location.hash !== '#story'){
+    history.pushState({screen:'story'}, '', '#story');
+  }
   renderStages();
   document.getElementById('titleScreen').classList.remove('active');
   document.getElementById('storyScreen').classList.add('active');
   startStoryBgm();
 }
-function goBattle(){playClick();sessionStorage.setItem('hd_freebattle_entry_time', String(Date.now()));setTimeout(()=>{location.href='./freebattle.html';},170);}
-
-const novelLinesByStage = {
-  1: [
-  {speaker:'？？？', text:`たった一本のダガーをハートに秘めているか？`, char:'none'},
-  {speaker:'ツルギ', text:`よお！俺の名前はツルギ！`, char:'tsurugi'},
-  {speaker:'ツルギ', text:`超絶シンプル読み合いバトル！「ハート＆ダガー」で天下をとる男だ！`, char:'tsurugi'},
-  {speaker:'ツルギ', text:`全国のハーダガリストをなぎ倒して、必ずハーダガマスターになってやる！`, char:'tsurugi'},
-  {speaker:'マモル', text:`相変わらずでかい独り言だな。
-ツルギ。`, char:'mamoru'},
-  {speaker:'ツルギ', text:`げっ！いたのかマモル！`, char:'tsurugi'},
-  {speaker:'マモル', text:`少しよからぬ情報を入手してな。`, char:'mamoru'},
-  {speaker:'マモル', text:`ハーダガ四天王が本格的にこの街を制圧しようとしているらしい。`, char:'mamoru'},
-  {speaker:'マモル', text:`なんとしてもヤツらを止めねばならん。`, char:'mamoru'},
-  {speaker:'ツルギ', text:`ハーダガ四天王ってあのめちゃくちゃ強い4人組だろ？
-俺もいっしょに行くぜ！`, char:'tsurugi'},
-  {speaker:'マモル', text:`ふん。
-ハーダガリストが馴れ合いとは笑わせてくれるな。`, char:'mamoru'},
-  {speaker:'マモル', text:`あいつらは俺1人で止めてみせる。`, char:'mamoru'},
-  {speaker:'ツルギ', text:`ちぇっ！
-かわいげのないやつ！`, char:'tsurugi'},
-  {speaker:'マモル', text:`だがお前と久々に勝負してやらんこともないぞ。
-ツルギも四天王もまとめて倒す。`, char:'mamoru'},
-  {speaker:'マモル', text:`ハーダガマスターになるのはこの俺だ。`, char:'mamoru'},
-  {speaker:'ツルギ', text:`おもしれーじゃん！！
-早速勝負しようぜ！`, char:'tsurugi'}
-]
+function goBattle(){
+  playClick();
+  sessionStorage.setItem('hd_freebattle_entry_time', String(Date.now()));
+  setTimeout(()=>{
+    location.href='./freebattle.html';
+  },170);
 };
 let novelIdx = 0;
 let currentNovelStage = 1;
