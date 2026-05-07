@@ -699,16 +699,35 @@ function closeHowto(event){
   if(modal)modal.classList.remove('active');
 }
 
+
+function showStoryModeScreen(){
+  const gate=document.getElementById('tapStartScreen');
+  if(gate)gate.classList.add('hidden');
+
+  const title=document.getElementById('titleScreen');
+  const story=document.getElementById('storyScreen');
+  const novel=document.getElementById('novelScreen');
+  const free=document.getElementById('freeBattleScreen');
+  const frame=document.getElementById('freeBattleFrame');
+
+  if(title)title.classList.remove('active');
+  if(novel)novel.classList.remove('active');
+  if(free)free.classList.remove('active');
+  if(frame)frame.src='about:blank';
+
+  if(story)story.classList.add('active');
+
+  renderStages();
+  stopTitleBgm();
+  startStoryBgm();
+}
+
 function showTitle(){playClick();sessionStorage.setItem('hd_title_unlocked','1');const gate=document.getElementById('tapStartScreen');if(gate)gate.classList.add('hidden');stopStoryBgm();const free=document.getElementById('freeBattleScreen');if(free)free.classList.remove('active');const frame=document.getElementById('freeBattleFrame');if(frame)frame.src='about:blank';document.getElementById('novelScreen')?.classList.remove('active');document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');startTitleBgm();}
 function goStory(){
-  stopTitleBgm();
   playClick();
-  renderStages();
+  sessionStorage.setItem('hd_title_unlocked','1');
   history.replaceState({screen:'story'}, '', '#story');
-  document.getElementById('titleScreen').classList.remove('active');
-  document.getElementById('novelScreen')?.classList.remove('active');
-  document.getElementById('storyScreen').classList.add('active');
-  startStoryBgm();
+  showStoryModeScreen();
 }
 
 function returnFromFreeBattle(){
@@ -742,7 +761,11 @@ function goBattle(){
   const frame=document.getElementById('freeBattleFrame');
   if(screen)screen.classList.add('active');
   if(frame){
-    // 毎回まっさらなフリーバトルから開始
+    frame.onload = ()=>{
+      try{
+        frame.contentWindow.postMessage({type:'HDG_START_FREE_BGM'}, '*');
+      }catch(e){}
+    };
     frame.src = './freebattle.html?v=' + Date.now();
   }
 }
@@ -861,14 +884,7 @@ function clearStage(i){
 
 
 function showStoryScreenFromHash(){
-  renderStages();
-  document.getElementById('titleScreen').classList.remove('active');
-  document.getElementById('storyScreen').classList.add('active');
-  if(sessionStorage.getItem('hd_return_story_select') === '1'){
-    startStoryBgmReturn();
-  }else{
-    startStoryBgm();
-  }
+  showStoryModeScreen();
 }
 
 window.addEventListener('pageshow',()=>{
@@ -905,27 +921,27 @@ window.addEventListener('DOMContentLoaded',()=>{
     if(gate)gate.classList.remove('hidden','starting');
     document.getElementById('novelScreen')?.classList.remove('active');
     document.getElementById('storyScreen').classList.remove('active');
+    document.getElementById('freeBattleScreen')?.classList.remove('active');
     document.getElementById('titleScreen').classList.add('active');
     return;
   }
 
-  const returnedFromFreebattle = sessionStorage.getItem('hd_return_title_bgm') === '1';
-  if(returnedFromFreebattle){
-    sessionStorage.removeItem('hd_return_title_bgm');
+  restoreTitleFromFreebattle();
+
+  if(location.hash === '#story'){
     sessionStorage.setItem('hd_title_unlocked','1');
     hdTitleUnlocked = true;
+    showStoryModeScreen();
+    return;
   }
 
   if(hdTitleUnlocked){
     if(gate)gate.classList.add('hidden');
     document.getElementById('novelScreen')?.classList.remove('active');
     document.getElementById('storyScreen').classList.remove('active');
+    document.getElementById('freeBattleScreen')?.classList.remove('active');
     document.getElementById('titleScreen').classList.add('active');
     startTitleBgm();
-  }
-
-  if(location.hash === '#story'){
-    showStoryScreenFromHash();
   }
 });
 </script>

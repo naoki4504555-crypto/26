@@ -25,6 +25,21 @@ window.addEventListener("pageshow", ()=>{ ensureBattleBgm(); });
 document.addEventListener("pointerdown", ()=>{ ensureBattleBgm(); }, {capture:true, passive:true});
 document.addEventListener("click", ()=>{ ensureBattleBgm(); }, {capture:true, passive:true});
 
+
+/* HDG iframe auto BGM from parent */
+window.addEventListener("message", (ev)=>{
+  if(ev && ev.data && ev.data.type === "HDG_START_FREE_BGM"){
+    ensureBattleBgm();
+  }
+});
+
+
+/* HDG freebattle auto BGM boot */
+window.addEventListener("DOMContentLoaded", ()=>{ ensureBattleBgm(); });
+window.addEventListener("load", ()=>{ ensureBattleBgm(); });
+window.addEventListener("pageshow", ()=>{ ensureBattleBgm(); });
+document.addEventListener("pointerdown", ()=>{ ensureBattleBgm(); }, {capture:true, passive:true});
+
 </script>
 
 <meta charset="UTF-8">
@@ -34,7 +49,12 @@ document.addEventListener("click", ()=>{ ensureBattleBgm(); }, {capture:true, pa
 :root{--blue:#39a8ff;--red:#e04248;--gold:#f0c35a;}
 *{box-sizing:border-box}
 body{margin:0;flex: 0 0 auto;
-  min-height:100vh;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:#fff;background:linear-gradient(135deg,#07111f,#170909 55%,#050505);overflow-x:hidden}
+  min-height:100vh;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:#fff;
+  background:
+    radial-gradient(circle at 20% 12%, rgba(255,244,174,.72), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(160,224,255,.55), transparent 30%),
+    linear-gradient(135deg,#78c8ff 0%,#aee8ff 32%,#fff1b8 68%,#ffd6aa 100%);
+  overflow-x:hidden}
 .wrap{max-width:1180px;margin:0 auto;padding:16px}
 .title{text-align:center;margin:10px 0 12px}
 .title-main{font-size:clamp(30px,5vw,58px);font-weight:900;color:#ffe9a8;text-shadow:0 0 12px #000,0 0 24px rgba(240,195,90,.35)}
@@ -1954,6 +1974,53 @@ body.sokkoo-special-shake {
   }
 }
 
+
+/* HDG gentle bright freebattle background */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 15% 80%, rgba(255,255,255,.38), transparent 24%),
+    radial-gradient(circle at 75% 78%, rgba(255,238,180,.35), transparent 28%),
+    linear-gradient(to bottom, rgba(255,255,255,.34), rgba(255,255,255,.08));
+}
+.wrap{
+  background:rgba(255,255,255,.10);
+  border-radius:24px;
+  box-shadow:0 12px 34px rgba(70,130,180,.18);
+}
+.title-main{
+  color:#5b3413;
+  text-shadow:0 2px 0 rgba(255,255,255,.75),0 0 18px rgba(255,250,210,.75);
+}
+.mode-box,
+.start-screen,
+.side,
+.vs,
+.logbox,
+.rules-panel{
+  box-shadow:0 10px 26px rgba(80,120,150,.18);
+}
+.panel.player{
+  background:linear-gradient(135deg,rgba(94,177,238,.82),rgba(42,105,178,.82));
+  border-color:rgba(255,255,255,.74);
+}
+.panel.enemy{
+  background:linear-gradient(135deg,rgba(255,144,144,.84),rgba(213,77,83,.84));
+  border-color:rgba(255,255,255,.72);
+}
+.side{
+  background:rgba(255,255,255,.18);
+  border-color:rgba(255,255,255,.34);
+}
+.logbox{
+  background:rgba(255,255,255,.22);
+  border-color:rgba(255,255,255,.35);
+}
+
 </style>
 </head>
 <body>
@@ -2134,17 +2201,7 @@ function ensureBattleBgm(){
     audio.volume = 0.18;
     const p = audio.play();
     if(p && p.catch){
-      p.catch(()=>{
-        const retry = ()=>{
-          try{
-            audio.play().catch(()=>{});
-          }catch(e){}
-          document.removeEventListener("pointerdown", retry);
-          document.removeEventListener("click", retry);
-        };
-        document.addEventListener("pointerdown", retry, {once:true});
-        document.addEventListener("click", retry, {once:true});
-      });
+      p.catch(()=>{});
     }
   }catch(e){}
 }
