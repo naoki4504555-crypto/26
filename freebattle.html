@@ -17,6 +17,7 @@
     location.replace("./index.html");
   }
 })();
+
 </script>
 
 <meta charset="UTF-8">
@@ -2154,6 +2155,34 @@ function buttonTap(){
 }
 
 
+
+/* HDG one-time silent audio unlock */
+let hdAudioUnlockedOnce = false;
+
+function unlockAudioOnce(){
+  if(hdAudioUnlockedOnce) return;
+  hdAudioUnlockedOnce = true;
+
+  try{
+    const ctx = unlockAudio();
+    if(!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    gain.gain.setValueAtTime(0.000001, now);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.001);
+  }catch(e){}
+}
+
+window.addEventListener("pointerdown", unlockAudioOnce, { once:true, passive:true });
+
 function clearBattleResultLabels(){
   const p = document.getElementById("playerResultLabel");
   const e = document.getElementById("enemyResultLabel");
@@ -3044,7 +3073,24 @@ window.addEventListener("load", updateBgmButtons);
 
 <script>
 (function(){
-  function setupBackButton(){
+  
+function playBackTitlePicoReliable(){
+  const se = document.getElementById("backTitlePico");
+  if(se){
+    try{
+      se.pause();
+      se.currentTime = 0;
+      const p = se.play();
+      if(p && p.catch){
+        p.catch(()=>{ buttonTap(); });
+      }
+      return;
+    }catch(e){}
+  }
+  buttonTap();
+}
+
+function setupBackButton(){
     const btn = document.getElementById('hdBackTitleBtn');
     if(!btn || btn.dataset.ready === '1') return;
     btn.dataset.ready = '1';
