@@ -813,18 +813,37 @@ function showStoryScreenFromHash(){
   }
 }
 
+
+function restoreTitleFromFreebattle(){
+  if(sessionStorage.getItem('hd_return_title_bgm') !== '1') return;
+  sessionStorage.removeItem('hd_return_title_bgm');
+  sessionStorage.setItem('hd_title_unlocked','1');
+  hdTitleUnlocked = true;
+
+  const gate=document.getElementById('tapStartScreen');
+  if(gate)gate.classList.add('hidden');
+
+  document.getElementById('novelScreen')?.classList.remove('active');
+  document.getElementById('storyScreen').classList.remove('active');
+  document.getElementById('titleScreen').classList.add('active');
+
+  // history.back() で戻った場合は、以前ユーザー操作で鳴っていた音声状態を復帰しやすい
+  startTitleBgm();
+
+  // Safariで復帰直後だけ弾かれた場合の保険。次の操作で即復帰。
+  const retry=()=>{
+    if(sessionStorage.getItem('hd_title_unlocked') === '1'){
+      startTitleBgm();
+    }
+    window.removeEventListener('pointerdown', retry);
+    window.removeEventListener('click', retry);
+  };
+  window.addEventListener('pointerdown', retry, {once:true});
+  window.addEventListener('click', retry, {once:true});
+}
+
 window.addEventListener('pageshow',()=>{
-  if(sessionStorage.getItem('hd_return_title_bgm') === '1'){
-    sessionStorage.removeItem('hd_return_title_bgm');
-    sessionStorage.setItem('hd_title_unlocked','1');
-    hdTitleUnlocked = true;
-    const gate=document.getElementById('tapStartScreen');
-    if(gate)gate.classList.add('hidden');
-    document.getElementById('novelScreen')?.classList.remove('active');
-    document.getElementById('storyScreen').classList.remove('active');
-    document.getElementById('titleScreen').classList.add('active');
-    startTitleBgm();
-  }
+  restoreTitleFromFreebattle();
 });
 
 window.addEventListener('DOMContentLoaded',()=>{
@@ -851,12 +870,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     return;
   }
 
-  const returnedFromFreebattle = sessionStorage.getItem('hd_return_title_bgm') === '1';
-  if(returnedFromFreebattle){
-    sessionStorage.removeItem('hd_return_title_bgm');
-    sessionStorage.setItem('hd_title_unlocked','1');
-    hdTitleUnlocked = true;
-  }
+  restoreTitleFromFreebattle();
 
   if(hdTitleUnlocked){
     if(gate)gate.classList.add('hidden');

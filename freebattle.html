@@ -3074,22 +3074,6 @@ window.addEventListener("load", updateBgmButtons);
 <script>
 (function(){
   
-function playBackTitlePicoReliable(){
-  const se = document.getElementById("backTitlePico");
-  if(se){
-    try{
-      se.pause();
-      se.currentTime = 0;
-      const p = se.play();
-      if(p && p.catch){
-        p.catch(()=>{ buttonTap(); });
-      }
-      return;
-    }catch(e){}
-  }
-  buttonTap();
-}
-
 function setupBackButton(){
     const btn = document.getElementById('hdBackTitleBtn');
     if(!btn || btn.dataset.ready === '1') return;
@@ -3100,8 +3084,14 @@ function setupBackButton(){
       sessionStorage.setItem('hd_title_unlocked','1');
       sessionStorage.setItem('hd_return_title_bgm','1');
       sessionStorage.removeItem('hd_freebattle_entry_time');
+
       setTimeout(function(){
-        location.href = './index.html';
+        // 新規読み込みだとBGM自動再生がSafariに止められやすいので、元のindexへ履歴復帰を優先
+        if(history.length > 1){
+          history.back();
+        }else{
+          location.href = './index.html';
+        }
       }, 170);
     });
   }
