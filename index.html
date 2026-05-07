@@ -392,6 +392,8 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   </div>
 </section>
 
+
+<audio id="titleBgm" src="./taiko-thunder.mp3" preload="auto" loop></audio>
 <audio id="storyBgm" src="./story-bgm.mp3" loop preload="auto"></audio>
 
 <script>
@@ -424,7 +426,29 @@ function playClick(){
     osc.stop(now+0.15);
   }catch(e){}
 }
+
+function startTitleBgm(){
+  const bgm = document.getElementById('titleBgm');
+  const story = document.getElementById('storyBgm');
+  if(story){
+    story.pause();
+    story.currentTime = 0;
+  }
+  if(!bgm) return;
+  bgm.volume = 0.42;
+  const p = bgm.play();
+  if(p && p.catch) p.catch(()=>{});
+}
+
+function stopTitleBgm(){
+  const bgm = document.getElementById('titleBgm');
+  if(!bgm) return;
+  bgm.pause();
+  bgm.currentTime = 0;
+}
+
 function startStoryBgm(){
+  stopTitleBgm();
   const bgm=document.getElementById('storyBgm');
   if(!bgm)return;
   bgm.pause();
@@ -460,8 +484,9 @@ function closeHowto(event){
   if(modal)modal.classList.remove('active');
 }
 
-function showTitle(){playClick();stopStoryBgm();document.getElementById('novelScreen')?.classList.remove('active');document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');}
+function showTitle(){playClick();stopStoryBgm();document.getElementById('novelScreen')?.classList.remove('active');document.getElementById('storyScreen').classList.remove('active');document.getElementById('titleScreen').classList.add('active');startTitleBgm();}
 function goStory(){
+  stopTitleBgm();
   playClick();
   if(location.hash !== '#story'){ history.pushState({screen:'story'}, '', '#story'); }
   renderStages();
@@ -620,6 +645,7 @@ function showStoryScreenFromHash(){
   }
 }
 window.addEventListener('DOMContentLoaded',()=>{
+  startTitleBgm();
   if(window.__HD_RELOADED__){
     if(location.hash){
       history.replaceState(null, '', location.pathname);
