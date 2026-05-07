@@ -1927,25 +1927,6 @@ body.sokkoo-special-shake {
 }
 
 
-/* タイトルへ戻るボタン（統合版で追加） */
-#hdBackTitleBtn{
-  position:fixed;
-  top:calc(10px + env(safe-area-inset-top));
-  left:calc(10px + env(safe-area-inset-left));
-  z-index:99999;
-  padding:9px 13px;
-  border-radius:999px;
-  border:2px solid rgba(255,255,255,.9);
-  background:rgba(0,0,0,.62);
-  color:#fff;
-  font-weight:900;
-  font-size:14px;
-  box-shadow:0 3px 12px rgba(0,0,0,.45);
-  backdrop-filter: blur(3px);
-}
-#hdBackTitleBtn:active{transform:translateY(1px) scale(.98);}
-
-
 /* HDG fix: smartphone Sokkoo effect must not shake bottom remaining-card UI */
 @media (max-width: 767px){
   body.sokkoo-special-shake{
@@ -1970,48 +1951,50 @@ body.sokkoo-special-shake {
 }
 
 
-/* HDG freebattle sign heading */
+
+/* HDG freebattle cool English heading */
 .freebattle-sign{
   display:flex;
+  flex-direction:column;
+  align-items:center;
   justify-content:center;
   margin:8px 0 14px;
 }
 .freebattle-sign .title-main{
   display:inline-block;
-  padding:10px 34px 12px;
-  border:4px solid #2a1008;
-  border-radius:18px;
-  background:linear-gradient(#ffeaa0,#d8982a 55%,#9f5c12);
-  color:#261005;
+  padding:8px 28px 9px;
+  border:3px solid rgba(255,236,160,.95);
+  border-radius:999px;
+  background:linear-gradient(135deg,rgba(0,0,0,.72),rgba(55,20,12,.72));
+  color:#ffe9a8;
+  font-size:clamp(30px,5vw,58px);
   font-weight:1000;
-  letter-spacing:.08em;
-  text-shadow:0 2px 0 rgba(255,255,255,.45);
-  box-shadow:0 5px 0 #4b2208,0 0 0 3px rgba(255,255,255,.25) inset,0 10px 28px rgba(0,0,0,.45);
+  letter-spacing:.10em;
+  text-shadow:0 2px 0 #000,0 0 18px rgba(255,210,90,.65);
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,.16) inset,
+    0 0 24px rgba(255,196,70,.26),
+    0 10px 26px rgba(0,0,0,.46);
 }
-/* HDG title button moved beside howto */
-#hdBackTitleBtn{
-  position:static !important;
-  top:auto !important;
-  left:auto !important;
-  z-index:auto !important;
-  padding:inherit;
-  border-radius:inherit;
-  border:inherit;
-  background:inherit;
-  color:inherit;
-  font-weight:inherit;
-  font-size:inherit;
-  box-shadow:inherit;
-  backdrop-filter:none;
+.freebattle-sign .title-sub{
+  margin-top:6px;
+  padding:4px 22px 5px;
+  border-radius:999px;
+  background:linear-gradient(#e7bb5b,#b9852e);
+  color:#2a1008;
+  border:2px solid #2a1008;
+  font-weight:1000;
+  font-size:clamp(12px,2.5vw,18px);
+  letter-spacing:.16em;
+  box-shadow:0 4px 0 rgba(0,0,0,.36);
 }
-#hdBackTitleBtn:active{transform:translateY(1px) scale(.98);}
 
 </style>
 </head>
 <body>
 <div id="sokkooFinishOverlay" class="sokkoo-finish-overlay"></div>
 <div class="wrap">
-  <div class="title"><div class="title-main">フリーバトル</div></div>
+  <div class="title"><div class="title-main">FREE BATTLE</div></div>
 
   <div class="mode-box">
     <div class="mode-title">ゲームモード</div>
