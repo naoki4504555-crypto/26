@@ -664,21 +664,25 @@ function unlockTitleStart(event){
 
 function startStoryBgm(){
   stopTitleBgm();
-const bgm=document.getElementById('storyBgm');
+  const bgm=document.getElementById('storyBgm');
   if(!bgm)return;
   bgm.pause();
   try{ bgm.currentTime = 0; }catch(e){}
   bgm.volume=0.42;
-  bgm.play().catch(()=>{
-    const retry=()=>{
-      try{ bgm.currentTime = 0; }catch(e){}
-      bgm.play().catch(()=>{});
-      document.body.removeEventListener('pointerdown',retry);
-      document.body.removeEventListener('click',retry);
-    };
-    document.body.addEventListener('pointerdown',retry,{once:true});
-    document.body.addEventListener('click',retry,{once:true});
-  });
+
+  const tryPlay=()=>{
+    const p = bgm.play();
+    if(p && p.catch) p.catch(()=>{});
+  };
+  tryPlay();
+
+  const retry=()=>{
+    tryPlay();
+    document.body.removeEventListener('pointerdown',retry);
+    document.body.removeEventListener('click',retry);
+  };
+  document.body.addEventListener('pointerdown',retry,{once:true});
+  document.body.addEventListener('click',retry,{once:true});
 }
 function stopStoryBgm(){
   const bgm=document.getElementById('storyBgm');
@@ -759,21 +763,28 @@ function goBattle(){
 
   const screen=document.getElementById('freeBattleScreen');
   const frame=document.getElementById('freeBattleFrame');
+
   if(screen)screen.classList.add('active');
+
   if(frame){
-    const startFreeBgm = ()=>{
+    const sendStart=()=>{
       try{
         frame.contentWindow.postMessage({type:'HDG_START_FREE_BGM'}, '*');
       }catch(e){}
     };
-    frame.onload = ()=>{
-      startFreeBgm();
-      setTimeout(startFreeBgm, 120);
-      setTimeout(startFreeBgm, 450);
-      setTimeout(startFreeBgm, 900);
+
+    frame.onload=()=>{
+      sendStart();
+      setTimeout(sendStart,50);
+      setTimeout(sendStart,150);
+      setTimeout(sendStart,350);
+      setTimeout(sendStart,700);
     };
-    frame.src = './freebattle.html?v=' + Date.now();
-    setTimeout(startFreeBgm, 80);
+
+    frame.src='./freebattle.html?v='+Date.now();
+
+    sendStart();
+    setTimeout(sendStart,20);
   }
 }
 let novelIdx = 0;
@@ -857,6 +868,12 @@ document.addEventListener('pointerup',(e)=>{
   if(e.target && e.target.closest && e.target.closest('.novel-back'))return;
   advanceNovel();
 });
+
+
+let clearedStage = Number(localStorage.getItem("hd_story_cleared") || "0");
+let unlockedStage = Number(localStorage.getItem("hd_story_unlocked") || "1");
+if(!Number.isFinite(clearedStage)) clearedStage = 0;
+if(!Number.isFinite(unlockedStage) || unlockedStage < 1) unlockedStage = 1;
 
 function renderStages(){
   const grid=document.getElementById('stageGrid'); grid.innerHTML='';

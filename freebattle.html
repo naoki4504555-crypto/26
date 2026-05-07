@@ -29,17 +29,20 @@ document.addEventListener("click", ()=>{ ensureBattleBgm(); }, {capture:true, pa
 /* HDG iframe auto BGM from parent */
 window.addEventListener("message", (ev)=>{
   if(ev && ev.data && ev.data.type === "HDG_START_FREE_BGM"){
-    ensureBattleBgm();
+    ensureBattleBgm(true);
   }
 });
-
-
 /* HDG freebattle auto BGM boot */
 window.addEventListener("DOMContentLoaded", ()=>{ ensureBattleBgm(); });
 window.addEventListener("load", ()=>{ ensureBattleBgm(); });
 window.addEventListener("pageshow", ()=>{ ensureBattleBgm(); });
 document.addEventListener("pointerdown", ()=>{ ensureBattleBgm(); }, {capture:true, passive:true});
 
+
+/* HDG freebattle autoplay recovery */
+window.addEventListener("DOMContentLoaded", ()=>{ ensureBattleBgm(false); });
+window.addEventListener("pageshow", ()=>{ ensureBattleBgm(false); });
+document.addEventListener("pointerdown", ()=>{ ensureBattleBgm(true); }, {capture:true, passive:true});
 </script>
 
 <meta charset="UTF-8">
@@ -2159,15 +2162,31 @@ function unlockAudio(){
 }
 
 
-function ensureBattleBgm(){
+function ensureBattleBgm(forceUnlock){
   try{
     const audio = document.getElementById("bgm");
     if(!audio) return;
+
     audio.loop = true;
     audio.volume = 0.18;
+
+    if(forceUnlock){
+      try{ unlockAudio(); }catch(e){}
+    }
+
     const p = audio.play();
+
     if(p && p.catch){
-      p.catch(()=>{});
+      p.catch(()=>{
+        const retry = ()=>{
+          try{
+            unlockAudio();
+            audio.play().catch(()=>{});
+          }catch(e){}
+        };
+        window.addEventListener('pointerdown', retry, {once:true,capture:true});
+        window.addEventListener('click', retry, {once:true,capture:true});
+      });
     }
   }catch(e){}
 }
