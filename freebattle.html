@@ -19,20 +19,19 @@
 })();
 
 
-/* HDG always freebattle BGM final */
-window.addEventListener("load", ()=>{ ensureBattleBgm(); });
-window.addEventListener("pageshow", ()=>{ ensureBattleBgm(); });
-document.addEventListener("pointerdown", ()=>{ ensureBattleBgm(); }, {capture:true, passive:true});
-document.addEventListener("click", ()=>{ ensureBattleBgm(); }, {capture:true, passive:true});
-
-
-
 /* HDG child BGM disabled; parent owns freebattle BGM */
 window.addEventListener("message", (ev)=>{
   if(ev && ev.data && ev.data.type === "HDG_STOP_FREE_BGM"){
     try{ stopBgm(); }catch(e){}
   }
 });
+/* HDG iframe class for Safari bottom UI */
+try{
+  if(window.parent && window.parent !== window){
+    document.documentElement.classList.add("hdg-iframe-mode");
+  }
+}catch(e){}
+
 </script>
 
 <meta charset="UTF-8">
@@ -1984,6 +1983,31 @@ body.sokkoo-special-shake {
 
 
 
+
+
+/* HDG mobile bottom toolbar fix: keep bar size, move it above Safari UI */
+@media (max-width: 859px){
+  .controls{
+    bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+  }
+  body{
+    padding-bottom: calc(238px + 92px + env(safe-area-inset-bottom)) !important;
+  }
+}
+@media (max-width: 390px){
+  .controls{
+    bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+  }
+  body{
+    padding-bottom: calc(226px + 92px + env(safe-area-inset-bottom)) !important;
+  }
+}
+@media (display-mode: standalone){
+  .controls{
+    bottom: 0 !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2154,27 +2178,7 @@ return ctx;
 
 
 function ensureBattleBgm(forceUnlock){
-  try{
-    const audio = document.getElementById("bgm");
-    if(!audio) return;
-
-    audio.loop = true;
-    audio.volume = 0.18;
-
-    const p = audio.play();
-
-    if(p && p.catch){
-      p.catch(()=>{
-        const retry = ()=>{
-          try{
-            audio.play().catch(()=>{});
-          }catch(e){}
-        };
-        window.addEventListener('pointerdown', retry, {once:true,capture:true});
-        window.addEventListener('click', retry, {once:true,capture:true});
-      });
-    }
-  }catch(e){}
+  /* child iframe BGM disabled: parent page owns Free Battle BGM */
 }
 
 function buttonTap(){
@@ -2287,8 +2291,7 @@ function clearHistoryLog(){
 }
 
 function startGame(){
-  ensureBattleBgm();
-  clearHistoryLog();
+clearHistoryLog();
 clearEnemyCallTimer();
   player = makeHand();
   enemy = makeHand();
@@ -3043,10 +3046,12 @@ function ensureBattleBgm(forceUnlock){
   }catch(e){}
 }
 
-function startBgm(){ ensureBattleBgm(true); }
+function startBgm(){
+  /* child iframe BGM disabled */
+}
 
 function stopBgm(){
-  const audio = getBgmAudio ? getBgmAudio() : document.getElementById("bgm");
+  const audio = document.getElementById("bgm");
   bgmEnabled = false;
   if(audio){
     audio.pause();
@@ -3054,7 +3059,9 @@ function stopBgm(){
   }
 }
 
-function toggleBgm(){ ensureBattleBgm(true); }
+function toggleBgm(){
+  /* child iframe BGM disabled */
+}
 
 </script>
 <div id="sokkooOverlay" class="sokkoo-overlay"></div>
@@ -3109,7 +3116,7 @@ function toggleBgm(){ ensureBattleBgm(true); }
 </div>
 
 
-<audio id="bgm" src="mailbox-marimba.mp3" loop preload="auto"></audio>
+<audio id="bgm" preload="none"></audio>
 
 <script>
 (function(){
