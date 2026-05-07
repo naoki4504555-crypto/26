@@ -407,7 +407,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 </head>
 <body>
 
-<div id="tapStartScreen" onpointerdown="unlockTitleStart(event)">
+<div id="tapStartScreen" onpointerdown="unlockTitleStart(event)" onclick="unlockTitleStart(event)">
   <div class="tap-start-logo">HEART & DAGGER</div>
   <div class="tap-start-text">TAP TO START</div>
   <div class="tap-start-sub">画面をタップして開始</div>
@@ -592,14 +592,15 @@ function unlockTitleStart(event){
     event.preventDefault();
     event.stopPropagation();
   }
-  if(hdTitleUnlocked)return;
+  if(hdTitleUnlocked)return false;
+
   hdTitleUnlocked = true;
   sessionStorage.setItem('hd_title_unlocked','1');
 
   const gate = document.getElementById('tapStartScreen');
   if(gate){
     gate.classList.add('starting');
-    setTimeout(()=>gate.classList.add('hidden'),950);
+    setTimeout(()=>gate.classList.add('hidden'),900);
   }
 
   playClick();
@@ -611,11 +612,13 @@ function unlockTitleStart(event){
 
   startTitleBgm();
 
-  setTimeout(()=>{ flash.classList.add('show'); },20);
+  setTimeout(()=>flash.classList.add('show'),20);
   setTimeout(()=>{
     flash.classList.remove('show');
     setTimeout(()=>flash.remove(),600);
   },1800);
+
+  return false;
 }
 
 function startStoryBgm(){
@@ -816,6 +819,11 @@ function showStoryScreenFromHash(){
   }
 }
 window.addEventListener('DOMContentLoaded',()=>{
+  const tapGate=document.getElementById('tapStartScreen');
+  if(tapGate){
+    tapGate.addEventListener('pointerdown', unlockTitleStart, {passive:false});
+    tapGate.addEventListener('click', unlockTitleStart, {passive:false});
+  }
   const gate=document.getElementById('tapStartScreen');
 
   if(window.__HD_RELOADED__){
