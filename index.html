@@ -521,43 +521,36 @@ function getClickAudioCtx(){
 
 function playReliablePico(){
   try{
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if(!AC)return;
-    const ctx = window.__hdReliablePicoCtx || (window.__hdReliablePicoCtx = new AC());
-    if(ctx.state === 'suspended')ctx.resume();
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(980, now);
-    osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.15);
+    const ctx = getClickAudioCtx();
+    const fire = () => {
+      try{
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(980, now);
+        osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      }catch(e){}
+    };
+    if(ctx.state === "suspended"){
+      const p = ctx.resume();
+      if(p && p.then){ p.then(fire).catch(()=>{}); }
+      else { fire(); }
+    }else{
+      fire();
+    }
   }catch(e){}
 }
 
 function playClick(){
-  try{
-    const ctx=getClickAudioCtx();
-    const now=ctx.currentTime;
-    const osc=ctx.createOscillator();
-    const gain=ctx.createGain();
-    osc.type="square";
-    osc.frequency.setValueAtTime(980,now);
-    osc.frequency.exponentialRampToValueAtTime(1460,now+0.055);
-    gain.gain.setValueAtTime(0.0001,now);
-    gain.gain.exponentialRampToValueAtTime(0.34,now+0.008);
-    gain.gain.exponentialRampToValueAtTime(0.0001,now+0.14);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now+0.15);
-  }catch(e){}
+  playReliablePico();
 }
 
 
@@ -575,7 +568,6 @@ function unlockTitleStart(event){
     gate.classList.add('starting');
     setTimeout(()=>gate.classList.add('hidden'),950);
   }
-  playReliablePico();
   playClick();
 
   const flash=document.createElement('div');
@@ -829,6 +821,13 @@ window.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('storyScreen').classList.remove('active');
     document.getElementById('titleScreen').classList.add('active');
     return;
+  }
+
+  const returnedFromFreebattle = sessionStorage.getItem('hd_return_title_bgm') === '1';
+  if(returnedFromFreebattle){
+    sessionStorage.removeItem('hd_return_title_bgm');
+    sessionStorage.setItem('hd_title_unlocked','1');
+    hdTitleUnlocked = true;
   }
 
   if(hdTitleUnlocked){

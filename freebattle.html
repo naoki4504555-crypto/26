@@ -2124,20 +2124,31 @@ function unlockAudio(){
 function playReliableButtonPico(){
   try{
     const ctx = getAudioContext();
-    if(ctx.state === "suspended") ctx.resume();
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "square";
-    osc.frequency.setValueAtTime(980, now);
-    osc.frequency.exponentialRampToValueAtTime(1460, now + 0.045);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.36, now + 0.006);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.13);
+    const fire = () => {
+      try{
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(980, now);
+        osc.frequency.exponentialRampToValueAtTime(1460, now + 0.055);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.34, now + 0.008);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      }catch(e){}
+    };
+    if(ctx.state === "suspended"){
+      const p = ctx.resume();
+      if(p && p.then){ p.then(fire).catch(()=>{}); }
+      else { fire(); }
+    }else{
+      fire();
+    }
+    audioUnlocked = true;
   }catch(e){
     audioCtx = null;
   }
@@ -2150,14 +2161,14 @@ function buttonTap(){
 
 
 
-/* HDG reliable button pico fallback */
+/* HDG unified reliable pico fallback */
 document.addEventListener("pointerdown", (e)=>{
   const btn = e.target && e.target.closest ? e.target.closest("button") : null;
   if(!btn || btn.disabled) return;
-  if(btn.dataset.hdPicoPlayed === "1") return;
-  btn.dataset.hdPicoPlayed = "1";
-  buttonTap();
-  setTimeout(()=>{ btn.dataset.hdPicoPlayed = "0"; }, 180);
+  unlockAudio();
+  if(!btn.getAttribute("onclick")){
+    buttonTap();
+  }
 }, {capture:true, passive:true});
 
 function clearBattleResultLabels(){
@@ -3106,8 +3117,8 @@ window.addEventListener("load", updateBgmButtons);
     btn.addEventListener('click', function(ev){
       ev.preventDefault();
       buttonTap();
-      playBackPico();
       sessionStorage.setItem('hd_title_unlocked','1');
+      sessionStorage.setItem('hd_return_title_bgm','1');
       sessionStorage.removeItem('hd_freebattle_entry_time');
       setTimeout(function(){ location.href = './index.html'; }, 170);
     });
