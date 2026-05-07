@@ -18,6 +18,13 @@
   }
 })();
 
+
+/* HDG always freebattle BGM final */
+window.addEventListener("load", ()=>{ ensureBattleBgm(); });
+window.addEventListener("pageshow", ()=>{ ensureBattleBgm(); });
+document.addEventListener("pointerdown", ()=>{ ensureBattleBgm(); }, {capture:true, passive:true});
+document.addEventListener("click", ()=>{ ensureBattleBgm(); }, {capture:true, passive:true});
+
 </script>
 
 <meta charset="UTF-8">
@@ -1955,10 +1962,7 @@ body.sokkoo-special-shake {
 
 <div id="sokkooFinishOverlay" class="sokkoo-finish-overlay"></div>
 <div class="wrap">
-  <div class="title">
-    <div class="title-main"> ハート＆ダガー </div><br>
-    <div class="ribbon">HEART & DAGGER</div>
-  </div>
+  <div class="title"><div class="title-main">フリーバトル</div></div>
 
   <div class="mode-box">
     <div class="mode-title">ゲームモード</div>
@@ -2124,11 +2128,23 @@ function unlockAudio(){
 
 function ensureBattleBgm(){
   try{
-    if(typeof bgmAudio !== 'undefined' && bgmAudio){
-      bgmAudio.loop = true;
-      bgmAudio.volume = 0.35;
-      const p = bgmAudio.play();
-      if(p && p.catch) p.catch(()=>{});
+    const audio = document.getElementById("bgm");
+    if(!audio) return;
+    audio.loop = true;
+    audio.volume = 0.18;
+    const p = audio.play();
+    if(p && p.catch){
+      p.catch(()=>{
+        const retry = ()=>{
+          try{
+            audio.play().catch(()=>{});
+          }catch(e){}
+          document.removeEventListener("pointerdown", retry);
+          document.removeEventListener("click", retry);
+        };
+        document.addEventListener("pointerdown", retry, {once:true});
+        document.addEventListener("click", retry, {once:true});
+      });
     }
   }catch(e){}
 }
@@ -2982,29 +2998,11 @@ function getBgmAudio(){
   return audio;
 }
 
-function updateBgmButtons(){
-  const label = bgmEnabled ? "BGM ON" : "BGM OFF";
-  document.querySelectorAll(".bgm-toggle-btn").forEach(btn => {
-    btn.innerText = label;
-    btn.classList.toggle("bgm-on", bgmEnabled);
-  });
-}
+function updateBgmButtons(){}
 
-function startBgm(){
-  const audio = getBgmAudio();
-  if(!audio) return;
-  bgmEnabled = true;
-  audio.volume = 0.18;
-  audio.play().catch(()=>{});
-  updateBgmButtons();
-}
+function startBgm(){ ensureBattleBgm(); }
 
-function stopBgm(){
-  const audio = getBgmAudio();
-  bgmEnabled = false;
-  if(audio) audio.pause();
-  updateBgmButtons();
-}
+function stopBgm(){ /* BGM is always on in freebattle */ }
 
 
 
