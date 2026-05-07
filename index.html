@@ -761,12 +761,19 @@ function goBattle(){
   const frame=document.getElementById('freeBattleFrame');
   if(screen)screen.classList.add('active');
   if(frame){
-    frame.onload = ()=>{
+    const startFreeBgm = ()=>{
       try{
         frame.contentWindow.postMessage({type:'HDG_START_FREE_BGM'}, '*');
       }catch(e){}
     };
+    frame.onload = ()=>{
+      startFreeBgm();
+      setTimeout(startFreeBgm, 120);
+      setTimeout(startFreeBgm, 450);
+      setTimeout(startFreeBgm, 900);
+    };
     frame.src = './freebattle.html?v=' + Date.now();
+    setTimeout(startFreeBgm, 80);
   }
 }
 let novelIdx = 0;

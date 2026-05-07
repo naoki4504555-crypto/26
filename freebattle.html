@@ -49,12 +49,7 @@ document.addEventListener("pointerdown", ()=>{ ensureBattleBgm(); }, {capture:tr
 :root{--blue:#39a8ff;--red:#e04248;--gold:#f0c35a;}
 *{box-sizing:border-box}
 body{margin:0;flex: 0 0 auto;
-  min-height:100vh;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:#fff;
-  background:
-    radial-gradient(circle at 20% 12%, rgba(255,244,174,.72), transparent 28%),
-    radial-gradient(circle at 82% 18%, rgba(160,224,255,.55), transparent 30%),
-    linear-gradient(135deg,#78c8ff 0%,#aee8ff 32%,#fff1b8 68%,#ffd6aa 100%);
-  overflow-x:hidden}
+  min-height:100vh;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:#fff;background:linear-gradient(135deg,#07111f,#170909 55%,#050505);overflow-x:hidden}
 .wrap{max-width:1180px;margin:0 auto;padding:16px}
 .title{text-align:center;margin:10px 0 12px}
 .title-main{font-size:clamp(30px,5vw,58px);font-weight:900;color:#ffe9a8;text-shadow:0 0 12px #000,0 0 24px rgba(240,195,90,.35)}
@@ -1975,58 +1970,45 @@ body.sokkoo-special-shake {
 }
 
 
-/* HDG gentle bright freebattle background */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 15% 80%, rgba(255,255,255,.38), transparent 24%),
-    radial-gradient(circle at 75% 78%, rgba(255,238,180,.35), transparent 28%),
-    linear-gradient(to bottom, rgba(255,255,255,.34), rgba(255,255,255,.08));
+/* HDG freebattle sign heading */
+.freebattle-sign{
+  display:flex;
+  justify-content:center;
+  margin:8px 0 14px;
 }
-.wrap{
-  background:rgba(255,255,255,.10);
-  border-radius:24px;
-  box-shadow:0 12px 34px rgba(70,130,180,.18);
+.freebattle-sign .title-main{
+  display:inline-block;
+  padding:10px 34px 12px;
+  border:4px solid #2a1008;
+  border-radius:18px;
+  background:linear-gradient(#ffeaa0,#d8982a 55%,#9f5c12);
+  color:#261005;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-shadow:0 2px 0 rgba(255,255,255,.45);
+  box-shadow:0 5px 0 #4b2208,0 0 0 3px rgba(255,255,255,.25) inset,0 10px 28px rgba(0,0,0,.45);
 }
-.title-main{
-  color:#5b3413;
-  text-shadow:0 2px 0 rgba(255,255,255,.75),0 0 18px rgba(255,250,210,.75);
+/* HDG title button moved beside howto */
+#hdBackTitleBtn{
+  position:static !important;
+  top:auto !important;
+  left:auto !important;
+  z-index:auto !important;
+  padding:inherit;
+  border-radius:inherit;
+  border:inherit;
+  background:inherit;
+  color:inherit;
+  font-weight:inherit;
+  font-size:inherit;
+  box-shadow:inherit;
+  backdrop-filter:none;
 }
-.mode-box,
-.start-screen,
-.side,
-.vs,
-.logbox,
-.rules-panel{
-  box-shadow:0 10px 26px rgba(80,120,150,.18);
-}
-.panel.player{
-  background:linear-gradient(135deg,rgba(94,177,238,.82),rgba(42,105,178,.82));
-  border-color:rgba(255,255,255,.74);
-}
-.panel.enemy{
-  background:linear-gradient(135deg,rgba(255,144,144,.84),rgba(213,77,83,.84));
-  border-color:rgba(255,255,255,.72);
-}
-.side{
-  background:rgba(255,255,255,.18);
-  border-color:rgba(255,255,255,.34);
-}
-.logbox{
-  background:rgba(255,255,255,.22);
-  border-color:rgba(255,255,255,.35);
-}
+#hdBackTitleBtn:active{transform:translateY(1px) scale(.98);}
 
 </style>
 </head>
 <body>
-
-<button id="hdBackTitleBtn" type="button">← タイトル</button>
-
 <div id="sokkooFinishOverlay" class="sokkoo-finish-overlay"></div>
 <div class="wrap">
   <div class="title"><div class="title-main">フリーバトル</div></div>
@@ -2045,6 +2027,7 @@ body::before{
 
   <div class="howto-area">
     <button class="howto-btn" onclick="buttonTap(); openRules()">遊び方</button>
+    <button id="hdBackTitleBtn" class="howto-btn" type="button">タイトルへ</button>
     
   </div>
 
@@ -3045,36 +3028,54 @@ setTimeout(forceMobileRemainCardFrameSize, 100);
 
 
 
-let bgmEnabled = false;
+
+let bgmEnabled = true;
 
 function getBgmAudio(){
   const audio = document.getElementById("bgm");
   if(audio){
     audio.volume = 0.18;
+    audio.loop = true;
   }
   return audio;
 }
 
 function updateBgmButtons(){}
 
+function ensureBattleBgm(){
+  try{
+    const audio = getBgmAudio();
+    if(!audio) return;
+    bgmEnabled = true;
+    const p = audio.play();
+    if(p && p.catch){
+      p.catch(()=>{});
+    }
+  }catch(e){}
+}
+
 function startBgm(){ ensureBattleBgm(); }
 
 function stopBgm(){ /* BGM is always on in freebattle */ }
 
-
+function toggleBgm(){ ensureBattleBgm(); }
 
 document.addEventListener("visibilitychange", () => {
-  if(!document.hidden && bgmEnabled){
-    startBgm();
-  }
+  if(!document.hidden) ensureBattleBgm();
 });
 
 window.addEventListener("pageshow", () => {
-  updateBgmButtons();
-  if(bgmEnabled) startBgm();
+  ensureBattleBgm();
 });
 
-window.addEventListener("load", updateBgmButtons);
+window.addEventListener("load", () => {
+  ensureBattleBgm();
+});
+
+document.addEventListener("pointerdown", () => {
+  ensureBattleBgm();
+}, {capture:true, passive:true});
+
 
 </script>
 <div id="sokkooOverlay" class="sokkoo-overlay"></div>
