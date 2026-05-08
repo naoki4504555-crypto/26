@@ -1987,231 +1987,187 @@ body.sokkoo-special-shake {
 
 
 
-/* HDG static layout + restored historical card sizing */
-/* 固定バー廃止後の並びは維持：スコア → カード/コール → 履歴 → もう一度 */
-body{
-  padding-bottom: 20px !important;
+
+/* ===== REFERENCE CARD UI RESTORE ONLY ===== */
+/* 他UIは変更せず、残りカードアイコン部分のみ復元 */
+
+.card-btn span b {
+  display: inline-block;
+  margin-left: 2px;
+  color: #ffe784;
+  font-size: 1em;
 }
 
-.controls{
-  position: static !important;
-  left: auto !important;
-  right: auto !important;
-  bottom: auto !important;
+.panel.player {
+  display: none !important;
+}
+
+.top-panels {
+  grid-template-columns: 1fr !important;
+}
+
+.panel.enemy .counts {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px !important;
+}
+
+.panel.enemy.sokkoo-enemy .counts {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.panel.enemy .mini-card {
   width: 100% !important;
-  margin: 12px auto 10px !important;
-  transform: none !important;
-  z-index: auto !important;
+  min-width: 0 !important;
+  padding: 4px !important;
+  border-radius:6px !important;
 }
 
-/* スマホ時：以前詰めた版のサイズへ復元 */
+.panel.enemy .mini-card img {
+  height: 46px !important;
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 auto 2px !important;
+  aspect-ratio: 63 / 89;
+  object-fit: cover;
+  border-radius: 5px !important;
+}
+
+.panel.enemy .mini-card b {
+  display: inline !important;
+  font-size: 13px !important;
+  color: #ffe784;
+  margin: 0 !important;
+}
+
+.panel.enemy .mini-card span {
+  display: block !important;
+  font-size: 13px !important;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
 .controls .card-btn,
-.controls .call-btn{
-  width:100% !important;
-  min-width:0 !important;
-  min-height:78px !important;
-  height:auto !important;
-  padding:4px !important;
+.controls .call-btn {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 78px !important;
+  height: auto !important;
+  padding: 4px !important;
   border-radius:6px !important;
 }
 
-.controls .card-btn img{
-  height:46px !important;
-  width:auto !important;
-  max-width:100% !important;
-  margin:0 auto 2px !important;
-  aspect-ratio:63 / 89 !important;
-  object-fit:cover !important;
-  border-radius:5px !important;
+.controls .card-btn img {
+  height: 46px !important;
+  max-width: 100% !important;
+  margin: 0 auto 2px !important;
 }
 
-.controls .card-btn span{
-  display:block !important;
-  font-size:13px !important;
-  line-height:1.05 !important;
-  font-weight:900 !important;
-  text-align:center !important;
-  white-space:normal !important;
+.controls .card-btn span {
+  font-size: 13px !important;
+  line-height: 1.05 !important;
+  white-space: normal !important;
 }
 
-.controls .call-btn{
-  grid-column:1 / -1 !important;
-  min-height:58px !important;
-  font-size:20px !important;
-  line-height:1.15 !important;
+.controls .call-btn {
+  grid-column: 1 / -1 !important;
+  min-height: 58px !important;
+  font-size: 20px !important;
+  line-height: 1.15 !important;
 }
 
-/* 相手残りカードも自分ボタンと同じ寸法へ復元 */
-.panel.player{
-  display:none !important;
+@media (min-width: 860px) {
+  .panel.enemy .counts {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .panel.enemy .mini-card img,
+  .controls .card-btn img {
+    height: 84px !important;
+  }
+
+  .panel.enemy .mini-card b,
+  .panel.enemy .mini-card span,
+  .controls .card-btn span {
+    font-size: 18px !important;
+  }
+
+  .controls .card-btn,
+  .controls .call-btn {
+    min-height: 128px !important;
+    padding: 8px !important;
+  }
+
+  .controls .call-btn {
+    min-height: 80px !important;
+    font-size: 24px !important;
+  }
 }
 
-.top-panels{
-  grid-template-columns:1fr !important;
+/* ===== 自分のカードボタンと相手残数表示を統一 ===== */
+.controls .card-btn span,
+.panel.enemy .mini-card span {
+  display: block !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
 }
 
-.panel.enemy .counts{
-  display:grid !important;
-  grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
-  gap:7px !important;
+.controls .card-btn span b,
+.panel.enemy .mini-card span b {
+  display: inline !important;
+  margin-left: 3px !important;
+  color: #ffe784 !important;
+  font-size: 1em !important;
+  font-weight: 1000 !important;
 }
 
-.panel.enemy.sokkoo-enemy .counts{
-  grid-template-columns:repeat(5, minmax(0, 1fr)) !important;
+.controls .card-btn img,
+.panel.enemy .mini-card img {
+  aspect-ratio: 63 / 89;
+  object-fit: cover;
 }
 
-.panel.enemy .mini-card{
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:center !important;
-  justify-content:center !important;
-  text-align:center !important;
-  width:100% !important;
-  min-width:0 !important;
-  min-height:78px !important;
-  padding:4px !important;
-  border-radius:6px !important;
-  box-sizing:border-box !important;
-}
-
-.panel.enemy .mini-card img{
-  height:46px !important;
-  width:auto !important;
-  max-width:100% !important;
-  margin:0 auto 2px !important;
-  aspect-ratio:63 / 89 !important;
-  object-fit:cover !important;
-  border-radius:5px !important;
-  display:block !important;
-}
-
-.panel.enemy .mini-card span{
-  display:block !important;
-  width:100% !important;
-  font-size:13px !important;
-  font-weight:900 !important;
-  line-height:1.05 !important;
-  text-align:center !important;
-}
-
-.panel.enemy .mini-card b,
-.panel.enemy .mini-card span b,
-.controls .card-btn span b{
-  display:inline !important;
-  margin-left:3px !important;
-  color:#ffe784 !important;
-  font-size:1em !important;
-  font-weight:1000 !important;
-  line-height:1.05 !important;
-}
-
-/* 枠色は以前の統一版を維持 */
+/* ===== カード種類ごとの枠色・中央配置修正 ===== */
 .card-btn.dagger,
-.mini-card.dagger-card{
-  border-color:#e34242 !important;
-  box-shadow:0 0 12px rgba(227,66,66,.22) !important;
+.mini-card.dagger-card {
+  border-color: #e34242 !important;
+  box-shadow: 0 0 12px rgba(227,66,66,.22) !important;
 }
 
 .card-btn.shield,
-.mini-card.shield-card{
-  border-color:#f0c94a !important;
-  box-shadow:0 0 12px rgba(240,201,74,.22) !important;
+.mini-card.shield-card {
+  border-color: #f0c94a !important;
+  box-shadow: 0 0 12px rgba(240,201,74,.22) !important;
 }
 
 .card-btn.heart,
-.mini-card.heart-card{
-  border-color:#3b9cff !important;
-  box-shadow:0 0 12px rgba(59,156,255,.22) !important;
+.mini-card.heart-card {
+  border-color: #3b9cff !important;
+  box-shadow: 0 0 12px rgba(59,156,255,.22) !important;
 }
 
-.hidden,
-.panel.enemy .mini-card.hidden,
-.controls .card-btn.hidden{
-  display:none !important;
+.controls .card-btn,
+.panel.enemy .mini-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
 }
 
-/* もう一度ボタンがSafari下部UIに埋まらないよう、ボタン下だけ余白を確保 */
-.restart-area{
-  margin:10px auto calc(112px + env(safe-area-inset-bottom)) !important;
+.controls .card-btn img,
+.panel.enemy .mini-card img {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  object-fit: cover !important;
 }
 
-/* 小さめスマホ：履歴版の小型値へ復元 */
-@media (max-width:390px){
-  .controls .card-btn,
-  .controls .call-btn,
-  .panel.enemy .mini-card{
-    min-height:86px !important;
-  }
-
-  .controls .card-btn img,
-  .panel.enemy .mini-card img{
-    height:52px !important;
-  }
-
-  .controls .card-btn span,
-  .panel.enemy .mini-card span{
-    font-size:16px !important;
-  }
-
-  .controls .call-btn{
-    min-height:58px !important;
-    font-size:20px !important;
-  }
-
-  .restart-area{
-    margin-bottom:calc(124px + env(safe-area-inset-bottom)) !important;
-  }
-}
-
-/* PC・タブレット広幅：履歴版の大きめ値へ復元 */
-@media (min-width:860px){
-  body{
-    padding-bottom:20px !important;
-  }
-
-  .controls{
-    position:static !important;
-    background:transparent !important;
-    border-top:0 !important;
-    box-shadow:none !important;
-    padding:0 !important;
-    margin:12px 0 !important;
-  }
-
-  .controls .card-btn,
-  .controls .call-btn,
-  .panel.enemy .mini-card{
-    min-height:128px !important;
-    padding:8px !important;
-    border-radius:16px !important;
-  }
-
-  .controls .card-btn img,
-  .panel.enemy .mini-card img{
-    height:84px !important;
-    border-radius:8px !important;
-    margin-bottom:5px !important;
-  }
-
-  .controls .card-btn span,
-  .panel.enemy .mini-card span,
-  .panel.enemy .mini-card b{
-    font-size:18px !important;
-  }
-
-  .controls .call-btn{
-    min-height:80px !important;
-    font-size:24px !important;
-  }
-
-  .panel.enemy .counts{
-    max-width:760px !important;
-    margin:0 auto !important;
-  }
-
-  .restart-area{
-    margin-bottom:24px !important;
-  }
+.controls .card-btn span,
+.panel.enemy .mini-card span {
+  width: 100% !important;
+  text-align: center !important;
 }
 
 </style>
