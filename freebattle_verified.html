@@ -2827,9 +2827,9 @@ function forceMobileRemainCardFrameSize(){
   targets.forEach(el => {
     // HDG TEST FIX: 連打時の縦方向だけの微縮み対策。
     // サイズの土台だけ固定し、中身配置・padding は既存CSSに任せる。
-    el.style.height = "88px";
-    el.style.minHeight = "88px";
-    el.style.maxHeight = "88px";
+    el.style.height = "86px";
+    el.style.minHeight = "86px";
+    el.style.maxHeight = "86px";
     el.style.boxSizing = "border-box";
     el.style.overflow = "hidden";
   });
@@ -3653,6 +3653,133 @@ function setupBackButton(){
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupBackButton);
   else setupBackButton();
+})();
+</script>
+
+
+
+<!-- HDG FINAL FIX 2026-05-09: remaining-card vertical shrink guard -->
+<style>
+/*
+  残りカードアイコンが描画更新時に縦だけ数px縮む問題への最終ガード。
+  自分側ボタン・相手側ミニカードの外枠/中画像を同一値に固定し、
+  古いCSSやJSの一時的な実測同期に負けないよう最後段で上書きする。
+*/
+@media (max-width: 859px){
+  #controls .card-btn:not(.hidden),
+  .controls .card-btn:not(.hidden),
+  .panel.enemy .mini-card:not(.hidden){
+    height: 86px !important;
+    min-height: 86px !important;
+    max-height: 86px !important;
+    padding: 4px !important;
+    box-sizing: border-box !important;
+    flex: 0 0 auto !important;
+  }
+
+  #controls .card-btn:not(.hidden) img,
+  .controls .card-btn:not(.hidden) img,
+  .panel.enemy .mini-card:not(.hidden) img{
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    width: auto !important;
+    aspect-ratio: 63 / 89 !important;
+    object-fit: contain !important;
+    flex: 0 0 48px !important;
+  }
+}
+
+@media (min-width: 860px){
+  #controls .card-btn:not(.hidden),
+  .controls .card-btn:not(.hidden),
+  .panel.enemy .mini-card:not(.hidden){
+    height: 142px !important;
+    min-height: 142px !important;
+    max-height: 142px !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
+    flex: 0 0 auto !important;
+  }
+
+  #controls .card-btn:not(.hidden) img,
+  .controls .card-btn:not(.hidden) img,
+  .panel.enemy .mini-card:not(.hidden) img{
+    height: 82px !important;
+    min-height: 82px !important;
+    max-height: 82px !important;
+    width: auto !important;
+    aspect-ratio: 63 / 89 !important;
+    object-fit: contain !important;
+    flex: 0 0 82px !important;
+  }
+}
+</style>
+<script>
+(function(){
+  function setImportant(el, prop, value){
+    if(el) el.style.setProperty(prop, value, 'important');
+  }
+
+  function lockRemainCardVerticalSize(){
+    var desktop = window.matchMedia && window.matchMedia('(min-width: 860px)').matches;
+    var frameH = desktop ? '142px' : '86px';
+    var imgH = desktop ? '82px' : '48px';
+    var pad = desktop ? '8px' : '4px';
+
+    document.querySelectorAll('#controls .card-btn:not(.hidden), .controls .card-btn:not(.hidden), .panel.enemy .mini-card:not(.hidden)').forEach(function(el){
+      setImportant(el, 'height', frameH);
+      setImportant(el, 'min-height', frameH);
+      setImportant(el, 'max-height', frameH);
+      setImportant(el, 'padding', pad);
+      setImportant(el, 'box-sizing', 'border-box');
+      setImportant(el, 'flex', '0 0 auto');
+      setImportant(el, 'display', 'flex');
+      setImportant(el, 'flex-direction', 'column');
+      setImportant(el, 'align-items', 'center');
+      setImportant(el, 'justify-content', 'center');
+
+      var img = el.querySelector('img');
+      if(img){
+        setImportant(img, 'height', imgH);
+        setImportant(img, 'min-height', imgH);
+        setImportant(img, 'max-height', imgH);
+        setImportant(img, 'width', 'auto');
+        setImportant(img, 'aspect-ratio', '63 / 89');
+        setImportant(img, 'object-fit', 'contain');
+        setImportant(img, 'flex', '0 0 ' + imgH);
+        setImportant(img, 'margin', '0 auto 2px');
+      }
+    });
+
+    document.querySelectorAll('#controls .card-btn.hidden, .controls .card-btn.hidden, .panel.enemy .mini-card.hidden').forEach(function(el){
+      setImportant(el, 'display', 'none');
+    });
+  }
+
+  function scheduleLock(){
+    lockRemainCardVerticalSize();
+    requestAnimationFrame(lockRemainCardVerticalSize);
+    setTimeout(lockRemainCardVerticalSize, 80);
+    setTimeout(lockRemainCardVerticalSize, 250);
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleLock);
+  else scheduleLock();
+  window.addEventListener('load', scheduleLock);
+  window.addEventListener('resize', scheduleLock);
+  window.addEventListener('orientationchange', scheduleLock);
+  document.addEventListener('click', function(){ setTimeout(scheduleLock, 0); }, true);
+
+  var mo = new MutationObserver(scheduleLock);
+  function observe(){
+    var controls = document.getElementById('controls');
+    var enemy = document.querySelector('.panel.enemy');
+    if(controls) mo.observe(controls, {attributes:true, childList:true, subtree:true, characterData:true});
+    if(enemy) mo.observe(enemy, {attributes:true, childList:true, subtree:true, characterData:true});
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observe);
+  else observe();
 })();
 </script>
 
