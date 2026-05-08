@@ -2265,6 +2265,69 @@ body.sokkoo-special-shake {
   }
 }
 
+
+/* ===== HDG landscape controls centering fix ===== */
+/* スマホ/タブレットのランドスケープ時、自分カードアイコンが左詰めになるのを防ぐ */
+@media (orientation: landscape) and (max-height: 620px){
+  #controls.controls,
+  .controls{
+    width: max-content !important;
+    max-width: calc(100vw - 24px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: stretch !important;
+  }
+
+  #controls.controls.normal-layout,
+  .controls.normal-layout,
+  #controls.controls:not(.sokkoo-layout),
+  .controls:not(.sokkoo-layout){
+    grid-template-columns: repeat(3, 118px) !important;
+  }
+
+  #controls.controls.sokkoo-layout,
+  .controls.sokkoo-layout{
+    grid-template-columns: repeat(5, 96px) !important;
+  }
+
+  #controls .card-btn,
+  .controls .card-btn{
+    width: 100% !important;
+  }
+
+  #controls .call-btn,
+  .controls .call-btn{
+    width: 100% !important;
+  }
+}
+
+/* iPad横向きなど高さがあるランドスケープも中央に揃える */
+@media (orientation: landscape) and (min-width: 860px) and (max-width: 1366px){
+  #controls.controls,
+  .controls{
+    width: max-content !important;
+    max-width: calc(100vw - 32px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    justify-content: center !important;
+    justify-items: center !important;
+  }
+
+  #controls.controls.normal-layout,
+  .controls.normal-layout,
+  #controls.controls:not(.sokkoo-layout),
+  .controls:not(.sokkoo-layout){
+    grid-template-columns: repeat(3, 142px) !important;
+  }
+
+  #controls.controls.sokkoo-layout,
+  .controls.sokkoo-layout{
+    grid-template-columns: repeat(5, 118px) !important;
+  }
+}
+
 </style>
 </head>
 <body>
