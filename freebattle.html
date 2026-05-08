@@ -3913,3 +3913,154 @@ function setupBackButton(){
   }
 }
 </style>
+
+
+<!-- HDG PATCH: opponent-based remaining-card sync (2026-05-08) -->
+<script>
+(function(){
+  function visible(el){
+    if(!el) return false;
+    var cs = getComputedStyle(el);
+    return cs.display !== 'none' && cs.visibility !== 'hidden' && !el.classList.contains('hidden');
+  }
+  function setImp(el, prop, value){
+    if(el && value !== undefined && value !== null && value !== '') el.style.setProperty(prop, value, 'important');
+  }
+  function syncRemainingCardUI(){
+    var enemyPanel = document.querySelector('.panel.enemy');
+    var enemyCounts = document.querySelector('.panel.enemy .counts');
+    var controls = document.getElementById('controls');
+    if(!enemyPanel || !enemyCounts || !controls) return;
+
+    var enemyCards = Array.prototype.filter.call(enemyCounts.querySelectorAll('.mini-card'), visible);
+    var ownCards = Array.prototype.filter.call(controls.querySelectorAll('.card-btn[data-card]'), visible);
+    if(enemyCards.length === 0 || ownCards.length === 0) return;
+
+    var enemyRect = enemyCounts.getBoundingClientRect();
+    var enemyCardRect = enemyCards[0].getBoundingClientRect();
+    if(enemyRect.width < 10 || enemyCardRect.width < 10 || enemyCardRect.height < 10) return;
+
+    var enemyStyle = getComputedStyle(enemyCounts);
+    var cardStyle = getComputedStyle(enemyCards[0]);
+    var enemyImg = enemyCards[0].querySelector('img');
+    var enemyText = enemyCards[0].querySelector('span');
+    var enemyCountText = enemyCards[0].querySelector('b');
+    var imgRect = enemyImg ? enemyImg.getBoundingClientRect() : null;
+    var textStyle = enemyText ? getComputedStyle(enemyText) : null;
+    var bStyle = enemyCountText ? getComputedStyle(enemyCountText) : null;
+
+    var columns = enemyCards.length;
+    var gap = enemyStyle.columnGap && enemyStyle.columnGap !== 'normal' ? enemyStyle.columnGap : enemyStyle.gap;
+    if(!gap || gap === 'normal') gap = '8px';
+
+    // 親コンテナの幅を相手側の残りカード列に完全同期する。
+    setImp(controls, 'box-sizing', 'border-box');
+    setImp(controls, 'display', 'grid');
+    setImp(controls, 'grid-template-columns', 'repeat(' + columns + ', minmax(0, 1fr))');
+    setImp(controls, 'gap', gap);
+    setImp(controls, 'width', Math.round(enemyRect.width) + 'px');
+    setImp(controls, 'max-width', 'calc(100vw - 16px)');
+    setImp(controls, 'min-width', '0');
+    setImp(controls, 'justify-content', 'stretch');
+    setImp(controls, 'justify-items', 'stretch');
+    setImp(controls, 'align-items', 'stretch');
+
+    var pos = getComputedStyle(controls).position;
+    if(pos === 'fixed'){
+      setImp(controls, 'left', '50%');
+      setImp(controls, 'right', 'auto');
+      setImp(controls, 'transform', 'translateX(-50%)');
+    }else{
+      setImp(controls, 'margin-left', 'auto');
+      setImp(controls, 'margin-right', 'auto');
+      setImp(controls, 'transform', 'none');
+    }
+
+    // 自分側カードを、相手側カードの幅・高さ・内部文字サイズへ同期する。
+    ownCards.forEach(function(btn){
+      setImp(btn, 'box-sizing', 'border-box');
+      setImp(btn, 'width', '100%');
+      setImp(btn, 'min-width', '0');
+      setImp(btn, 'max-width', 'none');
+      setImp(btn, 'height', Math.round(enemyCardRect.height) + 'px');
+      setImp(btn, 'min-height', Math.round(enemyCardRect.height) + 'px');
+      setImp(btn, 'max-height', Math.round(enemyCardRect.height) + 'px');
+      setImp(btn, 'padding', cardStyle.paddingTop + ' ' + cardStyle.paddingRight + ' ' + cardStyle.paddingBottom + ' ' + cardStyle.paddingLeft);
+      setImp(btn, 'border-radius', cardStyle.borderRadius);
+      setImp(btn, 'display', 'flex');
+      setImp(btn, 'flex-direction', 'column');
+      setImp(btn, 'align-items', 'center');
+      setImp(btn, 'justify-content', 'center');
+      setImp(btn, 'text-align', 'center');
+      setImp(btn, 'overflow', 'hidden');
+
+      var img = btn.querySelector('img');
+      if(img && imgRect){
+        setImp(img, 'height', Math.round(imgRect.height) + 'px');
+        setImp(img, 'width', 'auto');
+        setImp(img, 'max-width', '100%');
+        setImp(img, 'object-fit', getComputedStyle(enemyImg).objectFit || 'cover');
+        setImp(img, 'margin', getComputedStyle(enemyImg).marginTop + ' auto ' + getComputedStyle(enemyImg).marginBottom + ' auto');
+        setImp(img, 'border-radius', getComputedStyle(enemyImg).borderRadius);
+        setImp(img, 'display', 'block');
+      }
+
+      var span = btn.querySelector('span');
+      if(span && textStyle){
+        setImp(span, 'font-size', textStyle.fontSize);
+        setImp(span, 'line-height', textStyle.lineHeight);
+        setImp(span, 'font-weight', textStyle.fontWeight);
+        setImp(span, 'width', '100%');
+        setImp(span, 'text-align', 'center');
+        setImp(span, 'margin', getComputedStyle(enemyText).margin);
+      }
+      var b = btn.querySelector('b');
+      if(b && bStyle){
+        setImp(b, 'font-size', bStyle.fontSize);
+        setImp(b, 'line-height', bStyle.lineHeight);
+        setImp(b, 'font-weight', bStyle.fontWeight);
+        setImp(b, 'margin', bStyle.margin);
+      }
+    });
+
+    var callBtn = controls.querySelector('.call-btn');
+    if(callBtn){
+      setImp(callBtn, 'grid-column', '1 / -1');
+      setImp(callBtn, 'width', '100%');
+      setImp(callBtn, 'max-width', '100%');
+    }
+  }
+
+  function scheduleSync(){
+    syncRemainingCardUI();
+    requestAnimationFrame(syncRemainingCardUI);
+    setTimeout(syncRemainingCardUI, 80);
+    setTimeout(syncRemainingCardUI, 250);
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleSync);
+  else scheduleSync();
+  window.addEventListener('load', scheduleSync);
+  window.addEventListener('resize', scheduleSync);
+  window.addEventListener('orientationchange', scheduleSync);
+  document.addEventListener('click', function(){ setTimeout(scheduleSync, 0); }, true);
+
+  var mo = new MutationObserver(scheduleSync);
+  function observeTargets(){
+    var controls = document.getElementById('controls');
+    var enemy = document.querySelector('.panel.enemy');
+    if(controls) mo.observe(controls, {attributes:true, childList:true, subtree:true, characterData:true});
+    if(enemy) mo.observe(enemy, {attributes:true, childList:true, subtree:true, characterData:true});
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observeTargets);
+  else observeTargets();
+
+  // 初期描画直後のCSS競合対策。
+  var n = 0;
+  var timer = setInterval(function(){
+    scheduleSync();
+    n++;
+    if(n > 20) clearInterval(timer);
+  }, 200);
+})();
+</script>
