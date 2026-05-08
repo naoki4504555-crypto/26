@@ -3679,3 +3679,95 @@ function setupBackButton(){
   }
 }
 </style>
+
+<!-- HDG PATCH: mobile/tablet player remaining cards full-width fix -->
+<style>
+/*
+  原因：タブレット縦画面用の「中央寄せ」パッチが #controls.controls に
+  width:max-content と固定気味の grid-template を当てており、後続の横幅拡張指定より
+  詳細度が高かったため、スマホ/タブレットで自分側だけ小さい幅のまま残っていた。
+  対策：スマホ/タブレットだけ、相手側(.panel.enemy .counts)と自分側(#controls)を
+  同じルールで wrap 幅いっぱいの均等グリッドに最終上書きする。高さは変更しない。
+*/
+@media (max-width: 1199px){
+  body #controls.controls,
+  body #controls.controls.normal-layout,
+  body #controls.controls.sokkoo-layout,
+  body .controls,
+  body .controls.normal-layout,
+  body .controls.sokkoo-layout,
+  body .panel.enemy .counts{
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+    display: grid !important;
+    justify-content: stretch !important;
+    justify-items: stretch !important;
+    align-items: stretch !important;
+  }
+
+  body #controls.controls.normal-layout,
+  body #controls.controls:not(.sokkoo-layout),
+  body .controls.normal-layout,
+  body .controls:not(.sokkoo-layout),
+  body .panel.enemy:not(.sokkoo-enemy) .counts{
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: var(--hdg-remain-gap-normal, 12px) !important;
+  }
+
+  body #controls.controls.sokkoo-layout,
+  body .controls.sokkoo-layout,
+  body .panel.enemy.sokkoo-enemy .counts{
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: var(--hdg-remain-gap-sokkoo, 8px) !important;
+  }
+
+  body #controls.controls .card-btn,
+  body .controls .card-btn,
+  body .panel.enemy .mini-card{
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    flex: none !important;
+  }
+
+  body #controls.controls .call-btn,
+  body .controls .call-btn{
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* スマホは高さを既存88pxのまま維持 */
+@media (max-width: 767px){
+  body #controls.controls .card-btn,
+  body .controls .card-btn,
+  body .panel.enemy .mini-card{
+    height: 88px !important;
+    min-height: 88px !important;
+    max-height: 88px !important;
+  }
+}
+
+/* タブレットは前回合わせた高さ86pxのまま維持 */
+@media (min-width: 768px) and (max-width: 1199px){
+  body #controls.controls .card-btn,
+  body .controls .card-btn,
+  body .panel.enemy .mini-card{
+    height: var(--hdg-tablet-remain-height, 86px) !important;
+    min-height: var(--hdg-tablet-remain-height, 86px) !important;
+    max-height: var(--hdg-tablet-remain-height, 86px) !important;
+  }
+
+  body #controls.controls .card-btn img,
+  body .controls .card-btn img,
+  body .panel.enemy .mini-card img{
+    height: var(--hdg-tablet-remain-img-height, 48px) !important;
+  }
+}
+</style>
