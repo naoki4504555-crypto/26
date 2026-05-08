@@ -2704,10 +2704,10 @@ function forceMobileRemainCardFrameSize(){
   if(!window.matchMedia("(max-width: 767px)").matches) return;
 
   const targets = document.querySelectorAll(
-    ".controls.normal-layout .card-btn, " +
-    ".controls.sokkoo-layout .card-btn, " +
-    ".panel.enemy:not(.sokkoo-enemy) .mini-card, " +
-    ".panel.enemy.sokkoo-enemy .mini-card"
+    ".controls.normal-layout .card-btn:not(.hidden), " +
+    ".controls.sokkoo-layout .card-btn:not(.hidden), " +
+    ".panel.enemy:not(.sokkoo-enemy) .mini-card:not(.hidden), " +
+    ".panel.enemy.sokkoo-enemy .mini-card:not(.hidden)"
   );
 
   targets.forEach(el => {
@@ -2727,6 +2727,35 @@ function forceMobileRemainCardFrameSize(){
 
 
 function forceSmartphoneRemainIconSize(){}
+
+/* HDG FIX: ソッコーモード専用カードの表示状態を、inline style まで含めて正規化する。
+   前回のサイズ同期処理が display:flex!important を直接付与するため、
+   通常モードへ戻した後も hidden クラスだけではソッコーカードが消えないことがあった。 */
+function applyModeSpecificVisibility(){
+  const modeOnlyIds = [
+    "btnSokkooDagger", "btnSokkooHeart",
+    "eSokkooDaggerBox", "eSokkooHeartBox",
+    "pSokkooDaggerBox", "pSokkooHeartBox"
+  ];
+
+  modeOnlyIds.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+
+    el.classList.toggle("hidden", !sokkooMode);
+
+    if(sokkooMode){
+      // 通常モード時に付けた display:none!important を解除して、
+      // その後の共通サイズ同期処理に任せる。
+      if(el.style.getPropertyValue("display") === "none"){
+        el.style.removeProperty("display");
+      }
+    } else {
+      // inline の display:flex!important が残っていても必ず非表示にする。
+      el.style.setProperty("display", "none", "important");
+    }
+  });
+}
 
 function updateUI(){
   document.body.classList.toggle("game-over-view", gameOver);
@@ -2762,6 +2791,7 @@ function updateUI(){
   document.getElementById("btnHeart").disabled = gameOver || player.心臓 === 0;
   document.getElementById("btnSokkooDagger").classList.toggle("hidden", !sokkooMode);
   document.getElementById("btnSokkooHeart").classList.toggle("hidden", !sokkooMode);
+  applyModeSpecificVisibility();
   document.getElementById("btnSokkooDagger").disabled = gameOver || !sokkooMode || (player.ソッコーダガー || 0) === 0;
   document.getElementById("btnSokkooHeart").disabled = gameOver || !sokkooMode || (player.ソッコーハート || 0) === 0;
   const controls = document.getElementById("controls");
@@ -2774,6 +2804,7 @@ function updateUI(){
   setCardEmptyState();
   
   forceMobileRemainCardFrameSize();
+  applyModeSpecificVisibility();
 }
 
 function randomEnemy(){
@@ -3915,6 +3946,11 @@ function setupBackButton(){
 </style>
 
 
+<!-- HDG FIX: hidden must win against old responsive CSS; inline display is handled by JS above -->
+<style>
+.hidden{display:none!important;}
+</style>
+
 <!-- HDG PATCH: opponent-based remaining-card sync (2026-05-08) -->
 <script>
 (function(){
@@ -3931,6 +3967,19 @@ function setupBackButton(){
     var enemyCounts = document.querySelector('.panel.enemy .counts');
     var controls = document.getElementById('controls');
     if(!enemyPanel || !enemyCounts || !controls) return;
+
+    // hidden クラスが付いたソッコー専用UIは、過去に付いた inline display:flex!important を打ち消す。
+    // 逆に hidden が外れたら display:none!important を解除して、表示モードへ復帰できるようにする。
+    Array.prototype.forEach.call(
+      document.querySelectorAll('#btnSokkooDagger,#btnSokkooHeart,#eSokkooDaggerBox,#eSokkooHeartBox,#pSokkooDaggerBox,#pSokkooHeartBox'),
+      function(el){
+        if(el.classList.contains('hidden')){
+          setImp(el, 'display', 'none');
+        }else if(el.style.getPropertyValue('display') === 'none'){
+          el.style.removeProperty('display');
+        }
+      }
+    );
 
     var enemyCards = Array.prototype.filter.call(enemyCounts.querySelectorAll('.mini-card'), visible);
     var ownCards = Array.prototype.filter.call(controls.querySelectorAll('.card-btn[data-card]'), visible);

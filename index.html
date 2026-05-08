@@ -793,6 +793,13 @@ function showTitle(){
     }
   }catch(e){}
   if(free)free.classList.remove('active');
+  if(frame){
+    try{
+      frame.src = 'about:blank';
+      frame.removeAttribute('data-loaded');
+      delete frame.dataset.loaded;
+    }catch(e){}
+  }
 
   document.getElementById('novelScreen')?.classList.remove('active');
   document.getElementById('storyScreen').classList.remove('active');
@@ -826,6 +833,13 @@ function returnFromFreeBattle(){
   }catch(e){}
 
   if(screen)screen.classList.remove('active');
+  if(frame){
+    try{
+      frame.src = 'about:blank';
+      frame.removeAttribute('data-loaded');
+      delete frame.dataset.loaded;
+    }catch(e){}
+  }
 
   document.getElementById('storyScreen').classList.remove('active');
   document.getElementById('novelScreen')?.classList.remove('active');
