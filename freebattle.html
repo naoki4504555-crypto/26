@@ -4110,6 +4110,44 @@ html body #eSokkooHeartBox span{
 </style>
 
 
+
+
+<!-- HDG PATCH: ハート＆ダガーコールボタン位置統一 -->
+<style>
+/*
+  原因：通常モードとソッコーモードで gap の値が違い、
+  gap が横間隔だけでなく「カード列 → コールボタン」の縦間隔にも効いていたため、
+  ハート＆ダガーコールボタンの高さ位置が数pxズレていた。
+  対策：横方向の間隔は各モードのまま維持し、縦方向(row-gap)だけ共通化する。
+  画面遷移・BGM・ゲームロジックには触らない。
+*/
+:root{
+  --hdg-call-row-gap: 12px;
+}
+
+html body #controls.controls.normal-layout,
+html body #controls.controls:not(.sokkoo-layout),
+html body .controls.normal-layout,
+html body .controls:not(.sokkoo-layout){
+  column-gap: var(--hdg-remain-gap-normal, 12px) !important;
+  row-gap: var(--hdg-call-row-gap) !important;
+}
+
+html body #controls.controls.sokkoo-layout,
+html body .controls.sokkoo-layout{
+  column-gap: var(--hdg-remain-gap-sokkoo, 8px) !important;
+  row-gap: var(--hdg-call-row-gap) !important;
+}
+
+html body #controls.controls .call-btn,
+html body .controls .call-btn{
+  grid-column: 1 / -1 !important;
+  margin-top: 0 !important;
+  align-self: stretch !important;
+  justify-self: stretch !important;
+}
+</style>
+
 <!-- HDG FIX: hidden must win against old responsive CSS; inline display is handled by JS above -->
 <style>
 .hidden{display:none!important;}
