@@ -2305,6 +2305,73 @@ html body .controls{
   }
 }
 
+
+/* ===== FIX: horizontal card layout + thinner borders ===== */
+
+/* 自分カードエリアを横並びに戻す */
+#controls.controls,
+.controls{
+  display:grid !important;
+  gap:10px !important;
+}
+
+/* 通常モード */
+#controls.controls:not(.sokkoo-layout),
+.controls:not(.sokkoo-layout){
+  grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+}
+
+/* ソッコーモード */
+#controls.controls.sokkoo-layout,
+.controls.sokkoo-layout{
+  grid-template-columns: repeat(5, minmax(0,1fr)) !important;
+}
+
+/* コールボタンは横いっぱい */
+#controls .call-btn,
+.controls .call-btn{
+  grid-column: 1 / -1 !important;
+}
+
+/* 神版寄りの細め外枠 */
+#controls .card-btn,
+.controls .card-btn,
+.panel.enemy .mini-card{
+  border-width:3px !important;
+  border-radius:20px !important;
+  min-height:92px !important;
+  height:92px !important;
+  width:auto !important;
+}
+
+/* 神版の余白感へ */
+#controls .card-btn img,
+.controls .card-btn img,
+.panel.enemy .mini-card img{
+  height:52px !important;
+}
+
+/* スマホ */
+@media (max-width:390px){
+  #controls .card-btn,
+  .controls .card-btn,
+  .panel.enemy .mini-card{
+    min-height:88px !important;
+    height:88px !important;
+    border-radius:18px !important;
+  }
+}
+
+/* PC */
+@media (min-width:860px){
+  #controls .card-btn,
+  .controls .card-btn,
+  .panel.enemy .mini-card{
+    border-radius:24px !important;
+    border-width:3px !important;
+  }
+}
+
 </style>
 </head>
 <body>

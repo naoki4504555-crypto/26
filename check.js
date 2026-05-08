@@ -16,6 +16,20 @@
 })();
 
 
+/* HDG child BGM disabled; parent owns freebattle BGM */
+window.addEventListener("message", (ev)=>{
+  if(ev && ev.data && ev.data.type === "HDG_STOP_FREE_BGM"){
+    try{ stopBgm(); }catch(e){}
+  }
+});
+/* HDG iframe class for Safari bottom UI */
+try{
+  if(window.parent && window.parent !== window){
+    document.documentElement.classList.add("hdg-iframe-mode");
+  }
+}catch(e){}
+
+
 
 let player, enemy, pScore, eScore;
 let gameOver = false;
@@ -70,19 +84,23 @@ function unlockAudio(){
       if(p && p.catch) p.catch(()=>{});
     }
     audioUnlocked = true;
-    return ctx;
+return ctx;
   } catch(e){
     audioCtx = null;
     return null;
   }
 }
 
+
+function ensureBattleBgm(forceUnlock){
+  /* disabled: parent page owns Free Battle BGM */
+}
+
 function buttonTap(){
   const nowMs = Date.now();
   if(nowMs - hdLastPicoAt < 130) return;
   hdLastPicoAt = nowMs;
-
-  const ctx = unlockAudio();
+const ctx = unlockAudio();
   if(!ctx) return;
 
   const fire = () => {
@@ -188,7 +206,7 @@ function clearHistoryLog(){
 }
 
 function startGame(){
-  clearHistoryLog();
+clearHistoryLog();
 clearEnemyCallTimer();
   player = makeHand();
   enemy = makeHand();
@@ -915,84 +933,54 @@ setTimeout(forceMobileRemainCardFrameSize, 100);
 
 
 
+
+
 let bgmEnabled = false;
 
 function getBgmAudio(){
   const audio = document.getElementById("bgm");
   if(audio){
     audio.volume = 0.18;
+    audio.loop = true;
   }
   return audio;
 }
 
-function updateBgmButtons(){
-  const label = bgmEnabled ? "BGM ON" : "BGM OFF";
-  document.querySelectorAll(".bgm-toggle-btn").forEach(btn => {
-    btn.innerText = label;
-    btn.classList.toggle("bgm-on", bgmEnabled);
-  });
+function updateBgmButtons(){}
+
+function ensureBattleBgm(forceUnlock){
+  try{
+    const audio = getBgmAudio();
+    if(!audio) return;
+
+    bgmEnabled = true;
+    const p = audio.play();
+    if(p && p.catch){
+      p.catch(()=>{});
+    }
+  }catch(e){}
 }
 
 function startBgm(){
-  const audio = getBgmAudio();
-  if(!audio) return;
-  bgmEnabled = true;
-  audio.volume = 0.18;
-  audio.play().catch(()=>{});
-  updateBgmButtons();
+  /* disabled: parent page owns Free Battle BGM */
 }
 
 function stopBgm(){
-  const audio = getBgmAudio();
-  bgmEnabled = false;
-  if(audio) audio.pause();
-  updateBgmButtons();
+  const audio = document.getElementById("bgm");
+  if(audio){
+    audio.pause();
+    try{audio.currentTime=0;}catch(e){}
+  }
 }
 
 function toggleBgm(){
-  const audio = getBgmAudio();
-  if(!audio) return;
-
-  if(audio.paused || !bgmEnabled){
-    startBgm();
-  } else {
-    stopBgm();
-  }
+  /* disabled: parent page owns Free Battle BGM */
 }
-
-document.addEventListener("visibilitychange", () => {
-  if(!document.hidden && bgmEnabled){
-    startBgm();
-  }
-});
-
-window.addEventListener("pageshow", () => {
-  updateBgmButtons();
-  if(bgmEnabled) startBgm();
-});
-
-window.addEventListener("load", updateBgmButtons);
 
 
 
 (function(){
   
-function playBackTitlePicoReliable(){
-  const se = document.getElementById("backTitlePico");
-  if(se){
-    try{
-      se.pause();
-      se.currentTime = 0;
-      const p = se.play();
-      if(p && p.catch){
-        p.catch(()=>{ buttonTap(); });
-      }
-      return;
-    }catch(e){}
-  }
-  buttonTap();
-}
-
 function setupBackButton(){
     const btn = document.getElementById('hdBackTitleBtn');
     if(!btn || btn.dataset.ready === '1') return;
@@ -1000,10 +988,14 @@ function setupBackButton(){
     btn.addEventListener('click', function(ev){
       ev.preventDefault();
       buttonTap();
-      sessionStorage.setItem('hd_title_unlocked','1');
-      sessionStorage.setItem('hd_return_title_bgm','1');
-      sessionStorage.removeItem('hd_freebattle_entry_time');
+
       setTimeout(function(){
+        try{
+          if(parent && parent !== window && typeof parent.returnFromFreeBattle === 'function'){
+            parent.returnFromFreeBattle();
+            return;
+          }
+        }catch(e){}
         location.href = './index.html';
       }, 170);
     });
