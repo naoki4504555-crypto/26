@@ -3840,3 +3840,76 @@ function setupBackButton(){
   }
 }
 </style>
+
+<!-- HDG PATCH: tablet landscape force full-width remaining cards -->
+<style>
+/*
+  タブレット横向き（iPad系など）は横幅が1200pxを超えることがあり、
+  直前までの max-width:1199px 指定から外れていた。
+  さらに既存のランドスケープ専用CSSが #controls に固定幅/中央寄せを再適用するため、
+  自分側の残りカードだけ小さいままになっていた。
+  ここで 768px〜1366px の横向きタブレットを最終上書きし、
+  相手側・自分側とも同じ比率で横幅いっぱいに均等配置する。
+  高さと中のカード画像サイズは変更しない。
+*/
+@media (orientation: landscape) and (min-width: 768px) and (max-width: 1366px){
+  html body .wrap,
+  html body main.wrap{
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  html body .panel.enemy .counts,
+  html body #controls.controls,
+  html body #controls.controls.normal-layout,
+  html body #controls.controls.sokkoo-layout,
+  html body .controls,
+  html body .controls.normal-layout,
+  html body .controls.sokkoo-layout{
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: grid !important;
+    box-sizing: border-box !important;
+    justify-content: stretch !important;
+    justify-items: stretch !important;
+    align-items: stretch !important;
+  }
+
+  html body .panel.enemy:not(.sokkoo-enemy) .counts,
+  html body #controls.controls.normal-layout,
+  html body #controls.controls:not(.sokkoo-layout),
+  html body .controls.normal-layout,
+  html body .controls:not(.sokkoo-layout){
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: var(--hdg-remain-gap-normal, 12px) !important;
+  }
+
+  html body .panel.enemy.sokkoo-enemy .counts,
+  html body #controls.controls.sokkoo-layout,
+  html body .controls.sokkoo-layout{
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: var(--hdg-remain-gap-sokkoo, 8px) !important;
+  }
+
+  html body .panel.enemy .mini-card,
+  html body #controls.controls .card-btn,
+  html body .controls .card-btn{
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+  }
+
+  html body #controls.controls .call-btn,
+  html body .controls .call-btn{
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+</style>
