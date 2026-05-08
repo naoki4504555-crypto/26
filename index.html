@@ -853,8 +853,26 @@ function returnFromFreeBattle(){
   startTitleBgm();
 }
 
+function hdIsTouchTabletOrPhone(){
+  try{
+    return window.matchMedia('(max-width: 1024px), (pointer: coarse)').matches;
+  }catch(e){
+    return /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent || '');
+  }
+}
+
 function goBattle(){
   playClick();
+
+  // iPhone/iPad/Safariでは巨大なfreebattle.htmlをiframeで開くと黒画面になることがあるため、
+  // タッチ端末は直接ページ遷移にする。PCは従来どおりiframe表示。
+  if(hdIsTouchTabletOrPhone()){
+    try{ stopAllHdAudio(); }catch(e){}
+    sessionStorage.setItem('hd_title_unlocked','1');
+    setTimeout(()=>{ location.href = './freebattle.html?v=' + Date.now(); }, 120);
+    return;
+  }
+
   startFreeBattleBgm();
 
   document.getElementById('titleScreen').classList.remove('active');

@@ -2328,6 +2328,140 @@ body.sokkoo-special-shake {
   }
 }
 
+
+
+/* ===== HDG 2026-05-08 FINAL: mobile black-screen avoidance support + remaining icon text unification ===== */
+/* 既存CSSが多層に重なっているため、最後尾で残りカードアイコンだけを確実に統一する。 */
+#controls.controls,
+.panel.enemy .counts{
+  display:grid !important;
+  align-items:stretch !important;
+  justify-content:center !important;
+}
+#controls.controls.normal-layout,
+#controls.controls:not(.sokkoo-layout),
+.panel.enemy:not(.sokkoo-enemy) .counts{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+#controls.controls.sokkoo-layout,
+.panel.enemy.sokkoo-enemy .counts{
+  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+}
+#controls .card-btn,
+.panel.enemy .mini-card{
+  width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  overflow:hidden !important;
+}
+#controls .card-btn img,
+.panel.enemy .mini-card img{
+  flex:0 0 auto !important;
+  width:auto !important;
+  aspect-ratio:63/89 !important;
+  object-fit:cover !important;
+  display:block !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+#controls .card-btn span,
+.panel.enemy .mini-card span,
+#controls .card-btn b,
+.panel.enemy .mini-card b{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif !important;
+  font-weight:1000 !important;
+  line-height:1.05 !important;
+  letter-spacing:0 !important;
+  text-align:center !important;
+}
+#controls .card-btn span,
+.panel.enemy .mini-card span{
+  display:block !important;
+  width:100% !important;
+  margin:0 !important;
+}
+#controls .card-btn b,
+.panel.enemy .mini-card b{
+  display:inline !important;
+  margin-left:3px !important;
+  color:#ffe784 !important;
+  font-size:1em !important;
+}
+.hdg-sokkoo-wrap{
+  display:inline-flex !important;
+  flex-wrap:wrap !important;
+  justify-content:center !important;
+  align-items:baseline !important;
+  column-gap:.08em !important;
+  row-gap:0 !important;
+  white-space:normal !important;
+}
+.hdg-sokkoo-word,
+.hdg-sokkoo-tail{
+  display:inline-block !important;
+  white-space:nowrap !important;
+}
+@media (max-width:767px){
+  body{ padding-bottom:calc(10px + env(safe-area-inset-bottom)) !important; }
+  #controls.controls{ width:100% !important; gap:7px !important; margin:12px auto 10px !important; }
+  .panel.enemy .counts{ width:100% !important; gap:7px !important; margin:0 auto !important; }
+  #controls .card-btn,
+  .panel.enemy .mini-card{ height:92px !important; min-height:92px !important; max-height:92px !important; padding:5px !important; border-radius:18px !important; }
+  #controls .card-btn img,
+  .panel.enemy .mini-card img{ height:58px !important; max-width:100% !important; margin-bottom:2px !important; }
+  #controls .card-btn span,
+  .panel.enemy .mini-card span,
+  #controls .card-btn b,
+  .panel.enemy .mini-card b{ font-size:15px !important; }
+  #controls.controls.sokkoo-layout .card-btn span,
+  .panel.enemy.sokkoo-enemy .mini-card span,
+  #controls.controls.sokkoo-layout .card-btn b,
+  .panel.enemy.sokkoo-enemy .mini-card b{ font-size:13px !important; }
+  #controls .call-btn{ grid-column:1 / -1 !important; min-height:62px !important; }
+}
+@media (max-width:390px){
+  #controls .card-btn,
+  .panel.enemy .mini-card{ height:86px !important; min-height:86px !important; max-height:86px !important; }
+  #controls .card-btn img,
+  .panel.enemy .mini-card img{ height:52px !important; }
+  #controls .card-btn span,
+  .panel.enemy .mini-card span,
+  #controls .card-btn b,
+  .panel.enemy .mini-card b{ font-size:14px !important; }
+  #controls.controls.sokkoo-layout .card-btn span,
+  .panel.enemy.sokkoo-enemy .mini-card span,
+  #controls.controls.sokkoo-layout .card-btn b,
+  .panel.enemy.sokkoo-enemy .mini-card b{ font-size:12px !important; }
+}
+@media (min-width:768px){
+  #controls.controls,
+  .panel.enemy .counts{ width:min(1080px,calc(100vw - 80px)) !important; max-width:min(1080px,calc(100vw - 80px)) !important; gap:12px !important; margin-left:auto !important; margin-right:auto !important; }
+  #controls .card-btn,
+  .panel.enemy .mini-card{ height:132px !important; min-height:132px !important; max-height:132px !important; padding:8px !important; border-radius:16px !important; }
+  #controls .card-btn img,
+  .panel.enemy .mini-card img{ height:78px !important; max-width:90px !important; margin-bottom:5px !important; }
+  #controls .card-btn span,
+  .panel.enemy .mini-card span,
+  #controls .card-btn b,
+  .panel.enemy .mini-card b{ font-size:20px !important; }
+  #controls.controls.sokkoo-layout .card-btn span,
+  .panel.enemy.sokkoo-enemy .mini-card span,
+  #controls.controls.sokkoo-layout .card-btn b,
+  .panel.enemy.sokkoo-enemy .mini-card b{ font-size:17px !important; }
+  #btnSokkooDagger span br,
+  #btnSokkooHeart span br,
+  #eSokkooDaggerBox span br,
+  #eSokkooHeartBox span br{ display:none !important; }
+}
+.hidden,
+.panel.enemy .mini-card.hidden,
+.controls .card-btn.hidden{ display:none !important; }
+
 </style>
 
 <style id="hdg-light-remain-fix">
@@ -2669,6 +2803,7 @@ clearEnemyCallTimer();
   clearBattleResultLabels();
   updateUI();
   normalizeRemainingLabelsLight();
+  startBgm();
   playSound("start");
 }
 
@@ -3451,7 +3586,16 @@ function ensureBattleBgm(forceUnlock){
 }
 
 function startBgm(){
-  /* disabled: parent page owns Free Battle BGM */
+  try{
+    if(window.parent && window.parent !== window) return; // iframe時は親ページBGMに任せる
+  }catch(e){}
+  try{
+    const audio = getBgmAudio();
+    if(!audio) return;
+    bgmEnabled = true;
+    const p = audio.play();
+    if(p && p.catch) p.catch(()=>{});
+  }catch(e){}
 }
 
 function stopBgm(){
@@ -3463,7 +3607,11 @@ function stopBgm(){
 }
 
 function toggleBgm(){
-  /* disabled: parent page owns Free Battle BGM */
+  try{
+    const audio = getBgmAudio();
+    if(!audio) return;
+    if(audio.paused){ startBgm(); } else { stopBgm(); }
+  }catch(e){}
 }
 
 
@@ -3550,7 +3698,7 @@ function setupBackButton(){
             return;
           }
         }catch(e){}
-        location.href = './index.html';
+        try{ stopAllFreeBattleAudio(); }catch(e){} location.href = './index.html';
       }, 170);
     });
   }
