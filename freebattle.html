@@ -2187,6 +2187,124 @@ html body .controls{
     margin: 12px 0 !important;
   }
 }
+
+/* ===== ROUND CARD ICONS ONLY: normal/sokkoo unified ===== */
+/* 通常モード・ソッコーモードで、残りカードアイコンの丸み・高さを統一 */
+#controls .card-btn,
+.controls .card-btn,
+.panel.enemy .mini-card{
+  min-height: 92px !important;
+  height: 92px !important;
+  padding: 6px !important;
+  border-width: 4px !important;
+  border-style: solid !important;
+  border-radius: 22px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+#controls .card-btn img,
+.controls .card-btn img,
+.panel.enemy .mini-card img{
+  height: 54px !important;
+  width: auto !important;
+  max-width: 100% !important;
+  aspect-ratio: 63 / 89 !important;
+  object-fit: cover !important;
+  border-radius: 3px !important;
+  margin: 0 auto 3px !important;
+  display: block !important;
+}
+
+#controls .card-btn span,
+.controls .card-btn span,
+.panel.enemy .mini-card span{
+  display: block !important;
+  width: 100% !important;
+  font-size: 16px !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+/* 数字が3行目に落ちないように、数字は同じ行に置く */
+#controls .card-btn span b,
+.controls .card-btn span b,
+.panel.enemy .mini-card span b,
+.panel.enemy .mini-card b{
+  display: inline !important;
+  margin-left: 3px !important;
+  font-size: 1em !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
+}
+
+/* ソッコーモードの5枚も通常モードと同じ高さ・丸み */
+.controls.sokkoo-layout .card-btn,
+.panel.enemy.sokkoo-enemy .mini-card{
+  min-height: 92px !important;
+  height: 92px !important;
+  border-radius: 22px !important;
+}
+
+/* 通常モード3枚とソッコーモード5枚の相手側を同じ高さで綺麗に揃える */
+.panel.enemy .counts{
+  align-items: stretch !important;
+}
+
+@media (max-width:390px){
+  #controls .card-btn,
+  .controls .card-btn,
+  .panel.enemy .mini-card,
+  .controls.sokkoo-layout .card-btn,
+  .panel.enemy.sokkoo-enemy .mini-card{
+    min-height: 88px !important;
+    height: 88px !important;
+    border-radius: 20px !important;
+    padding: 5px !important;
+  }
+
+  #controls .card-btn img,
+  .controls .card-btn img,
+  .panel.enemy .mini-card img{
+    height: 50px !important;
+  }
+
+  #controls .card-btn span,
+  .controls .card-btn span,
+  .panel.enemy .mini-card span{
+    font-size: 15px !important;
+    letter-spacing: -0.03em !important;
+  }
+}
+
+@media (min-width:860px){
+  #controls .card-btn,
+  .controls .card-btn,
+  .panel.enemy .mini-card,
+  .controls.sokkoo-layout .card-btn,
+  .panel.enemy.sokkoo-enemy .mini-card{
+    min-height: 128px !important;
+    height: 128px !important;
+    border-radius: 24px !important;
+    padding: 8px !important;
+  }
+
+  #controls .card-btn img,
+  .controls .card-btn img,
+  .panel.enemy .mini-card img{
+    height: 84px !important;
+    margin-bottom: 5px !important;
+  }
+
+  #controls .card-btn span,
+  .controls .card-btn span,
+  .panel.enemy .mini-card span{
+    font-size: 18px !important;
+  }
+}
+
 </style>
 </head>
 <body>
