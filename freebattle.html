@@ -3951,6 +3951,53 @@ function setupBackButton(){
 .hidden{display:none!important;}
 </style>
 
+
+
+<!-- HDG FIX: sokkoo labels always break at ソッコー / card name -->
+<style>
+/*
+  ソッコーダガー/ソッコーハートは、横幅が足りず2行になる時も
+  「ソッコー」＋「ダガー/ハート」で気持ちよく区切る。
+  以前のPC/タブレット用1行化CSS（br非表示・nowrap）を最終上書きする。
+*/
+html body #btnSokkooDagger > span,
+html body #btnSokkooHeart > span,
+html body #eSokkooDaggerBox > span,
+html body #eSokkooHeartBox > span,
+html body #pSokkooDaggerBox > span,
+html body #pSokkooHeartBox > span,
+html body [data-card="ソッコーダガー"] > span,
+html body [data-card="ソッコーハート"] > span{
+  white-space: normal !important;
+  line-height: 1.02 !important;
+  text-align: center !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+}
+
+html body #btnSokkooDagger > span br,
+html body #btnSokkooHeart > span br,
+html body #eSokkooDaggerBox > span br,
+html body #eSokkooHeartBox > span br,
+html body #pSokkooDaggerBox > span br,
+html body #pSokkooHeartBox > span br,
+html body [data-card="ソッコーダガー"] > span br,
+html body [data-card="ソッコーハート"] > span br{
+  display: initial !important;
+}
+
+html body #btnSokkooDagger > span b,
+html body #btnSokkooHeart > span b,
+html body #eSokkooDaggerBox > span b,
+html body #eSokkooHeartBox > span b,
+html body #pSokkooDaggerBox > span b,
+html body #pSokkooHeartBox > span b,
+html body [data-card="ソッコーダガー"] > span b,
+html body [data-card="ソッコーハート"] > span b{
+  white-space: nowrap !important;
+}
+</style>
+
 <!-- HDG PATCH: opponent-based remaining-card sync (2026-05-08) -->
 <script>
 (function(){
