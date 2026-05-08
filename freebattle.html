@@ -3580,3 +3580,102 @@ function setupBackButton(){
   }
 }
 </style>
+
+<style>
+/* ===== FINAL: 残りカードアイコン横幅を全端末・全向きで均等に広げる =====
+   ・自分側/相手側を同じ比率で横いっぱいに配置
+   ・高さは既存のスマホ88px / タブレットPC132pxを維持
+   ・中の小カード画像サイズも既存指定を維持
+*/
+:root{
+  --hdg-remain-gap-normal: clamp(8px, 1.2vw, 16px);
+  --hdg-remain-gap-sokkoo: clamp(5px, .9vw, 12px);
+}
+
+.panel.enemy .counts,
+.controls.normal-layout,
+.controls.sokkoo-layout{
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+  justify-content: stretch !important;
+  align-items: stretch !important;
+}
+
+.panel.enemy:not(.sokkoo-enemy) .counts,
+.controls.normal-layout{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: var(--hdg-remain-gap-normal) !important;
+}
+
+.panel.enemy.sokkoo-enemy .counts,
+.controls.sokkoo-layout{
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: var(--hdg-remain-gap-sokkoo) !important;
+}
+
+.panel.enemy .mini-card,
+.controls .card-btn{
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+
+/* スマホ：高さはこれまで通り88pxのまま、横幅だけ均等に伸ばす */
+@media (max-width: 767px){
+  .wrap{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .panel.enemy .mini-card,
+  .controls .card-btn{
+    height: 88px !important;
+    min-height: 88px !important;
+    max-height: 88px !important;
+  }
+
+  .panel.enemy .mini-card img,
+  .controls .card-btn img{
+    height: 48px !important;
+    width: auto !important;
+    max-width: 100% !important;
+  }
+}
+
+/* タブレット/PC：高さはこれまで通り132pxのまま、横幅だけ均等に伸ばす */
+@media (min-width: 768px){
+  .wrap{
+    max-width: 1180px !important;
+  }
+
+  .panel.enemy .mini-card,
+  .controls .card-btn{
+    height: 132px !important;
+    min-height: 132px !important;
+    max-height: 132px !important;
+  }
+
+  .panel.enemy .mini-card img,
+  .controls .card-btn img{
+    height: 78px !important;
+    width: auto !important;
+    max-width: 100% !important;
+  }
+}
+
+/* 横画面でスコア/操作列が右側に回り込む状態でも、残りカード行はその列の幅いっぱいに均等配置 */
+@media (orientation: landscape) and (min-width: 768px){
+  .panel.enemy .counts,
+  .controls.normal-layout,
+  .controls.sokkoo-layout{
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+</style>
