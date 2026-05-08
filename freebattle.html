@@ -77,20 +77,8 @@ button:disabled{opacity:.4;cursor:not-allowed}
   min-height:72px;margin:8px auto 14px;max-width:620px;display:flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:16px;background:rgba(0,0,0,.45);border:2px solid rgba(240,195,90,.65);color:#ffe784;font-size:24px;font-weight:900;text-align:center}
 .score{max-width:600px;margin:0 auto 14px;padding:10px;border-radius:16px;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.18);text-align:center;font-size:28px;font-weight:900}
 .score .p{color:#48a8ff;font-size:44px}.score .e{color:#ff5656;font-size:44px}
-.controls {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 6px;
-  padding: 8px;
-  background: rgba(0,0,0,0.9);
-  z-index: 1000;
-}
+/* removed fixed controls rule */
+
 .card-btn,.call-btn{flex: 0 0 auto;
   min-height:142px;border-radius:16px;background:rgba(255,255,255,.08);border:3px solid rgba(255,255,255,.25);color:#fff;padding:8px;box-shadow:0 10px 18px rgba(0,0,0,.3)}
 .card-btn img{height:94px;aspect-ratio:63/89;object-fit:cover;border-radius:8px;display:block;margin:0 auto 5px}
@@ -106,20 +94,9 @@ button:disabled{opacity:.4;cursor:not-allowed}
 @keyframes winFlash{0%{box-shadow:0 16px 26px rgba(0,0,0,.55)}45%{transform:scale(1.08);box-shadow:0 0 36px gold}100%{box-shadow:0 16px 26px rgba(0,0,0,.55)}}
 to{box-shadow:0 0 34px gold;transform:scale(1.035)}}
 @media(max-width:760px){.top-panels{grid-template-columns:1fr}.counts{gap:6px}.mini-card{width:70px}.battle{grid-template-columns:1fr;gap:8px}.vs{font-size:42px}.side{flex: 0 0 auto;
-  min-height:300px}.card-img{width:min(72%,210px)}.controls {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 6px;
-  padding: 8px;
-  background: rgba(0,0,0,0.9);
-  z-index: 1000;
-}}
+  min-height:300px}.card-img{width:min(72%,210px)}
+/* removed fixed controls rule */
+}
 
 /* ===== スマホ最適化版 ===== */
 body {
@@ -243,21 +220,8 @@ body {
 .score .e {
   font-size: 31px;
 }
+/* removed fixed controls rule */
 
-.controls {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 6px;
-  padding: 8px;
-  background: rgba(0,0,0,0.9);
-  z-index: 1000;
-}
 
 .card-btn,
 .call-btn {
@@ -429,21 +393,8 @@ body {
   .score .e {
     font-size: 44px;
   }
+/* removed fixed controls rule */
 
-  .controls {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 6px;
-  padding: 8px;
-  background: rgba(0,0,0,0.9);
-  z-index: 1000;
-}
 
   .card-btn,
   .call-btn {
@@ -501,23 +452,8 @@ body {
   z-index: 1000;
 }
 }
+/* removed fixed controls rule */
 
-/* ===== 通常/ソッコーモード別カードボタン配置 ===== */
-.controls {
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  z-index: 1000 !important;
-  margin: 0 !important;
-  padding: 9px 9px calc(10px + env(safe-area-inset-bottom)) !important;
-  background: linear-gradient(to top, rgba(0,0,0,.96), rgba(0,0,0,.88)) !important;
-  border-top: 2px solid rgba(240,195,90,.45) !important;
-  box-shadow: 0 -8px 26px rgba(0,0,0,.55) !important;
-  display: grid !important;
-  gap: 7px !important;
-  overflow: visible !important;
-}
 
 /* 通常モード：短剣・盾・心臓の3つを横一列、その下に横長コール */
 .controls.normal-layout {
@@ -2201,72 +2137,56 @@ body.sokkoo-special-shake {
 }
 
 
-/* ===== FINAL: fixed bar OFF, keep exact card icon UI ===== */
-body{
-  padding-bottom: 20px !important;
-}
 
-#controls,
-.controls{
+
+/* ===== TRUE FINAL: controls are NOT fixed ===== */
+html body #gameArea #controls.controls,
+html body #controls.controls,
+html body .controls{
   position: static !important;
-  left: auto !important;
+  inset: auto !important;
+  top: auto !important;
   right: auto !important;
   bottom: auto !important;
-  top: auto !important;
+  left: auto !important;
   width: 100% !important;
   max-width: none !important;
   margin: 12px auto 10px !important;
   transform: none !important;
   z-index: auto !important;
-
-  /* 固定バー時代の黒帯だけ消して、ボタン自体の色・形は維持 */
   background: transparent !important;
   border-top: 0 !important;
   box-shadow: none !important;
 }
 
-/* 指定順：スコア → カード/コール → 履歴 → もう一度 */
-#gameArea .score + #controls,
-#gameArea .score + .controls{
-  margin-top: 10px !important;
-}
-
-#log.log{
-  margin-top: 8px !important;
-  margin-bottom: 12px !important;
-}
-
-.restart-area{
-  margin: 10px auto calc(112px + env(safe-area-inset-bottom)) !important;
-}
-
 @media (max-width:859px){
-  body{
-    padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+  html body #gameArea #controls.controls,
+  html body #controls.controls,
+  html body .controls{
+    position: static !important;
+    inset: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    margin: 10px auto 8px !important;
+    padding: 9px !important;
   }
 
-  #controls,
-  .controls{
-    position: static !important;
-    bottom: auto !important;
-    padding: 9px !important;
-    margin: 10px auto 8px !important;
+  html body{
+    padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
   }
 }
 
 @media (min-width:860px){
-  #controls,
-  .controls{
+  html body #gameArea #controls.controls,
+  html body #controls.controls,
+  html body .controls{
     position: static !important;
+    inset: auto !important;
     padding: 0 !important;
     margin: 12px 0 !important;
   }
-
-  .restart-area{
-    margin-bottom:24px !important;
-  }
 }
-
 </style>
 </head>
 <body>
