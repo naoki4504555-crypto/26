@@ -875,17 +875,6 @@ function goBattle(){
     }catch(e){}
   }
 }
-
-const novelLinesByStage = {
-  1: [
-    { speaker: 'ツルギ', char: 'tsurugi', text: 'よし、ここからが本番だ！' },
-    { speaker: 'マモル', char: 'mamoru', text: 'まずは基本の勝負で腕試しだね。' },
-    { speaker: 'ツルギ', char: 'tsurugi', text: '短剣、盾、心臓。たった三つでも読み合いは深いんだ。' },
-    { speaker: 'マモル', char: 'mamoru', text: '相手の残りカードを見ながら、どのカードを切るか考えるんだよ。' },
-    { speaker: 'ツルギ', char: 'tsurugi', text: '行くぞ、ハート＆ダガー！' }
-  ]
-};
-
 let novelIdx = 0;
 let currentNovelStage = 1;
 let novelInputLocked = false;
@@ -924,10 +913,7 @@ function backToStageSelectFromNovel(e){
 function renderNovelLine(){
   const lines = novelLinesByStage[currentNovelStage] || [];
   const line = lines[novelIdx];
-  if(!line){
-    novelInputLocked = false;
-    return;
-  }
+  if(!line)return;
   const currentChar = line.char || (line.speaker === 'マモル' ? 'mamoru' : 'tsurugi');
   const tsurugi = document.getElementById('novelTsurugi');
   const mamoru = document.getElementById('novelMamoru');

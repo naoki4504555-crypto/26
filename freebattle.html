@@ -2328,25 +2328,6 @@ body.sokkoo-special-shake {
   }
 }
 
-
-
-/* ===== HDG FIX: コールボタン位置統一（文字サイズ・カードサイズには触らない） ===== */
-:root{ --hdg-call-row-gap: 10px; }
-#controls.controls.normal-layout,
-.controls.normal-layout{
-  column-gap: var(--hdg-remain-gap-normal, 12px) !important;
-  row-gap: var(--hdg-call-row-gap) !important;
-}
-#controls.controls.sokkoo-layout,
-.controls.sokkoo-layout{
-  column-gap: var(--hdg-remain-gap-sokkoo, 8px) !important;
-  row-gap: var(--hdg-call-row-gap) !important;
-}
-#controls.controls .call-btn,
-.controls .call-btn{
-  grid-column: 1 / -1 !important;
-}
-.hidden{display:none!important;}
 </style>
 </head>
 <body>
@@ -3517,3 +3498,643 @@ function setupBackButton(){
 
 </body>
 </html>
+
+<!-- HDG PATCH: tablet portrait controls centering -->
+<style>
+/* タブレット縦画面でも自分カード欄・相手カード欄が左詰めにならないように最終上書き */
+@media (orientation: portrait) and (min-width: 768px) and (max-width: 1199px){
+  #controls.controls,
+  .controls{
+    width: max-content !important;
+    max-width: calc(100vw - 48px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: stretch !important;
+  }
+
+  #controls.controls.normal-layout,
+  .controls.normal-layout,
+  #controls.controls:not(.sokkoo-layout),
+  .controls:not(.sokkoo-layout){
+    grid-template-columns: repeat(3, minmax(132px, 142px)) !important;
+  }
+
+  #controls.controls.sokkoo-layout,
+  .controls.sokkoo-layout{
+    grid-template-columns: repeat(5, minmax(104px, 118px)) !important;
+  }
+
+  .panel.enemy .counts{
+    width: max-content !important;
+    max-width: calc(100vw - 48px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    justify-content: center !important;
+    justify-items: center !important;
+  }
+
+  .panel.enemy:not(.sokkoo-enemy) .counts{
+    grid-template-columns: repeat(3, minmax(132px, 142px)) !important;
+  }
+
+  .panel.enemy.sokkoo-enemy .counts{
+    grid-template-columns: repeat(5, minmax(104px, 118px)) !important;
+  }
+
+  #controls .card-btn,
+  .controls .card-btn,
+  .panel.enemy .mini-card{
+    width: 100% !important;
+  }
+
+  #controls .call-btn,
+  .controls .call-btn{
+    width: 100% !important;
+  }
+}
+</style>
+
+
+<!-- HDG PATCH: tablet remaining-card height unify -->
+<style>
+/* タブレットだけ：相手の残りカードアイコン高さに合わせて、自分側も同じ高さへ統一 */
+@media (min-width: 768px) and (max-width: 1199px){
+  :root{
+    --hdg-tablet-remain-height: 86px;
+    --hdg-tablet-remain-img-height: 48px;
+  }
+
+  .panel.enemy .mini-card,
+  #controls .card-btn,
+  .controls .card-btn{
+    height: var(--hdg-tablet-remain-height) !important;
+    min-height: var(--hdg-tablet-remain-height) !important;
+    max-height: var(--hdg-tablet-remain-height) !important;
+    padding: 4px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  .panel.enemy .mini-card img,
+  #controls .card-btn img,
+  .controls .card-btn img{
+    height: var(--hdg-tablet-remain-img-height) !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    margin: 0 auto 2px !important;
+    display: block !important;
+  }
+
+  .panel.enemy .mini-card span,
+  .panel.enemy .mini-card b,
+  #controls .card-btn span,
+  #controls .card-btn b,
+  .controls .card-btn span,
+  .controls .card-btn b{
+    font-size: 11px !important;
+    line-height: 1.05 !important;
+    margin: 0 !important;
+    font-weight: 900 !important;
+  }
+
+  .panel.enemy .mini-card b,
+  #controls .card-btn b,
+  .controls .card-btn b{
+    font-size: 19px !important;
+  }
+}
+</style>
+
+<style>
+/* ===== FINAL: 残りカードアイコン横幅を全端末・全向きで均等に広げる =====
+   ・自分側/相手側を同じ比率で横いっぱいに配置
+   ・高さは既存のスマホ88px / タブレットPC132pxを維持
+   ・中の小カード画像サイズも既存指定を維持
+*/
+:root{
+  --hdg-remain-gap-normal: clamp(8px, 1.2vw, 16px);
+  --hdg-remain-gap-sokkoo: clamp(5px, .9vw, 12px);
+}
+
+.panel.enemy .counts,
+.controls.normal-layout,
+.controls.sokkoo-layout{
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+  justify-content: stretch !important;
+  align-items: stretch !important;
+}
+
+.panel.enemy:not(.sokkoo-enemy) .counts,
+.controls.normal-layout{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: var(--hdg-remain-gap-normal) !important;
+}
+
+.panel.enemy.sokkoo-enemy .counts,
+.controls.sokkoo-layout{
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: var(--hdg-remain-gap-sokkoo) !important;
+}
+
+.panel.enemy .mini-card,
+.controls .card-btn{
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+
+/* スマホ：高さはこれまで通り88pxのまま、横幅だけ均等に伸ばす */
+@media (max-width: 767px){
+  .wrap{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .panel.enemy .mini-card,
+  .controls .card-btn{
+    height: 88px !important;
+    min-height: 88px !important;
+    max-height: 88px !important;
+  }
+
+  .panel.enemy .mini-card img,
+  .controls .card-btn img{
+    height: 48px !important;
+    width: auto !important;
+    max-width: 100% !important;
+  }
+}
+
+/* タブレット/PC：高さはこれまで通り132pxのまま、横幅だけ均等に伸ばす */
+@media (min-width: 768px){
+  .wrap{
+    max-width: 1180px !important;
+  }
+
+  .panel.enemy .mini-card,
+  .controls .card-btn{
+    height: 132px !important;
+    min-height: 132px !important;
+    max-height: 132px !important;
+  }
+
+  .panel.enemy .mini-card img,
+  .controls .card-btn img{
+    height: 78px !important;
+    width: auto !important;
+    max-width: 100% !important;
+  }
+}
+
+/* 横画面でスコア/操作列が右側に回り込む状態でも、残りカード行はその列の幅いっぱいに均等配置 */
+@media (orientation: landscape) and (min-width: 768px){
+  .panel.enemy .counts,
+  .controls.normal-layout,
+  .controls.sokkoo-layout{
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+</style>
+
+<!-- HDG PATCH: mobile/tablet player remaining cards full-width fix -->
+<style>
+/*
+  原因：タブレット縦画面用の「中央寄せ」パッチが #controls.controls に
+  width:max-content と固定気味の grid-template を当てており、後続の横幅拡張指定より
+  詳細度が高かったため、スマホ/タブレットで自分側だけ小さい幅のまま残っていた。
+  対策：スマホ/タブレットだけ、相手側(.panel.enemy .counts)と自分側(#controls)を
+  同じルールで wrap 幅いっぱいの均等グリッドに最終上書きする。高さは変更しない。
+*/
+@media (max-width: 1199px){
+  body #controls.controls,
+  body #controls.controls.normal-layout,
+  body #controls.controls.sokkoo-layout,
+  body .controls,
+  body .controls.normal-layout,
+  body .controls.sokkoo-layout,
+  body .panel.enemy .counts{
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+    display: grid !important;
+    justify-content: stretch !important;
+    justify-items: stretch !important;
+    align-items: stretch !important;
+  }
+
+  body #controls.controls.normal-layout,
+  body #controls.controls:not(.sokkoo-layout),
+  body .controls.normal-layout,
+  body .controls:not(.sokkoo-layout),
+  body .panel.enemy:not(.sokkoo-enemy) .counts{
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: var(--hdg-remain-gap-normal, 12px) !important;
+  }
+
+  body #controls.controls.sokkoo-layout,
+  body .controls.sokkoo-layout,
+  body .panel.enemy.sokkoo-enemy .counts{
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: var(--hdg-remain-gap-sokkoo, 8px) !important;
+  }
+
+  body #controls.controls .card-btn,
+  body .controls .card-btn,
+  body .panel.enemy .mini-card{
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    flex: none !important;
+  }
+
+  body #controls.controls .call-btn,
+  body .controls .call-btn{
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* スマホは高さを既存88pxのまま維持 */
+@media (max-width: 767px){
+  body #controls.controls .card-btn,
+  body .controls .card-btn,
+  body .panel.enemy .mini-card{
+    height: 88px !important;
+    min-height: 88px !important;
+    max-height: 88px !important;
+  }
+}
+
+/* タブレットは前回合わせた高さ86pxのまま維持 */
+@media (min-width: 768px) and (max-width: 1199px){
+  body #controls.controls .card-btn,
+  body .controls .card-btn,
+  body .panel.enemy .mini-card{
+    height: var(--hdg-tablet-remain-height, 86px) !important;
+    min-height: var(--hdg-tablet-remain-height, 86px) !important;
+    max-height: var(--hdg-tablet-remain-height, 86px) !important;
+  }
+
+  body #controls.controls .card-btn img,
+  body .controls .card-btn img,
+  body .panel.enemy .mini-card img{
+    height: var(--hdg-tablet-remain-img-height, 48px) !important;
+  }
+}
+</style>
+
+<!-- HDG PATCH: smartphone/tablet landscape remaining cards full-width fix -->
+<style>
+/*
+  横向きのスマホ/タブレットでは、過去のランドスケープ中央寄せ指定が
+  #controls に width:max-content + 固定列幅を当てていたため、
+  自分側の残りカードだけ縦画面サイズの小さい横幅に戻っていた。
+  ここで最後に上書きし、相手側と同じく横幅いっぱいを3等分/5等分にする。
+  高さ・中のカード画像サイズは変更しない。
+*/
+@media (orientation: landscape) and (max-width: 1199px){
+  html body .wrap{
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+
+  html body .panel.enemy .counts,
+  html body #controls.controls,
+  html body #controls.controls.normal-layout,
+  html body #controls.controls.sokkoo-layout,
+  html body .controls,
+  html body .controls.normal-layout,
+  html body .controls.sokkoo-layout{
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: grid !important;
+    box-sizing: border-box !important;
+    justify-content: stretch !important;
+    justify-items: stretch !important;
+    align-items: stretch !important;
+  }
+
+  html body .panel.enemy:not(.sokkoo-enemy) .counts,
+  html body #controls.controls.normal-layout,
+  html body #controls.controls:not(.sokkoo-layout),
+  html body .controls.normal-layout,
+  html body .controls:not(.sokkoo-layout){
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: var(--hdg-remain-gap-normal, 12px) !important;
+  }
+
+  html body .panel.enemy.sokkoo-enemy .counts,
+  html body #controls.controls.sokkoo-layout,
+  html body .controls.sokkoo-layout{
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: var(--hdg-remain-gap-sokkoo, 8px) !important;
+  }
+
+  html body .panel.enemy .mini-card,
+  html body #controls.controls .card-btn,
+  html body .controls .card-btn{
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+  }
+
+  html body #controls.controls .call-btn,
+  html body .controls .call-btn{
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+</style>
+
+<!-- HDG PATCH: tablet landscape force full-width remaining cards -->
+<style>
+/*
+  タブレット横向き（iPad系など）は横幅が1200pxを超えることがあり、
+  直前までの max-width:1199px 指定から外れていた。
+  さらに既存のランドスケープ専用CSSが #controls に固定幅/中央寄せを再適用するため、
+  自分側の残りカードだけ小さいままになっていた。
+  ここで 768px〜1366px の横向きタブレットを最終上書きし、
+  相手側・自分側とも同じ比率で横幅いっぱいに均等配置する。
+  高さと中のカード画像サイズは変更しない。
+*/
+@media (orientation: landscape) and (min-width: 768px) and (max-width: 1366px){
+  html body .wrap,
+  html body main.wrap{
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  html body .panel.enemy .counts,
+  html body #controls.controls,
+  html body #controls.controls.normal-layout,
+  html body #controls.controls.sokkoo-layout,
+  html body .controls,
+  html body .controls.normal-layout,
+  html body .controls.sokkoo-layout{
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: grid !important;
+    box-sizing: border-box !important;
+    justify-content: stretch !important;
+    justify-items: stretch !important;
+    align-items: stretch !important;
+  }
+
+  html body .panel.enemy:not(.sokkoo-enemy) .counts,
+  html body #controls.controls.normal-layout,
+  html body #controls.controls:not(.sokkoo-layout),
+  html body .controls.normal-layout,
+  html body .controls:not(.sokkoo-layout){
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: var(--hdg-remain-gap-normal, 12px) !important;
+  }
+
+  html body .panel.enemy.sokkoo-enemy .counts,
+  html body #controls.controls.sokkoo-layout,
+  html body .controls.sokkoo-layout{
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: var(--hdg-remain-gap-sokkoo, 8px) !important;
+  }
+
+  html body .panel.enemy .mini-card,
+  html body #controls.controls .card-btn,
+  html body .controls .card-btn{
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+  }
+
+  html body #controls.controls .call-btn,
+  html body .controls .call-btn{
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+</style>
+
+
+<style>
+/* ===== HDG FIX: ハート＆ダガーコールボタン位置統一 =====
+   通常/ソッコーモードでカード列の横間隔は変えつつ、
+   コールボタンまでの縦間隔だけ全モード共通にする。
+   文字サイズ・カードサイズには触らない。 */
+:root{
+  --hdg-call-row-gap: 10px;
+}
+#controls.controls.normal-layout,
+.controls.normal-layout{
+  column-gap: var(--hdg-remain-gap-normal, 12px) !important;
+  row-gap: var(--hdg-call-row-gap) !important;
+}
+#controls.controls.sokkoo-layout,
+.controls.sokkoo-layout{
+  column-gap: var(--hdg-remain-gap-sokkoo, 8px) !important;
+  row-gap: var(--hdg-call-row-gap) !important;
+}
+#controls.controls .call-btn,
+.controls .call-btn{
+  grid-column: 1 / -1 !important;
+}
+</style>
+
+<!-- HDG FIX: hidden must win against old responsive CSS; inline display is handled by JS above -->
+<style>
+.hidden{display:none!important;}
+</style>
+
+<!-- HDG PATCH: opponent-based remaining-card sync (2026-05-08) -->
+<script>
+(function(){
+  function visible(el){
+    if(!el) return false;
+    var cs = getComputedStyle(el);
+    return cs.display !== 'none' && cs.visibility !== 'hidden' && !el.classList.contains('hidden');
+  }
+  function setImp(el, prop, value){
+    if(el && value !== undefined && value !== null && value !== '') el.style.setProperty(prop, value, 'important');
+  }
+  function syncRemainingCardUI(){
+    var enemyPanel = document.querySelector('.panel.enemy');
+    var enemyCounts = document.querySelector('.panel.enemy .counts');
+    var controls = document.getElementById('controls');
+    if(!enemyPanel || !enemyCounts || !controls) return;
+
+    // hidden クラスが付いたソッコー専用UIは、過去に付いた inline display:flex!important を打ち消す。
+    // 逆に hidden が外れたら display:none!important を解除して、表示モードへ復帰できるようにする。
+    Array.prototype.forEach.call(
+      document.querySelectorAll('#btnSokkooDagger,#btnSokkooHeart,#eSokkooDaggerBox,#eSokkooHeartBox,#pSokkooDaggerBox,#pSokkooHeartBox'),
+      function(el){
+        if(el.classList.contains('hidden')){
+          setImp(el, 'display', 'none');
+        }else if(el.style.getPropertyValue('display') === 'none'){
+          el.style.removeProperty('display');
+        }
+      }
+    );
+
+    var enemyCards = Array.prototype.filter.call(enemyCounts.querySelectorAll('.mini-card'), visible);
+    var ownCards = Array.prototype.filter.call(controls.querySelectorAll('.card-btn[data-card]'), visible);
+    if(enemyCards.length === 0 || ownCards.length === 0) return;
+
+    var enemyRect = enemyCounts.getBoundingClientRect();
+    var enemyCardRect = enemyCards[0].getBoundingClientRect();
+    if(enemyRect.width < 10 || enemyCardRect.width < 10 || enemyCardRect.height < 10) return;
+
+    var enemyStyle = getComputedStyle(enemyCounts);
+    var cardStyle = getComputedStyle(enemyCards[0]);
+    var enemyImg = enemyCards[0].querySelector('img');
+    var enemyText = enemyCards[0].querySelector('span');
+    var enemyCountText = enemyCards[0].querySelector('b');
+    var imgRect = enemyImg ? enemyImg.getBoundingClientRect() : null;
+    var textStyle = enemyText ? getComputedStyle(enemyText) : null;
+    var bStyle = enemyCountText ? getComputedStyle(enemyCountText) : null;
+
+    var columns = enemyCards.length;
+    var gap = enemyStyle.columnGap && enemyStyle.columnGap !== 'normal' ? enemyStyle.columnGap : enemyStyle.gap;
+    if(!gap || gap === 'normal') gap = '8px';
+
+    // 親コンテナの幅を相手側の残りカード列に完全同期する。
+    setImp(controls, 'box-sizing', 'border-box');
+    setImp(controls, 'display', 'grid');
+    setImp(controls, 'grid-template-columns', 'repeat(' + columns + ', minmax(0, 1fr))');
+    setImp(controls, 'column-gap', gap);
+    setImp(controls, 'row-gap', 'var(--hdg-call-row-gap, 10px)');
+    setImp(controls, 'width', Math.round(enemyRect.width) + 'px');
+    setImp(controls, 'max-width', 'calc(100vw - 16px)');
+    setImp(controls, 'min-width', '0');
+    setImp(controls, 'justify-content', 'stretch');
+    setImp(controls, 'justify-items', 'stretch');
+    setImp(controls, 'align-items', 'stretch');
+
+    var pos = getComputedStyle(controls).position;
+    if(pos === 'fixed'){
+      setImp(controls, 'left', '50%');
+      setImp(controls, 'right', 'auto');
+      setImp(controls, 'transform', 'translateX(-50%)');
+    }else{
+      setImp(controls, 'margin-left', 'auto');
+      setImp(controls, 'margin-right', 'auto');
+      setImp(controls, 'transform', 'none');
+    }
+
+    // 自分側カードを、相手側カードの幅・高さ・内部文字サイズへ同期する。
+    ownCards.forEach(function(btn){
+      setImp(btn, 'box-sizing', 'border-box');
+      setImp(btn, 'width', '100%');
+      setImp(btn, 'min-width', '0');
+      setImp(btn, 'max-width', 'none');
+      setImp(btn, 'height', Math.round(enemyCardRect.height) + 'px');
+      setImp(btn, 'min-height', Math.round(enemyCardRect.height) + 'px');
+      setImp(btn, 'max-height', Math.round(enemyCardRect.height) + 'px');
+      setImp(btn, 'padding', cardStyle.paddingTop + ' ' + cardStyle.paddingRight + ' ' + cardStyle.paddingBottom + ' ' + cardStyle.paddingLeft);
+      setImp(btn, 'border-radius', cardStyle.borderRadius);
+      setImp(btn, 'display', 'flex');
+      setImp(btn, 'flex-direction', 'column');
+      setImp(btn, 'align-items', 'center');
+      setImp(btn, 'justify-content', 'center');
+      setImp(btn, 'text-align', 'center');
+      setImp(btn, 'overflow', 'hidden');
+
+      var img = btn.querySelector('img');
+      if(img && imgRect){
+        setImp(img, 'height', Math.round(imgRect.height) + 'px');
+        setImp(img, 'width', 'auto');
+        setImp(img, 'max-width', '100%');
+        setImp(img, 'object-fit', getComputedStyle(enemyImg).objectFit || 'cover');
+        setImp(img, 'margin', getComputedStyle(enemyImg).marginTop + ' auto ' + getComputedStyle(enemyImg).marginBottom + ' auto');
+        setImp(img, 'border-radius', getComputedStyle(enemyImg).borderRadius);
+        setImp(img, 'display', 'block');
+      }
+
+      var span = btn.querySelector('span');
+      if(span && textStyle){
+        setImp(span, 'font-size', textStyle.fontSize);
+        setImp(span, 'line-height', textStyle.lineHeight);
+        setImp(span, 'font-weight', textStyle.fontWeight);
+        setImp(span, 'width', '100%');
+        setImp(span, 'text-align', 'center');
+        setImp(span, 'margin', getComputedStyle(enemyText).margin);
+      }
+      var b = btn.querySelector('b');
+      if(b && bStyle){
+        setImp(b, 'font-size', bStyle.fontSize);
+        setImp(b, 'line-height', bStyle.lineHeight);
+        setImp(b, 'font-weight', bStyle.fontWeight);
+        setImp(b, 'margin', bStyle.margin);
+      }
+    });
+
+    var callBtn = controls.querySelector('.call-btn');
+    if(callBtn){
+      setImp(callBtn, 'grid-column', '1 / -1');
+      setImp(callBtn, 'width', '100%');
+      setImp(callBtn, 'max-width', '100%');
+    }
+  }
+
+  function scheduleSync(){
+    syncRemainingCardUI();
+    requestAnimationFrame(syncRemainingCardUI);
+    setTimeout(syncRemainingCardUI, 80);
+    setTimeout(syncRemainingCardUI, 250);
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleSync);
+  else scheduleSync();
+  window.addEventListener('load', scheduleSync);
+  window.addEventListener('resize', scheduleSync);
+  window.addEventListener('orientationchange', scheduleSync);
+  document.addEventListener('click', function(){ setTimeout(scheduleSync, 0); }, true);
+
+  var mo = new MutationObserver(scheduleSync);
+  function observeTargets(){
+    var controls = document.getElementById('controls');
+    var enemy = document.querySelector('.panel.enemy');
+    if(controls) mo.observe(controls, {attributes:true, childList:true, subtree:true, characterData:true});
+    if(enemy) mo.observe(enemy, {attributes:true, childList:true, subtree:true, characterData:true});
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observeTargets);
+  else observeTargets();
+
+  // 初期描画直後のCSS競合対策。
+  var n = 0;
+  var timer = setInterval(function(){
+    scheduleSync();
+    n++;
+    if(n > 20) clearInterval(timer);
+  }, 200);
+})();
+</script>
