@@ -2200,6 +2200,73 @@ body.sokkoo-special-shake {
   margin:10px auto calc(112px + env(safe-area-inset-bottom)) !important;
 }
 
+
+/* ===== FINAL: fixed bar OFF, keep exact card icon UI ===== */
+body{
+  padding-bottom: 20px !important;
+}
+
+#controls,
+.controls{
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  top: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 12px auto 10px !important;
+  transform: none !important;
+  z-index: auto !important;
+
+  /* 固定バー時代の黒帯だけ消して、ボタン自体の色・形は維持 */
+  background: transparent !important;
+  border-top: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 指定順：スコア → カード/コール → 履歴 → もう一度 */
+#gameArea .score + #controls,
+#gameArea .score + .controls{
+  margin-top: 10px !important;
+}
+
+#log.log{
+  margin-top: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+.restart-area{
+  margin: 10px auto calc(112px + env(safe-area-inset-bottom)) !important;
+}
+
+@media (max-width:859px){
+  body{
+    padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+  }
+
+  #controls,
+  .controls{
+    position: static !important;
+    bottom: auto !important;
+    padding: 9px !important;
+    margin: 10px auto 8px !important;
+  }
+}
+
+@media (min-width:860px){
+  #controls,
+  .controls{
+    position: static !important;
+    padding: 0 !important;
+    margin: 12px 0 !important;
+  }
+
+  .restart-area{
+    margin-bottom:24px !important;
+  }
+}
+
 </style>
 </head>
 <body>
