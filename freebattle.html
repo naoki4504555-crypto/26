@@ -3960,7 +3960,10 @@ function setupBackButton(){
     return cs.display !== 'none' && cs.visibility !== 'hidden' && !el.classList.contains('hidden');
   }
   function setImp(el, prop, value){
-    if(el && value !== undefined && value !== null && value !== '') el.style.setProperty(prop, value, 'important');
+    if(!el || value === undefined || value === null || value === '') return;
+    value = String(value);
+    if(el.style.getPropertyValue(prop) === value && el.style.getPropertyPriority(prop) === 'important') return;
+    el.style.setProperty(prop, value, 'important');
   }
   function syncRemainingCardUI(){
     var enemyPanel = document.querySelector('.panel.enemy');
@@ -4277,5 +4280,96 @@ function setupBackButton(){
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observe);
   else observe();
+})();
+</script>
+
+
+<!-- HDG PATCH: stable free-battle start + final remaining-card text unifier -->
+<style>
+/* 残りカード名と枚数の文字を、相手側/自分側で最終的に同じ見た目へ統一 */
+.panel.enemy .mini-card span,
+#controls .card-btn span,
+.controls .card-btn span{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif !important;
+  font-weight:900 !important;
+  line-height:1.04 !important;
+  text-align:center !important;
+  letter-spacing:0 !important;
+}
+.panel.enemy .mini-card span b,
+#controls .card-btn span b,
+.controls .card-btn span b{
+  font-size:1em !important;
+  line-height:1.04 !important;
+  font-weight:1000 !important;
+  vertical-align:baseline !important;
+}
+</style>
+<script>
+(function(){
+  function safeCall(fn){ try{ if(typeof fn === 'function') fn(); }catch(e){} }
+  function hdgStartFreeBattle(){
+    try{
+      if(typeof startGame === 'function'){
+        startGame();
+        return false;
+      }
+    }catch(e){
+      console.error('HDG startGame failed', e);
+    }
+    return false;
+  }
+  window.hdgStartFreeBattle = hdgStartFreeBattle;
+
+  function bindStartButtons(){
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('#startScreen .big-btn, .restart-area .big-btn'));
+    buttons.forEach(function(btn){
+      if(btn.dataset.hdgStartBound === '1') return;
+      btn.dataset.hdgStartBound = '1';
+      btn.setAttribute('type','button');
+      btn.onclick = null;
+      btn.addEventListener('click', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        safeCall(window.buttonTap);
+        return hdgStartFreeBattle();
+      }, true);
+    });
+  }
+
+  function fitRemainingTextOnce(){
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.panel.enemy .mini-card, #controls .card-btn[data-card], .controls .card-btn[data-card]'));
+    cards.forEach(function(card){
+      if(!card || card.classList.contains('hidden')) return;
+      var cs = getComputedStyle(card);
+      if(cs.display === 'none' || cs.visibility === 'hidden') return;
+      var span = card.querySelector('span');
+      if(!span) return;
+      var r = card.getBoundingClientRect();
+      if(r.width < 10 || r.height < 10) return;
+      var label = card.getAttribute('data-card') || '';
+      var isSokkoo = label.indexOf('ソッコー') === 0;
+      var size = Math.max(isSokkoo ? 10 : 11, Math.min(isSokkoo ? 18 : 23, Math.min(r.width, r.height) * (isSokkoo ? 0.145 : 0.18)));
+      span.style.setProperty('font-size', size.toFixed(2) + 'px', 'important');
+      span.style.setProperty('line-height', isSokkoo ? '1.02' : '1.04', 'important');
+      var b = span.querySelector('b');
+      if(b){
+        b.style.setProperty('font-size','1em','important');
+        b.style.setProperty('line-height', isSokkoo ? '1.02' : '1.04','important');
+      }
+    });
+  }
+  function scheduleTextFit(){
+    fitRemainingTextOnce();
+    requestAnimationFrame(fitRemainingTextOnce);
+    setTimeout(fitRemainingTextOnce, 100);
+    setTimeout(fitRemainingTextOnce, 300);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ bindStartButtons(); scheduleTextFit(); });
+  else { bindStartButtons(); scheduleTextFit(); }
+  window.addEventListener('load', function(){ bindStartButtons(); scheduleTextFit(); });
+  window.addEventListener('resize', scheduleTextFit);
+  window.addEventListener('orientationchange', scheduleTextFit);
+  document.addEventListener('click', function(){ setTimeout(scheduleTextFit, 0); }, true);
 })();
 </script>
