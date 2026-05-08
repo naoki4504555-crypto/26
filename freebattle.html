@@ -2197,6 +2197,74 @@ body.sokkoo-special-shake {
   margin: 10px auto calc(112px + env(safe-area-inset-bottom)) !important;
 }
 
+
+/* ===== GOD VERSION small icon unify ===== */
+/* 上下の小カードを完全統一 */
+
+.panel.enemy .mini-card,
+#controls .card-btn,
+.controls .card-btn{
+  min-height: 86px !important;
+  height: 86px !important;
+  border-radius: 18px !important;
+  padding: 4px !important;
+}
+
+.panel.enemy .mini-card img,
+#controls .card-btn img,
+.controls .card-btn img{
+  height: 48px !important;
+  width: auto !important;
+  aspect-ratio: 63/89 !important;
+  object-fit: contain !important;
+  margin: 0 auto 2px !important;
+  display:block !important;
+}
+
+.panel.enemy .mini-card span,
+.panel.enemy .mini-card b,
+#controls .card-btn span,
+#controls .card-btn b,
+.controls .card-btn span,
+.controls .card-btn b{
+  font-size: 11px !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.panel.enemy .mini-card b,
+#controls .card-btn b,
+.controls .card-btn b{
+  font-size: 19px !important;
+  margin-left: 2px !important;
+}
+
+@media (min-width:860px){
+  .panel.enemy .mini-card,
+  #controls .card-btn,
+  .controls .card-btn{
+    min-height: 142px !important;
+    height: 142px !important;
+    padding: 8px !important;
+  }
+
+  .panel.enemy .mini-card img,
+  #controls .card-btn img,
+  .controls .card-btn img{
+    height: 82px !important;
+  }
+
+  .panel.enemy .mini-card span,
+  .panel.enemy .mini-card b,
+  #controls .card-btn span,
+  #controls .card-btn b,
+  .controls .card-btn span,
+  .controls .card-btn b{
+    font-size: 22px !important;
+  }
+}
+
 </style>
 </head>
 <body>
