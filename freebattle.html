@@ -2329,6 +2329,36 @@ body.sokkoo-special-shake {
 }
 
 </style>
+
+<style id="hdg-light-remain-fix">
+/* 軽量版：残りカードアイコンの文字を自分・相手で統一。MutationObserverは使わない */
+.controls .card-btn span,
+.panel.enemy .mini-card span{
+  font-size:17px !important;
+  line-height:1.05 !important;
+  font-weight:900 !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  letter-spacing:0 !important;
+}
+.controls .card-btn span b,
+.panel.enemy .mini-card span b,
+.panel.enemy .mini-card b{
+  font-size:1em !important;
+  line-height:1.05 !important;
+  font-weight:1000 !important;
+  margin-left:.12em !important;
+}
+.hdg-sokkoo-wrap{ white-space:normal !important; word-break:keep-all !important; overflow-wrap:normal !important; }
+.hdg-sokkoo-word,.hdg-sokkoo-tail{ display:inline-block !important; white-space:nowrap !important; }
+@media (max-width:390px){
+  .controls .card-btn span, .panel.enemy .mini-card span{ font-size:16px !important; }
+}
+@media (min-width:860px){
+  .controls .card-btn span, .panel.enemy .mini-card span, .panel.enemy .mini-card b{ font-size:23px !important; }
+  #btnSokkooDagger span, #btnSokkooHeart span, #eSokkooDaggerBox span, #eSokkooHeartBox span{ font-size:16px !important; }
+}
+</style>
 </head>
 <body>
 <div id="sokkooFinishOverlay" class="sokkoo-finish-overlay"></div>
@@ -2638,6 +2668,7 @@ clearEnemyCallTimer();
   resetCardClasses();
   clearBattleResultLabels();
   updateUI();
+  normalizeRemainingLabelsLight();
   playSound("start");
 }
 
@@ -2728,6 +2759,26 @@ function forceMobileRemainCardFrameSize(){
 
 function forceSmartphoneRemainIconSize(){}
 
+function normalizeRemainingLabelsLight(){
+  const cards = document.querySelectorAll('.panel.enemy .mini-card[data-card], #controls .card-btn[data-card]');
+  cards.forEach(card => {
+    const label = card.getAttribute('data-card') || '';
+    const span = card.querySelector('span');
+    if(!span) return;
+    if(label === 'ソッコーダガー' || label === 'ソッコーハート'){
+      const tail = label === 'ソッコーダガー' ? 'ダガー' : 'ハート';
+      const b = span.querySelector('b');
+      const id = b ? b.id : '';
+      const count = b ? b.textContent : '0';
+      if(!span.classList.contains('hdg-sokkoo-wrap')){
+        span.className = (span.className ? span.className + ' ' : '') + 'hdg-sokkoo-wrap';
+        span.innerHTML = '<span class="hdg-sokkoo-word">ソッコー</span><span class="hdg-sokkoo-tail">' + tail + ' <b id="' + id + '">' + count + '</b></span>';
+      }
+    }
+  });
+}
+
+
 /* HDG FIX: ソッコーモード専用カードの表示状態を、inline style まで含めて正規化する。
    前回のサイズ同期処理が display:flex!important を直接付与するため、
    通常モードへ戻した後も hidden クラスだけではソッコーカードが消えないことがあった。 */
@@ -2804,6 +2855,7 @@ function updateUI(){
   setCardEmptyState();
   
   forceMobileRemainCardFrameSize();
+  normalizeRemainingLabelsLight();
   applyModeSpecificVisibility();
 }
 
@@ -3414,6 +3466,17 @@ function toggleBgm(){
   /* disabled: parent page owns Free Battle BGM */
 }
 
+
+function stopAllFreeBattleAudio(){
+  try{ stopBgm(); }catch(e){}
+  try{
+    if(audioCtx && audioCtx.state !== 'closed'){ audioCtx.close().catch(()=>{}); }
+  }catch(e){}
+}
+window.addEventListener('pagehide', stopAllFreeBattleAudio);
+window.addEventListener('beforeunload', stopAllFreeBattleAudio);
+document.addEventListener('visibilitychange', () => { if(document.hidden) stopAllFreeBattleAudio(); });
+
 </script>
 <div id="sokkooOverlay" class="sokkoo-overlay"></div>
 
@@ -3951,425 +4014,9 @@ function setupBackButton(){
 .hidden{display:none!important;}
 </style>
 
-<!-- HDG PATCH: opponent-based remaining-card sync (2026-05-08) -->
-<script>
-(function(){
-  function visible(el){
-    if(!el) return false;
-    var cs = getComputedStyle(el);
-    return cs.display !== 'none' && cs.visibility !== 'hidden' && !el.classList.contains('hidden');
-  }
-  function setImp(el, prop, value){
-    if(!el || value === undefined || value === null || value === '') return;
-    value = String(value);
-    if(el.style.getPropertyValue(prop) === value && el.style.getPropertyPriority(prop) === 'important') return;
-    el.style.setProperty(prop, value, 'important');
-  }
-  function syncRemainingCardUI(){
-    var enemyPanel = document.querySelector('.panel.enemy');
-    var enemyCounts = document.querySelector('.panel.enemy .counts');
-    var controls = document.getElementById('controls');
-    if(!enemyPanel || !enemyCounts || !controls) return;
-
-    // hidden クラスが付いたソッコー専用UIは、過去に付いた inline display:flex!important を打ち消す。
-    // 逆に hidden が外れたら display:none!important を解除して、表示モードへ復帰できるようにする。
-    Array.prototype.forEach.call(
-      document.querySelectorAll('#btnSokkooDagger,#btnSokkooHeart,#eSokkooDaggerBox,#eSokkooHeartBox,#pSokkooDaggerBox,#pSokkooHeartBox'),
-      function(el){
-        if(el.classList.contains('hidden')){
-          setImp(el, 'display', 'none');
-        }else if(el.style.getPropertyValue('display') === 'none'){
-          el.style.removeProperty('display');
-        }
-      }
-    );
-
-    var enemyCards = Array.prototype.filter.call(enemyCounts.querySelectorAll('.mini-card'), visible);
-    var ownCards = Array.prototype.filter.call(controls.querySelectorAll('.card-btn[data-card]'), visible);
-    if(enemyCards.length === 0 || ownCards.length === 0) return;
-
-    var enemyRect = enemyCounts.getBoundingClientRect();
-    var enemyCardRect = enemyCards[0].getBoundingClientRect();
-    if(enemyRect.width < 10 || enemyCardRect.width < 10 || enemyCardRect.height < 10) return;
-
-    var enemyStyle = getComputedStyle(enemyCounts);
-    var cardStyle = getComputedStyle(enemyCards[0]);
-    var enemyImg = enemyCards[0].querySelector('img');
-    var enemyText = enemyCards[0].querySelector('span');
-    var enemyCountText = enemyCards[0].querySelector('b');
-    var imgRect = enemyImg ? enemyImg.getBoundingClientRect() : null;
-    var textStyle = enemyText ? getComputedStyle(enemyText) : null;
-    var bStyle = enemyCountText ? getComputedStyle(enemyCountText) : null;
-
-    var columns = enemyCards.length;
-    var gap = enemyStyle.columnGap && enemyStyle.columnGap !== 'normal' ? enemyStyle.columnGap : enemyStyle.gap;
-    if(!gap || gap === 'normal') gap = '8px';
-
-    // 親コンテナの幅を相手側の残りカード列に完全同期する。
-    setImp(controls, 'box-sizing', 'border-box');
-    setImp(controls, 'display', 'grid');
-    setImp(controls, 'grid-template-columns', 'repeat(' + columns + ', minmax(0, 1fr))');
-    setImp(controls, 'gap', gap);
-    setImp(controls, 'width', Math.round(enemyRect.width) + 'px');
-    setImp(controls, 'max-width', 'calc(100vw - 16px)');
-    setImp(controls, 'min-width', '0');
-    setImp(controls, 'justify-content', 'stretch');
-    setImp(controls, 'justify-items', 'stretch');
-    setImp(controls, 'align-items', 'stretch');
-
-    var pos = getComputedStyle(controls).position;
-    if(pos === 'fixed'){
-      setImp(controls, 'left', '50%');
-      setImp(controls, 'right', 'auto');
-      setImp(controls, 'transform', 'translateX(-50%)');
-    }else{
-      setImp(controls, 'margin-left', 'auto');
-      setImp(controls, 'margin-right', 'auto');
-      setImp(controls, 'transform', 'none');
-    }
-
-    // 自分側カードを、相手側カードの幅・高さ・内部文字サイズへ同期する。
-    ownCards.forEach(function(btn){
-      setImp(btn, 'box-sizing', 'border-box');
-      setImp(btn, 'width', '100%');
-      setImp(btn, 'min-width', '0');
-      setImp(btn, 'max-width', 'none');
-      setImp(btn, 'height', Math.round(enemyCardRect.height) + 'px');
-      setImp(btn, 'min-height', Math.round(enemyCardRect.height) + 'px');
-      setImp(btn, 'max-height', Math.round(enemyCardRect.height) + 'px');
-      setImp(btn, 'padding', cardStyle.paddingTop + ' ' + cardStyle.paddingRight + ' ' + cardStyle.paddingBottom + ' ' + cardStyle.paddingLeft);
-      setImp(btn, 'border-radius', cardStyle.borderRadius);
-      setImp(btn, 'display', 'flex');
-      setImp(btn, 'flex-direction', 'column');
-      setImp(btn, 'align-items', 'center');
-      setImp(btn, 'justify-content', 'center');
-      setImp(btn, 'text-align', 'center');
-      setImp(btn, 'overflow', 'hidden');
-
-      var img = btn.querySelector('img');
-      if(img && imgRect){
-        setImp(img, 'height', Math.round(imgRect.height) + 'px');
-        setImp(img, 'width', 'auto');
-        setImp(img, 'max-width', '100%');
-        setImp(img, 'object-fit', getComputedStyle(enemyImg).objectFit || 'cover');
-        setImp(img, 'margin', getComputedStyle(enemyImg).marginTop + ' auto ' + getComputedStyle(enemyImg).marginBottom + ' auto');
-        setImp(img, 'border-radius', getComputedStyle(enemyImg).borderRadius);
-        setImp(img, 'display', 'block');
-      }
-
-      var span = btn.querySelector('span');
-      if(span && textStyle){
-        setImp(span, 'font-size', textStyle.fontSize);
-        setImp(span, 'line-height', textStyle.lineHeight);
-        setImp(span, 'font-weight', textStyle.fontWeight);
-        setImp(span, 'width', '100%');
-        setImp(span, 'text-align', 'center');
-        setImp(span, 'margin', getComputedStyle(enemyText).margin);
-      }
-      var b = btn.querySelector('b');
-      if(b && bStyle){
-        setImp(b, 'font-size', bStyle.fontSize);
-        setImp(b, 'line-height', bStyle.lineHeight);
-        setImp(b, 'font-weight', bStyle.fontWeight);
-        setImp(b, 'margin', bStyle.margin);
-      }
-    });
-
-    var callBtn = controls.querySelector('.call-btn');
-    if(callBtn){
-      setImp(callBtn, 'grid-column', '1 / -1');
-      setImp(callBtn, 'width', '100%');
-      setImp(callBtn, 'max-width', '100%');
-    }
-  }
-
-  function scheduleSync(){
-    syncRemainingCardUI();
-    requestAnimationFrame(syncRemainingCardUI);
-    setTimeout(syncRemainingCardUI, 80);
-    setTimeout(syncRemainingCardUI, 250);
-  }
-
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleSync);
-  else scheduleSync();
-  window.addEventListener('load', scheduleSync);
-  window.addEventListener('resize', scheduleSync);
-  window.addEventListener('orientationchange', scheduleSync);
-  document.addEventListener('click', function(){ setTimeout(scheduleSync, 0); }, true);
-
-  var mo = new MutationObserver(scheduleSync);
-  function observeTargets(){
-    var controls = document.getElementById('controls');
-    var enemy = document.querySelector('.panel.enemy');
-    if(controls) mo.observe(controls, {attributes:true, childList:true, subtree:true, characterData:true});
-    if(enemy) mo.observe(enemy, {attributes:true, childList:true, subtree:true, characterData:true});
-  }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observeTargets);
-  else observeTargets();
-
-  // 初期描画直後のCSS競合対策。
-  var n = 0;
-  var timer = setInterval(function(){
-    scheduleSync();
-    n++;
-    if(n > 20) clearInterval(timer);
-  }, 200);
-})();
-</script>
+<!-- HDG PATCH REMOVED: heavy MutationObserver sync caused freeze on game start. -->
 
 
-<!-- HDG PATCH: remaining-card text size sync + smart Sokkoo line wrapping -->
-<style>
-/*
-  残りカードの文字サイズ最終整理。
-  旧CSSの端末別 font-size 指定に負けないよう、相手/自分を同じ指定で上書きする。
-  ソッコー系は横幅が足りる時は1行、足りない時だけ「ソッコー」「ダガー/ハート」で自然に2行化する。
-*/
-.panel.enemy .mini-card span,
-#controls .card-btn span,
-.controls .card-btn span{
-  display:block !important;
-  width:100% !important;
-  min-width:0 !important;
-  text-align:center !important;
-  font-weight:900 !important;
-  line-height:1.04 !important;
-  margin:0 !important;
-  letter-spacing:0 !important;
-  overflow:visible !important;
-  text-wrap:normal !important;
-}
 
-.panel.enemy .mini-card span:not(.hdg-sokkoo-wrap),
-#controls .card-btn span:not(.hdg-sokkoo-wrap),
-.controls .card-btn span:not(.hdg-sokkoo-wrap){
-  white-space:nowrap !important;
-}
+<!-- HDG PATCH REMOVED: replaced with lightweight label normalization. -->
 
-.hdg-sokkoo-wrap{
-  white-space:normal !important;
-  word-break:keep-all !important;
-  overflow-wrap:normal !important;
-  line-break:strict !important;
-}
-
-.hdg-sokkoo-word,
-.hdg-sokkoo-tail{
-  display:inline-block !important;
-  white-space:nowrap !important;
-  vertical-align:baseline !important;
-}
-
-.hdg-sokkoo-wrap b,
-.panel.enemy .mini-card span b,
-#controls .card-btn span b,
-.controls .card-btn span b{
-  display:inline !important;
-  font-size:1em !important;
-  line-height:1.04 !important;
-  font-weight:1000 !important;
-  color:#ffe784 !important;
-  margin-left:.12em !important;
-  white-space:nowrap !important;
-}
-</style>
-
-<script>
-(function(){
-  function clamp(min, value, max){ return Math.max(min, Math.min(value, max)); }
-  function setImp(el, prop, value){ if(!el) return; if(el.style.getPropertyValue(prop) === String(value) && el.style.getPropertyPriority(prop) === 'important') return; el.style.setProperty(prop, value, 'important'); }
-  function isVisible(el){
-    if(!el || el.classList.contains('hidden')) return false;
-    var cs = getComputedStyle(el);
-    return cs.display !== 'none' && cs.visibility !== 'hidden';
-  }
-  function normalizeSokkooLabel(card){
-    var label = card.getAttribute('data-card') || '';
-    if(label !== 'ソッコーダガー' && label !== 'ソッコーハート') return;
-    var span = card.querySelector('span');
-    if(!span) return;
-    var tail = label === 'ソッコーダガー' ? 'ダガー' : 'ハート';
-    var b = span.querySelector('b');
-    if(!b) return;
-    var id = b.id || '';
-    var count = b.textContent || '0';
-    if(span.classList.contains('hdg-sokkoo-wrap') && span.querySelector('.hdg-sokkoo-word') && span.querySelector('.hdg-sokkoo-tail')) return;
-    span.className = (span.className ? span.className + ' ' : '') + 'hdg-sokkoo-wrap';
-    span.innerHTML = '<span class="hdg-sokkoo-word">ソッコー</span><span class="hdg-sokkoo-tail">' + tail + ' <b id="' + id + '">' + count + '</b></span>';
-  }
-  function normalizeNormalLabel(card){
-    var label = card.getAttribute('data-card') || '';
-    if(label === 'ソッコーダガー' || label === 'ソッコーハート') return;
-    var span = card.querySelector('span');
-    if(!span) return;
-    span.classList.remove('hdg-sokkoo-wrap');
-  }
-  function fitOneCard(card){
-    var span = card.querySelector('span');
-    if(!span) return;
-    var rect = card.getBoundingClientRect();
-    if(rect.width < 10 || rect.height < 10) return;
-    var label = card.getAttribute('data-card') || '';
-    var isSokkoo = label === 'ソッコーダガー' || label === 'ソッコーハート';
-
-    /* カード外枠に対して文字を連動。旧px固定/media queryを上書きする。 */
-    var base = Math.min(rect.width * (isSokkoo ? 0.145 : 0.18), rect.height * (isSokkoo ? 0.145 : 0.18));
-    var fontSize = isSokkoo ? clamp(10, base, 18) : clamp(11, base, 23);
-
-    setImp(span, 'font-size', fontSize.toFixed(2) + 'px');
-    setImp(span, 'line-height', isSokkoo ? '1.02' : '1.04');
-    setImp(span, 'font-weight', '900');
-    setImp(span, 'text-align', 'center');
-    setImp(span, 'width', '100%');
-    setImp(span, 'margin', '0');
-    setImp(span, 'letter-spacing', '0');
-    setImp(span, 'overflow', 'visible');
-
-    var b = span.querySelector('b');
-    if(b){
-      setImp(b, 'font-size', '1em');
-      setImp(b, 'line-height', '1.02');
-      setImp(b, 'font-weight', '1000');
-      setImp(b, 'margin-left', '.12em');
-      setImp(b, 'white-space', 'nowrap');
-    }
-
-    if(isSokkoo){
-      setImp(span, 'white-space', 'normal');
-      setImp(span, 'word-break', 'keep-all');
-      setImp(span, 'overflow-wrap', 'normal');
-      Array.prototype.forEach.call(span.querySelectorAll('.hdg-sokkoo-word,.hdg-sokkoo-tail'), function(part){
-        setImp(part, 'display', 'inline-block');
-        setImp(part, 'white-space', 'nowrap');
-      });
-
-      /* まず1行で入るか試す。入るなら1行。入らない時だけ、inline-block同士の境目で2行になる。 */
-      var available = Math.max(0, rect.width - 8);
-      if(span.scrollWidth > available){
-        var small = clamp(9.5, fontSize * 0.94, fontSize);
-        setImp(span, 'font-size', small.toFixed(2) + 'px');
-      }
-    }else{
-      setImp(span, 'white-space', 'nowrap');
-      setImp(span, 'word-break', 'normal');
-    }
-  }
-  function syncRemainingText(){
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.panel.enemy .mini-card, #controls .card-btn[data-card], .controls .card-btn[data-card]')).filter(isVisible);
-    cards.forEach(function(card){ normalizeSokkooLabel(card); normalizeNormalLabel(card); });
-    cards.forEach(fitOneCard);
-  }
-  function schedule(){
-    syncRemainingText();
-    requestAnimationFrame(syncRemainingText);
-    setTimeout(syncRemainingText, 60);
-    setTimeout(syncRemainingText, 220);
-  }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule);
-  else schedule();
-  window.addEventListener('load', schedule);
-  window.addEventListener('resize', schedule);
-  window.addEventListener('orientationchange', schedule);
-  document.addEventListener('click', function(){ setTimeout(schedule, 0); }, true);
-  var mo = new MutationObserver(schedule);
-  function observe(){
-    var controls = document.getElementById('controls');
-    var enemy = document.querySelector('.panel.enemy');
-    if(controls) mo.observe(controls, {attributes:true, childList:true, subtree:true, characterData:true});
-    if(enemy) mo.observe(enemy, {attributes:true, childList:true, subtree:true, characterData:true});
-  }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observe);
-  else observe();
-})();
-</script>
-
-
-<!-- HDG PATCH: stable free-battle start + final remaining-card text unifier -->
-<style>
-/* 残りカード名と枚数の文字を、相手側/自分側で最終的に同じ見た目へ統一 */
-.panel.enemy .mini-card span,
-#controls .card-btn span,
-.controls .card-btn span{
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif !important;
-  font-weight:900 !important;
-  line-height:1.04 !important;
-  text-align:center !important;
-  letter-spacing:0 !important;
-}
-.panel.enemy .mini-card span b,
-#controls .card-btn span b,
-.controls .card-btn span b{
-  font-size:1em !important;
-  line-height:1.04 !important;
-  font-weight:1000 !important;
-  vertical-align:baseline !important;
-}
-</style>
-<script>
-(function(){
-  function safeCall(fn){ try{ if(typeof fn === 'function') fn(); }catch(e){} }
-  function hdgStartFreeBattle(){
-    try{
-      if(typeof startGame === 'function'){
-        startGame();
-        return false;
-      }
-    }catch(e){
-      console.error('HDG startGame failed', e);
-    }
-    return false;
-  }
-  window.hdgStartFreeBattle = hdgStartFreeBattle;
-
-  function bindStartButtons(){
-    var buttons = Array.prototype.slice.call(document.querySelectorAll('#startScreen .big-btn, .restart-area .big-btn'));
-    buttons.forEach(function(btn){
-      if(btn.dataset.hdgStartBound === '1') return;
-      btn.dataset.hdgStartBound = '1';
-      btn.setAttribute('type','button');
-      btn.onclick = null;
-      btn.addEventListener('click', function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        safeCall(window.buttonTap);
-        return hdgStartFreeBattle();
-      }, true);
-    });
-  }
-
-  function fitRemainingTextOnce(){
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.panel.enemy .mini-card, #controls .card-btn[data-card], .controls .card-btn[data-card]'));
-    cards.forEach(function(card){
-      if(!card || card.classList.contains('hidden')) return;
-      var cs = getComputedStyle(card);
-      if(cs.display === 'none' || cs.visibility === 'hidden') return;
-      var span = card.querySelector('span');
-      if(!span) return;
-      var r = card.getBoundingClientRect();
-      if(r.width < 10 || r.height < 10) return;
-      var label = card.getAttribute('data-card') || '';
-      var isSokkoo = label.indexOf('ソッコー') === 0;
-      var size = Math.max(isSokkoo ? 10 : 11, Math.min(isSokkoo ? 18 : 23, Math.min(r.width, r.height) * (isSokkoo ? 0.145 : 0.18)));
-      span.style.setProperty('font-size', size.toFixed(2) + 'px', 'important');
-      span.style.setProperty('line-height', isSokkoo ? '1.02' : '1.04', 'important');
-      var b = span.querySelector('b');
-      if(b){
-        b.style.setProperty('font-size','1em','important');
-        b.style.setProperty('line-height', isSokkoo ? '1.02' : '1.04','important');
-      }
-    });
-  }
-  function scheduleTextFit(){
-    fitRemainingTextOnce();
-    requestAnimationFrame(fitRemainingTextOnce);
-    setTimeout(fitRemainingTextOnce, 100);
-    setTimeout(fitRemainingTextOnce, 300);
-  }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ bindStartButtons(); scheduleTextFit(); });
-  else { bindStartButtons(); scheduleTextFit(); }
-  window.addEventListener('load', function(){ bindStartButtons(); scheduleTextFit(); });
-  window.addEventListener('resize', scheduleTextFit);
-  window.addEventListener('orientationchange', scheduleTextFit);
-  document.addEventListener('click', function(){ setTimeout(scheduleTextFit, 0); }, true);
-})();
-</script>

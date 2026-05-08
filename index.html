@@ -866,13 +866,9 @@ function goBattle(){
   if(screen)screen.classList.add('active');
 
   if(frame){
-    if(!frame.src || frame.src === 'about:blank'){
-      frame.dataset.loaded = '1';
-      frame.src = './freebattle.html?v=preload';
-    }
-    try{
-      frame.contentWindow.postMessage({type:'HDG_STOP_FREE_BGM'}, '*');
-    }catch(e){}
+    try{ frame.src = 'about:blank'; }catch(e){}
+    frame.dataset.loaded = '1';
+    setTimeout(()=>{ frame.src = './freebattle.html?v=' + Date.now(); }, 0);
   }
 }
 let novelIdx = 0;
@@ -994,6 +990,22 @@ function clearStage(i){
 
 
 
+
+
+function stopAllHdAudio(){
+  try{ stopTitleBgm(); }catch(e){}
+  try{ stopFreeBattleBgm(); }catch(e){}
+  try{ stopStoryBgm(); }catch(e){}
+  try{
+    const frame=document.getElementById('freeBattleFrame');
+    if(frame && frame.contentWindow && typeof frame.contentWindow.stopAllFreeBattleAudio === 'function'){
+      frame.contentWindow.stopAllFreeBattleAudio();
+    }
+  }catch(e){}
+}
+window.addEventListener('pagehide', stopAllHdAudio);
+window.addEventListener('beforeunload', stopAllHdAudio);
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) stopAllHdAudio(); });
 
 function showStoryScreenFromHash(){
   showStoryModeScreen();
