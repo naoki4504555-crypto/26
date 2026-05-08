@@ -3524,3 +3524,59 @@ function setupBackButton(){
   }
 }
 </style>
+
+
+<!-- HDG PATCH: tablet remaining-card height unify -->
+<style>
+/* タブレットだけ：相手の残りカードアイコン高さに合わせて、自分側も同じ高さへ統一 */
+@media (min-width: 768px) and (max-width: 1199px){
+  :root{
+    --hdg-tablet-remain-height: 86px;
+    --hdg-tablet-remain-img-height: 48px;
+  }
+
+  .panel.enemy .mini-card,
+  #controls .card-btn,
+  .controls .card-btn{
+    height: var(--hdg-tablet-remain-height) !important;
+    min-height: var(--hdg-tablet-remain-height) !important;
+    max-height: var(--hdg-tablet-remain-height) !important;
+    padding: 4px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  .panel.enemy .mini-card img,
+  #controls .card-btn img,
+  .controls .card-btn img{
+    height: var(--hdg-tablet-remain-img-height) !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    margin: 0 auto 2px !important;
+    display: block !important;
+  }
+
+  .panel.enemy .mini-card span,
+  .panel.enemy .mini-card b,
+  #controls .card-btn span,
+  #controls .card-btn b,
+  .controls .card-btn span,
+  .controls .card-btn b{
+    font-size: 11px !important;
+    line-height: 1.05 !important;
+    margin: 0 !important;
+    font-weight: 900 !important;
+  }
+
+  .panel.enemy .mini-card b,
+  #controls .card-btn b,
+  .controls .card-btn b{
+    font-size: 19px !important;
+  }
+}
+</style>
