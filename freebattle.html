@@ -3467,3 +3467,60 @@ function setupBackButton(){
 
 </body>
 </html>
+
+<!-- HDG PATCH: tablet portrait controls centering -->
+<style>
+/* タブレット縦画面でも自分カード欄・相手カード欄が左詰めにならないように最終上書き */
+@media (orientation: portrait) and (min-width: 768px) and (max-width: 1199px){
+  #controls.controls,
+  .controls{
+    width: max-content !important;
+    max-width: calc(100vw - 48px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: stretch !important;
+  }
+
+  #controls.controls.normal-layout,
+  .controls.normal-layout,
+  #controls.controls:not(.sokkoo-layout),
+  .controls:not(.sokkoo-layout){
+    grid-template-columns: repeat(3, minmax(132px, 142px)) !important;
+  }
+
+  #controls.controls.sokkoo-layout,
+  .controls.sokkoo-layout{
+    grid-template-columns: repeat(5, minmax(104px, 118px)) !important;
+  }
+
+  .panel.enemy .counts{
+    width: max-content !important;
+    max-width: calc(100vw - 48px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    justify-content: center !important;
+    justify-items: center !important;
+  }
+
+  .panel.enemy:not(.sokkoo-enemy) .counts{
+    grid-template-columns: repeat(3, minmax(132px, 142px)) !important;
+  }
+
+  .panel.enemy.sokkoo-enemy .counts{
+    grid-template-columns: repeat(5, minmax(104px, 118px)) !important;
+  }
+
+  #controls .card-btn,
+  .controls .card-btn,
+  .panel.enemy .mini-card{
+    width: 100% !important;
+  }
+
+  #controls .call-btn,
+  .controls .call-btn{
+    width: 100% !important;
+  }
+}
+</style>
