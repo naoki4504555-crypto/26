@@ -14,6 +14,10 @@
     return false;
   }
   if(isReload()){
+    try{
+      sessionStorage.setItem('hd_title_unlocked','1');
+      sessionStorage.setItem('hd_return_title_bgm','1');
+    }catch(e){}
     location.replace("./index.html");
   }
 })();
@@ -3698,7 +3702,12 @@ function setupBackButton(){
             return;
           }
         }catch(e){}
-        try{ stopAllFreeBattleAudio(); }catch(e){} location.href = './index.html';
+        try{ stopAllFreeBattleAudio(); }catch(e){}
+        try{
+          sessionStorage.setItem('hd_title_unlocked','1');
+          sessionStorage.setItem('hd_return_title_bgm','1');
+        }catch(e){}
+        location.href = './index.html';
       }, 170);
     });
   }
@@ -4168,3 +4177,100 @@ function setupBackButton(){
 
 <!-- HDG PATCH REMOVED: replaced with lightweight label normalization. -->
 
+
+
+<!-- HDG FINAL FIX 20260508: title return state + remaining-card visual unification -->
+<style>
+/*
+  残りカード表示の最終上書き。
+  相手側の .mini-card と自分側の .card-btn に同じ寸法・同じ文字サイズを当てる。
+  過去のレスポンシブCSSが後から勝ってバラつく問題を、ファイル末尾の強い指定で止める。
+*/
+html body{
+  --hdg-remain-h: 142px;
+  --hdg-remain-img-h: 94px;
+  --hdg-remain-font: 23px;
+  --hdg-remain-num-font: 23px;
+}
+@media (max-width: 767px){
+  html body{
+    --hdg-remain-h: 88px;
+    --hdg-remain-img-h: 46px;
+    --hdg-remain-font: 13px;
+    --hdg-remain-num-font: 13px;
+  }
+}
+@media (min-width: 768px) and (max-width: 1199px){
+  html body{
+    --hdg-remain-h: 86px;
+    --hdg-remain-img-h: 48px;
+    --hdg-remain-font: 13px;
+    --hdg-remain-num-font: 13px;
+  }
+}
+html body .panel.enemy .mini-card,
+html body #controls.controls .card-btn,
+html body .controls .card-btn{
+  height: var(--hdg-remain-h) !important;
+  min-height: var(--hdg-remain-h) !important;
+  max-height: var(--hdg-remain-h) !important;
+  padding: 8px 6px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+html body .panel.enemy .mini-card img,
+html body #controls.controls .card-btn img,
+html body .controls .card-btn img{
+  height: var(--hdg-remain-img-h) !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  aspect-ratio: 63 / 89 !important;
+  object-fit: cover !important;
+  display: block !important;
+  margin: 0 auto !important;
+  border-radius: 0 !important;
+  flex: 0 0 auto !important;
+}
+html body .panel.enemy .mini-card span,
+html body .panel.enemy .mini-card b,
+html body #controls.controls .card-btn span,
+html body #controls.controls .card-btn b,
+html body .controls .card-btn span,
+html body .controls .card-btn b{
+  font-size: var(--hdg-remain-font) !important;
+  line-height: 1.04 !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+html body .panel.enemy .mini-card b,
+html body #controls.controls .card-btn b,
+html body .controls .card-btn b{
+  display: inline !important;
+  font-size: var(--hdg-remain-num-font) !important;
+  color: #ffe784 !important;
+}
+/* ソッコー系は1行で入る時は1行、狭い時だけ「ソッコー」で自然に分割 */
+html body .hdg-sokkoo-wrap{
+  display: inline-flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: baseline !important;
+  column-gap: .15em !important;
+  row-gap: 0 !important;
+  line-height: 1.02 !important;
+}
+html body .hdg-sokkoo-word,
+html body .hdg-sokkoo-tail{
+  display: inline-block !important;
+  white-space: nowrap !important;
+}
+</style>

@@ -1029,6 +1029,22 @@ function showStoryScreenFromHash(){
   showStoryModeScreen();
 }
 
+function restoreTitleFromFreebattle(){
+  if(sessionStorage.getItem('hd_return_title_bgm') !== '1') return false;
+  sessionStorage.removeItem('hd_return_title_bgm');
+  sessionStorage.setItem('hd_title_unlocked','1');
+  hdTitleUnlocked = true;
+  try{ if(location.hash){ history.replaceState(null, '', location.pathname); } }catch(e){}
+  const gate=document.getElementById('tapStartScreen');
+  if(gate)gate.classList.add('hidden');
+  document.getElementById('novelScreen')?.classList.remove('active');
+  document.getElementById('storyScreen')?.classList.remove('active');
+  document.getElementById('freeBattleScreen')?.classList.remove('active');
+  document.getElementById('titleScreen')?.classList.add('active');
+  try{ startTitleBgm(); }catch(e){}
+  return true;
+}
+
 window.addEventListener('pageshow',()=>{
   if(sessionStorage.getItem('hd_return_title_bgm') === '1'){
     sessionStorage.removeItem('hd_return_title_bgm');
@@ -1051,7 +1067,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
   const gate=document.getElementById('tapStartScreen');
 
-  if(window.__HD_RELOADED__){
+  if(window.__HD_RELOADED__ && sessionStorage.getItem('hd_return_title_bgm') !== '1'){
     sessionStorage.removeItem('hd_title_unlocked');
     sessionStorage.removeItem('hd_return_title_bgm');
     hdTitleUnlocked = false;
@@ -1068,7 +1084,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     return;
   }
 
-  restoreTitleFromFreebattle();
+  if(restoreTitleFromFreebattle()) return;
 
   if(location.hash === '#story'){
     sessionStorage.setItem('hd_title_unlocked','1');
