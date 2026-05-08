@@ -1,0 +1,8 @@
+通常モード: mode_normal.jpeg
+ソッコーモード: mode_sokkoo.jpeg
+裏面: card_back.jpeg
+短剣: dagger.jpeg
+盾: shield.jpeg
+心臓: heart.jpeg
+ソッコーダガー: sokkoo_dagger.jpeg
+ソッコーハート: sokkoo_heart.jpeg
