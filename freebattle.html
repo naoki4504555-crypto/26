@@ -3946,6 +3946,29 @@ function setupBackButton(){
 </style>
 
 
+/* ===== HDG FIX: ハート＆ダガーコールボタン位置統一 =====
+   通常/ソッコーモードでカード列の横間隔は変えつつ、
+   コールボタンまでの縦間隔だけ全モード共通にする。
+   文字サイズ・カードサイズには触らない。 */
+:root{
+  --hdg-call-row-gap: 10px;
+}
+#controls.controls.normal-layout,
+.controls.normal-layout{
+  column-gap: var(--hdg-remain-gap-normal, 12px) !important;
+  row-gap: var(--hdg-call-row-gap) !important;
+}
+#controls.controls.sokkoo-layout,
+.controls.sokkoo-layout{
+  column-gap: var(--hdg-remain-gap-sokkoo, 8px) !important;
+  row-gap: var(--hdg-call-row-gap) !important;
+}
+#controls.controls .call-btn,
+.controls .call-btn{
+  grid-column: 1 / -1 !important;
+}
+
+
 <!-- HDG FIX: hidden must win against old responsive CSS; inline display is handled by JS above -->
 <style>
 .hidden{display:none!important;}
@@ -4006,7 +4029,8 @@ function setupBackButton(){
     setImp(controls, 'box-sizing', 'border-box');
     setImp(controls, 'display', 'grid');
     setImp(controls, 'grid-template-columns', 'repeat(' + columns + ', minmax(0, 1fr))');
-    setImp(controls, 'gap', gap);
+    setImp(controls, 'column-gap', gap);
+    setImp(controls, 'row-gap', 'var(--hdg-call-row-gap, 10px)');
     setImp(controls, 'width', Math.round(enemyRect.width) + 'px');
     setImp(controls, 'max-width', 'calc(100vw - 16px)');
     setImp(controls, 'min-width', '0');
