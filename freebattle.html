@@ -4081,7 +4081,7 @@ function setupBackButton(){
 
       var span = btn.querySelector('span');
       if(span && textStyle){
-        setImp(span, 'font-size', textStyle.fontSize);
+        /* HDG font-only fix: font-size is controlled by CSS, not inline sync. */
         setImp(span, 'line-height', textStyle.lineHeight);
         setImp(span, 'font-weight', textStyle.fontWeight);
         setImp(span, 'width', '100%');
@@ -4090,7 +4090,7 @@ function setupBackButton(){
       }
       var b = btn.querySelector('b');
       if(b && bStyle){
-        setImp(b, 'font-size', bStyle.fontSize);
+        /* HDG font-only fix: count font-size is controlled by CSS, not inline sync. */
         setImp(b, 'line-height', bStyle.lineHeight);
         setImp(b, 'font-weight', bStyle.fontWeight);
         setImp(b, 'margin', bStyle.margin);
@@ -4138,3 +4138,40 @@ function setupBackButton(){
   }, 200);
 })();
 </script>
+
+
+<!-- HDG FIX: remaining-card text font unify by god-folder method (font only) -->
+<style>
+/*
+  神フォルダ方式：残りカードアイコンの「文字」だけをCSSで最終統一。
+  width / height / padding / gap / img / transform には一切触らない。
+*/
+#controls .card-btn span,
+.controls .card-btn span,
+.panel.enemy .mini-card span,
+#controls .card-btn span b,
+#controls .card-btn b,
+.controls .card-btn span b,
+.controls .card-btn b,
+.panel.enemy .mini-card span b,
+.panel.enemy .mini-card b{
+  font-size: 13px !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+}
+
+@media (min-width: 860px){
+  #controls .card-btn span,
+  .controls .card-btn span,
+  .panel.enemy .mini-card span,
+  #controls .card-btn span b,
+  #controls .card-btn b,
+  .controls .card-btn span b,
+  .controls .card-btn b,
+  .panel.enemy .mini-card span b,
+  .panel.enemy .mini-card b{
+    font-size: 18px !important;
+  }
+}
+</style>
