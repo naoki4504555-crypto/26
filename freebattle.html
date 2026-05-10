@@ -1529,8 +1529,9 @@ body.sokkoo-special-shake {
 
 
 /* ===== HDG remaining-card UI system =====
-   残りカード表示は「枠サイズ」「中カード」「数字」「配置」をここで一元管理。
-   自分側（下の選択ボタン）と相手側（上パネル）は同じ寸法トークンを使う。 */
+   残りカード表示の根本ルール。
+   ここでは「カード枚数の列」を JS の状態クラス（normal-layout / sokkoo-layout）で決める。
+   VS表示や横長カード用の幅ルールに巻き込まれないよう、#controls を専用の flex 行として定義する。 */
 :root{
   --remain-card-h: 86px;
   --remain-card-radius: 18px;
@@ -1539,13 +1540,13 @@ body.sokkoo-special-shake {
   --remain-count-size: 19px;
   --remain-label-size: 11px;
   --remain-gap: 7px;
-  --remain-player-normal-w: 118px;
-  --remain-player-sokkoo-w: 96px;
+  --remain-player-normal-w: clamp(96px, 30vw, 118px);
+  --remain-player-sokkoo-w: clamp(58px, 18vw, 96px);
   --remain-enemy-max-w: 760px;
 }
 
 .hidden,
-.controls .card-btn.hidden,
+#controls .card-btn.hidden,
 .panel.enemy .mini-card.hidden{
   display: none !important;
 }
@@ -1555,35 +1556,59 @@ body.sokkoo-special-shake {
   margin: 10px auto calc(112px + env(safe-area-inset-bottom)) !important;
 }
 
-/* 自分側：残りカードボタンの並び */
+/* 自分側：残りカード行。gridではなく、表示中カードだけが横に並ぶ専用flex行にする。 */
 #controls.controls,
 .controls{
-  display: grid !important;
-  grid-auto-flow: row !important;
-  grid-auto-columns: auto !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
   justify-content: center !important;
-  justify-items: center !important;
   align-items: stretch !important;
+  align-content: center !important;
   gap: var(--remain-gap) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
 }
 
 #controls.controls.normal-layout,
-.controls.normal-layout,
-#controls.controls:not(.sokkoo-layout),
-.controls:not(.sokkoo-layout){
-  grid-template-columns: repeat(3, minmax(0, var(--remain-player-normal-w))) !important;
+.controls.normal-layout{
+  --remain-player-card-w: var(--remain-player-normal-w);
 }
 
 #controls.controls.sokkoo-layout,
 .controls.sokkoo-layout{
-  grid-template-columns: repeat(5, minmax(0, var(--remain-player-sokkoo-w))) !important;
+  --remain-player-card-w: var(--remain-player-sokkoo-w);
+}
+
+#controls .card-btn,
+.controls .card-btn{
+  flex: 0 0 var(--remain-player-card-w) !important;
+  width: var(--remain-player-card-w) !important;
+  max-width: var(--remain-player-card-w) !important;
+}
+
+#controls .call-btn,
+.controls .call-btn{
+  flex: 0 0 min(100%, 368px) !important;
+  width: min(100%, 368px) !important;
+  max-width: min(100%, 368px) !important;
+}
+
+#controls.sokkoo-layout .call-btn,
+.controls.sokkoo-layout .call-btn{
+  flex-basis: min(100%, 512px) !important;
+  width: min(100%, 512px) !important;
+  max-width: min(100%, 512px) !important;
 }
 
 /* 相手側：残りカードパネルの並び */
 .panel.player{
   display: none !important;
 }
-
 
 .panel.enemy{
   border: none !important;
@@ -1592,28 +1617,22 @@ body.sokkoo-special-shake {
   padding: 0 !important;
 }
 
-#controls .call-btn,
-.controls .call-btn{
-  grid-column: 1 / -1 !important;
-}
-
-
 .top-panels{
   grid-template-columns: 1fr !important;
 }
 
 .counts,
 .panel.enemy .counts{
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--remain-gap);
-  width: 100%;
-  max-width: var(--remain-enemy-max-w);
-  margin: 0 auto;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: var(--remain-gap) !important;
+  width: 100% !important;
+  max-width: var(--remain-enemy-max-w) !important;
+  margin: 0 auto !important;
 }
 
 .panel.enemy.sokkoo-enemy .counts{
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
 }
 
 /* 共通カード枠：自分側ボタンと相手側ミニカードを同じ土台にする */
@@ -1621,7 +1640,6 @@ body.sokkoo-special-shake {
 .controls .card-btn,
 .mini-card,
 .panel.enemy .mini-card{
-  width: 100% !important;
   min-width: 0 !important;
   height: var(--remain-card-h) !important;
   min-height: var(--remain-card-h) !important;
@@ -1629,16 +1647,16 @@ body.sokkoo-special-shake {
   padding: var(--remain-card-pad) !important;
   box-sizing: border-box !important;
   border-radius: var(--remain-card-radius) !important;
-  background: rgba(255,255,255,.08);
-  border: 3px solid rgba(255,255,255,.25);
-  box-shadow: 0 10px 18px rgba(0,0,0,.3);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  overflow: hidden;
+  background: rgba(255,255,255,.08) !important;
+  border: 3px solid rgba(255,255,255,.25) !important;
+  box-shadow: 0 10px 18px rgba(0,0,0,.3) !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 4px !important;
+  overflow: hidden !important;
 }
 
 #controls .card-btn img,
@@ -1650,28 +1668,28 @@ body.sokkoo-special-shake {
   max-width: 100% !important;
   aspect-ratio: 63 / 89 !important;
   object-fit: contain !important;
-  border-radius: 5px;
+  border-radius: 5px !important;
   display: block !important;
   margin: 0 auto !important;
-  transform: translateY(6px);
-  flex: 0 0 auto;
+  transform: translateY(6px) !important;
+  flex: 0 0 auto !important;
 }
 
 #controls .card-btn span,
 .controls .card-btn span,
 .mini-card span,
 .panel.enemy .mini-card span{
-  display: block;
-  width: 100%;
-  margin: 0;
-  color: #fff;
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  color: #fff !important;
   font-size: var(--remain-label-size) !important;
-  line-height: 1;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  text-align: center;
-  white-space: nowrap;
-  flex: 0 0 auto;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  flex: 0 0 auto !important;
 }
 
 .card-btn span b,
@@ -1680,14 +1698,14 @@ body.sokkoo-special-shake {
 .mini-card b,
 .panel.enemy .mini-card b,
 .panel.enemy .mini-card span b{
-  display: inline-block;
+  display: inline-block !important;
   margin: 0 0 0 2px !important;
-  color: #ffe784;
+  color: #ffe784 !important;
   font-size: var(--remain-count-size) !important;
-  line-height: 1;
-  font-weight: 1000;
-  white-space: nowrap;
-  transform: translateY(1px);
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+  white-space: nowrap !important;
+  transform: translateY(1px) !important;
 }
 
 .card-btn.dagger,
@@ -1724,18 +1742,25 @@ body.sokkoo-special-shake {
   box-shadow: 0 0 12px rgba(59,156,255,.25) !important;
 }
 
-/* スマホ横画面：自分側は横幅を固定して中央寄せ、数字は相手側も自分側も同じ倍率 */
+.card-empty,
+#controls .card-btn.card-empty,
+.controls .card-btn.card-empty{
+  opacity: .38 !important;
+  filter: grayscale(.65) brightness(.72) !important;
+  transform: scale(.96) !important;
+}
+
+.card-empty img,
+#controls .card-btn.card-empty img,
+.controls .card-btn.card-empty img{
+  opacity: .75 !important;
+  filter: grayscale(.65) brightness(.72) !important;
+}
+
+/* スマホ横画面：数字だけ相手側も自分側も同じ倍率 */
 @media (orientation: landscape) and (max-height: 620px){
   :root{
     --remain-count-size: 22px;
-  }
-
-  #controls.controls,
-  .controls{
-    width: max-content !important;
-    max-width: calc(100vw - 24px) !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
   }
 }
 
@@ -1744,14 +1769,6 @@ body.sokkoo-special-shake {
   :root{
     --remain-player-normal-w: 142px;
     --remain-player-sokkoo-w: 118px;
-  }
-
-  #controls.controls,
-  .controls{
-    width: max-content !important;
-    max-width: calc(100vw - 32px) !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
   }
 }
 
@@ -1765,13 +1782,29 @@ body.sokkoo-special-shake {
     --remain-count-size: 22px;
     --remain-label-size: 22px;
     --remain-gap: 12px;
+    --remain-player-normal-w: 142px;
+    --remain-player-sokkoo-w: 118px;
   }
 
   #controls .card-btn img,
   .controls .card-btn img,
   .mini-card img,
   .panel.enemy .mini-card img{
-    border-radius: 8px;
+    border-radius: 8px !important;
+  }
+
+  #controls .call-btn,
+  .controls .call-btn{
+    flex-basis: min(100%, 462px) !important;
+    width: min(100%, 462px) !important;
+    max-width: min(100%, 462px) !important;
+  }
+
+  #controls.sokkoo-layout .call-btn,
+  .controls.sokkoo-layout .call-btn{
+    flex-basis: min(100%, 638px) !important;
+    width: min(100%, 638px) !important;
+    max-width: min(100%, 638px) !important;
   }
 
   #btnSokkooDagger span br,
@@ -1787,7 +1820,6 @@ body.sokkoo-special-shake {
   #eSokkooHeartBox span{
     white-space: nowrap !important;
   }
-
 }
 
 </style>
