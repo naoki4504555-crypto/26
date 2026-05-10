@@ -72,8 +72,8 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .enemy .card-label{background:linear-gradient(#d94545,#8e1616)}
 .vs{font-size:58px;font-weight:1000;color:#fff2bd;text-shadow:0 0 12px #ffad30,0 0 32px #ffad30;text-align:center}
 .result-box{flex: 0 0 auto;
-  min-height:72px;margin:8px auto 14px;max-width:620px;display:flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:16px;background:rgba(0,0,0,.45);border:2px solid rgba(240,195,90,.65);color:#ffe784;font-size:24px;font-weight:900;text-align:center}
-.score{max-width:600px;margin:0 auto 14px;padding:10px;border-radius:16px;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.18);text-align:center;font-size:28px;font-weight:900}
+  width:var(--hd-game-row-w);max-width:100%;min-height:72px;margin:8px auto 14px;display:flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:16px;background:rgba(0,0,0,.45);border:2px solid rgba(240,195,90,.65);color:#ffe784;font-size:24px;font-weight:900;text-align:center}
+.score{width:var(--hd-game-row-w);max-width:100%;margin:0 auto 14px;padding:10px;border-radius:16px;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.18);text-align:center;font-size:28px;font-weight:900}
 .score .p{color:#48a8ff;font-size:44px}.score .e{color:#ff5656;font-size:44px}
 /* removed fixed controls rule */
 
@@ -84,7 +84,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .card-btn.dagger{border-color:#39a8ff}.card-btn.shield{border-color:#68cf55}.card-btn.heart{border-color:#ff6d83}
 .call-btn{background:linear-gradient(135deg,#ffe990,#b56f0d);color:#2a1007;font-size:24px;font-weight:1000;border-color:#fff0a8}
 .call-hidden{animation:callPulse .55s infinite alternate}
-.log{max-width:900px;height:140px;overflow-y:auto;margin:14px auto 0;padding:12px 16px;border-radius:14px;background:rgba(0,0,0,.55);border:1px solid rgba(240,195,90,.5);font-weight:800;line-height:1.55}
+.log{width:var(--hd-game-row-w);max-width:100%;height:140px;overflow-y:auto;margin:14px auto 0;padding:12px 16px;border-radius:14px;background:rgba(0,0,0,.55);border:1px solid rgba(240,195,90,.5);font-weight:800;line-height:1.55}
 .hidden{display:none}
 .card-enter-player{animation:enterLeft .36s ease-out}.card-enter-enemy{animation:enterRight .36s ease-out}.card-win{animation:winFlash .65s ease-out;border:5px solid gold}.card-lose{filter:brightness(.65);transform:scale(.97)}
 @keyframes enterLeft{0%{transform:translateX(-80px) rotate(-8deg) scale(.7);opacity:0}70%{transform:translateX(8px) rotate(2deg) scale(1.04);opacity:1}100%{transform:translateX(0) rotate(0) scale(1)}}
@@ -1563,6 +1563,20 @@ body.sokkoo-special-shake {
 
 .top-panels{
   grid-template-columns: 1fr !important;
+}
+
+/* ゲーム画面の共通横幅レール。
+   ゲームモード欄を基準幅にして、結果表示・スコア・履歴・残りカード行を同じ幅で統一する。 */
+.mode-box,
+.result-box,
+.score,
+.log,
+.restart-area{
+  width: var(--hd-game-row-w) !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
 }
 
 /* 残りカード行の共通コンテナ。
