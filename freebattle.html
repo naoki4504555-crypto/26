@@ -4609,3 +4609,108 @@ html body #controls.controls .card-btn.hidden{display:none !important;}
   document.addEventListener('click', function(){ setTimeout(schedule, 0); }, true);
 })();
 </script>
+
+
+<!-- HDG FINAL HOTFIX 2026-05-10: smartphone landscape player remaining cards enlarge like enemy -->
+<style>
+/*
+  タブレットは直ったため触らない。
+  スマホ横だけを viewport height で判定し、自分側カードボタンを相手側と同じ
+  「枠＋中カードごと拡大」へ強制する。pointer判定はiPhoneで不安定な場合があるため使わない。
+*/
+@media (orientation: landscape) and (max-height: 620px){
+  html body #controls.controls,
+  html body section#controls.controls{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    display:grid !important;
+    justify-content:stretch !important;
+    justify-items:stretch !important;
+    align-items:stretch !important;
+    transform:none !important;
+  }
+
+  html body section#controls.controls.normal-layout,
+  html body section#controls.controls:not(.sokkoo-layout){
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  html body section#controls.controls.sokkoo-layout{
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  }
+
+  html body section#controls.controls > button.card-btn,
+  html body section#controls.controls > #btnDagger,
+  html body section#controls.controls > #btnShield,
+  html body section#controls.controls > #btnHeart,
+  html body section#controls.controls > #btnSokkooDagger,
+  html body section#controls.controls > #btnSokkooHeart{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:132px !important;
+    min-height:132px !important;
+    max-height:132px !important;
+    padding:8px !important;
+    box-sizing:border-box !important;
+    display:flex !important;
+    flex:none !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:2px !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  html body section#controls.controls > button.card-btn > img,
+  html body section#controls.controls > #btnDagger > img,
+  html body section#controls.controls > #btnShield > img,
+  html body section#controls.controls > #btnHeart > img,
+  html body section#controls.controls > #btnSokkooDagger > img,
+  html body section#controls.controls > #btnSokkooHeart > img{
+    height:78px !important;
+    width:auto !important;
+    max-width:100% !important;
+    aspect-ratio:63/89 !important;
+    object-fit:contain !important;
+    display:block !important;
+    margin:4px auto 0 !important;
+    flex:0 0 auto !important;
+    transform:none !important;
+  }
+
+  html body section#controls.controls > button.card-btn > span,
+  html body section#controls.controls > button.card-btn > span > b{
+    font-size:22px !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+    flex:0 0 auto !important;
+  }
+}
+</style>
+
+<script>
+/* スマホ横で自分側カードに残ったinlineサイズを、最後にもう一度掃除する */
+(function(){
+  function isPhoneLandscape(){
+    return window.matchMedia && window.matchMedia('(orientation: landscape) and (max-height: 620px)').matches;
+  }
+  function cleanPlayerRemainInline(){
+    if(!isPhoneLandscape()) return;
+    document.querySelectorAll('#controls.card-btn, #controls .card-btn, #controls .card-btn img, #controls .card-btn span, #controls .card-btn b').forEach(function(el){
+      ['width','min-width','max-width','height','min-height','max-height','font-size','line-height','transform','margin','padding','flex'].forEach(function(prop){
+        el.style.removeProperty(prop);
+      });
+    });
+  }
+  function schedule(){ cleanPlayerRemainInline(); requestAnimationFrame(cleanPlayerRemainInline); setTimeout(cleanPlayerRemainInline,120); setTimeout(cleanPlayerRemainInline,360); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', schedule); else schedule();
+  window.addEventListener('load', schedule);
+  window.addEventListener('resize', schedule);
+  window.addEventListener('orientationchange', schedule);
+  document.addEventListener('click', function(){ setTimeout(schedule,0); }, true);
+})();
+</script>
