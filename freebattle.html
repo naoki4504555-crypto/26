@@ -1515,10 +1515,10 @@ body.sokkoo-special-shake {
    残りカード行・VSエリア・操作ボタンもその幅いっぱいに均等配分する。 */
 :root{
   --remain-card-h: 86px;
-  --remain-card-radius: 18px;
+  --remain-card-radius: 16px;
   --remain-card-pad: 4px;
   --remain-card-img-h: 48px;
-  --remain-image-radius: 7px;
+  --remain-image-radius: 4px;
   --remain-count-size: 15px;
   --remain-label-size: 11px;
   --remain-gap: 6px;
@@ -1671,7 +1671,9 @@ body.sokkoo-special-shake {
   max-width: 100% !important;
   aspect-ratio: 63 / 89 !important;
   object-fit: contain !important;
+  /* 画像データは加工せず、カード画像の白フチ外周だけが自然に丸く見える最小半径にする。 */
   border-radius: var(--remain-image-radius) !important;
+  clip-path: none !important;
   display: block !important;
   margin: 0 auto !important;
   transform: translateY(6px) !important;
@@ -1762,7 +1764,7 @@ body.sokkoo-special-shake {
     --remain-card-img-h: 82px;
     --remain-count-size: 18px;
     --remain-label-size: 22px;
-    --remain-image-radius: 10px;
+    --remain-image-radius: 6px;
     --remain-gap: 12px;
     --hd-screen-gutter: 16px;
     --hd-game-row-w: min(820px, calc(100vw - (var(--hd-screen-gutter) * 2)));
@@ -1809,6 +1811,8 @@ body.sokkoo-special-shake {
     --remain-row-w: var(--hd-game-row-w);
     --remain-card-h: 88px;
     --remain-card-img-h: 48px;
+    --remain-image-radius: 4px;
+    --remain-card-radius: 16px;
     --remain-count-size: 15px;
     --remain-label-size: 11px;
     --remain-gap: 6px;
