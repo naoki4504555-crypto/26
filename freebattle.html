@@ -4908,3 +4908,18 @@ html body section#controls.controls > button.card-btn > span > b{
   }
 }
 </style>
+
+<!-- HDG FIX 2026-05-10F: player remaining card artwork slight-up alignment -->
+<style>
+/*
+  相手側と自分側の残りカード画像を同じ基準で、中心よりほんの少しだけ上へ。
+  数字の位置・枠サイズ・横幅指定は変更しない。
+*/
+html body .panel.enemy .mini-card img,
+html body #controls.controls > button.card-btn > img,
+html body section#controls.controls > button.card-btn > img{
+  transform:translateY(-2px) !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+</style>
