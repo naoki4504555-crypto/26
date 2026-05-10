@@ -4397,3 +4397,215 @@ function setupBackButton(){
   }
 }
 </style>
+
+
+<!-- HDG FINAL PATCH 2026-05-10: orientation classification by device, not viewport width -->
+<style>
+/*
+  目的：スマホ横で viewport 幅だけを見たPC/タブレットCSSが混ざる問題を止める。
+  - スマホ横：相手/自分/コールを同じ拡大方式へ統一
+  - タブレット：縦横で拡大せず、同じサイズを維持
+  - 残りカードは数字のみ表示前提。カード＋数字をワンセット中央寄せ。
+*/
+:root{
+  --hdg-final-gap-normal: clamp(8px, 1.2vw, 14px);
+  --hdg-final-gap-sokkoo: clamp(5px, .9vw, 10px);
+  --hdg-final-card-h: 132px;
+  --hdg-final-img-h: 78px;
+  --hdg-final-num-font: 22px;
+  --hdg-final-call-h: 92px;
+  --hdg-final-call-font: 24px;
+}
+
+html body .panel.enemy .counts,
+html body #controls.controls,
+html body .controls{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  display:grid !important;
+  box-sizing:border-box !important;
+  justify-content:stretch !important;
+  justify-items:stretch !important;
+  align-items:stretch !important;
+  transform:none !important;
+}
+
+html body .panel.enemy:not(.sokkoo-enemy) .counts,
+html body #controls.controls.normal-layout,
+html body #controls.controls:not(.sokkoo-layout),
+html body .controls.normal-layout,
+html body .controls:not(.sokkoo-layout){
+  grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+  gap:var(--hdg-final-gap-normal) !important;
+}
+
+html body .panel.enemy.sokkoo-enemy .counts,
+html body #controls.controls.sokkoo-layout,
+html body .controls.sokkoo-layout{
+  grid-template-columns:repeat(5, minmax(0, 1fr)) !important;
+  gap:var(--hdg-final-gap-sokkoo) !important;
+}
+
+html body .panel.enemy .mini-card,
+html body #controls.controls .card-btn,
+html body .controls .card-btn{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:var(--hdg-final-card-h) !important;
+  min-height:var(--hdg-final-card-h) !important;
+  max-height:var(--hdg-final-card-h) !important;
+  padding:8px !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  flex:none !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:2px !important;
+  overflow:hidden !important;
+  text-align:center !important;
+  border-radius:16px !important;
+}
+
+html body .panel.enemy .mini-card img,
+html body #controls.controls .card-btn img,
+html body .controls .card-btn img{
+  height:var(--hdg-final-img-h) !important;
+  width:auto !important;
+  max-width:100% !important;
+  aspect-ratio:63/89 !important;
+  object-fit:contain !important;
+  display:block !important;
+  margin:4px auto 0 !important; /* 数字位置を活かしつつカードだけ少し下げる */
+  flex:0 0 auto !important;
+}
+
+html body .panel.enemy .mini-card span,
+html body #controls.controls .card-btn span,
+html body .controls .card-btn span{
+  display:block !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-size:var(--hdg-final-num-font) !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+  letter-spacing:0 !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  flex:0 0 auto !important;
+}
+
+html body .panel.enemy .mini-card b,
+html body #controls.controls .card-btn b,
+html body .controls .card-btn b,
+html body .panel.enemy .mini-card span b,
+html body #controls.controls .card-btn span b,
+html body .controls .card-btn span b{
+  display:inline !important;
+  margin:0 !important;
+  padding:0 !important;
+  color:#ffe784 !important;
+  font-size:1em !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+}
+
+html body #controls.controls .call-btn,
+html body .controls .call-btn{
+  grid-column:1 / -1 !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-height:var(--hdg-final-call-h) !important;
+  height:auto !important;
+  font-size:var(--hdg-final-call-font) !important;
+  line-height:1.15 !important;
+  box-sizing:border-box !important;
+  transform:none !important;
+}
+
+/* スマホ縦：以前の見やすい小さめサイズ */
+@media (max-width:767px) and (orientation:portrait){
+  :root{
+    --hdg-final-card-h:88px;
+    --hdg-final-img-h:48px;
+    --hdg-final-num-font:19px;
+    --hdg-final-call-h:58px;
+    --hdg-final-call-font:20px;
+  }
+  html body .wrap{max-width:100% !important;}
+  html body .panel.enemy .mini-card,
+  html body #controls.controls .card-btn,
+  html body .controls .card-btn{padding:5px !important;border-radius:18px !important;}
+}
+
+/* スマホ横：幅が860pxを超えてもPC扱いにせず、敵味方を同じ「全体拡大」へ */
+@media (orientation:landscape) and (max-height:620px) and (pointer:coarse){
+  :root{
+    --hdg-final-card-h:132px;
+    --hdg-final-img-h:78px;
+    --hdg-final-num-font:22px;
+    --hdg-final-call-h:92px;
+    --hdg-final-call-font:24px;
+  }
+  html body .wrap{width:100% !important;max-width:100vw !important;}
+  html body .panel.enemy .counts,
+  html body #controls.controls,
+  html body .controls{width:100% !important;max-width:100% !important;}
+}
+
+/* タブレット：縦横でサイズを変えない。スマホ横のような拡大残りを防ぐ */
+@media (min-width:768px) and (max-width:1366px) and (pointer:coarse){
+  :root{
+    --hdg-final-card-h:132px;
+    --hdg-final-img-h:78px;
+    --hdg-final-num-font:22px;
+    --hdg-final-call-h:92px;
+    --hdg-final-call-font:24px;
+  }
+  html body .wrap{width:100% !important;max-width:1180px !important;}
+}
+
+.hidden,
+html body .panel.enemy .mini-card.hidden,
+html body .controls .card-btn.hidden,
+html body #controls.controls .card-btn.hidden{display:none !important;}
+</style>
+
+<script>
+/* orientation/resize後に古いJSやブラウザが残したinlineサイズを掃除する。
+   display:none!important はモード切替に必要なので触らない。 */
+(function(){
+  function clearHdgInlineLayout(){
+    var selector = [
+      '#controls', '.controls',
+      '#controls .card-btn', '.controls .card-btn', '.panel.enemy .mini-card',
+      '#controls .card-btn img', '.controls .card-btn img', '.panel.enemy .mini-card img',
+      '#controls .card-btn span', '.controls .card-btn span', '.panel.enemy .mini-card span',
+      '#controls .card-btn b', '.controls .card-btn b', '.panel.enemy .mini-card b',
+      '#controls .call-btn', '.controls .call-btn'
+    ].join(',');
+    document.querySelectorAll(selector).forEach(function(el){
+      ['width','min-width','max-width','height','min-height','max-height','font-size','line-height','transform','left','right','top','bottom','margin','margin-left','margin-right','padding'].forEach(function(prop){
+        el.style.removeProperty(prop);
+      });
+    });
+  }
+  function schedule(){
+    clearHdgInlineLayout();
+    requestAnimationFrame(clearHdgInlineLayout);
+    setTimeout(clearHdgInlineLayout, 80);
+    setTimeout(clearHdgInlineLayout, 260);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule);
+  else schedule();
+  window.addEventListener('load', schedule);
+  window.addEventListener('resize', schedule);
+  window.addEventListener('orientationchange', schedule);
+  document.addEventListener('click', function(){ setTimeout(schedule, 0); }, true);
+})();
+</script>
