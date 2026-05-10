@@ -530,13 +530,15 @@ body {
 
 
 /* ===== 残りカード表示：統一ルール ===== */
-.card-btn span b,
-.panel.enemy .mini-card span b{
-  display:inline;
-  margin-left:3px;
-  color:#ffe784;
-  font-size:1em;
-  font-weight:1000;
+:root{
+  --remain-mobile-frame-h:88px;
+  --remain-mobile-img-h:48px;
+  --remain-mobile-font:13px;
+  --remain-mobile-gap:4px;
+  --remain-wide-frame-h:132px;
+  --remain-wide-img-h:78px;
+  --remain-wide-font:18px;
+  --remain-wide-gap:3px;
 }
 
 /* 自分側の上部パネルは使わず、相手残りカードだけを上部に表示 */
@@ -556,7 +558,6 @@ body {
 .panel.enemy:not(.sokkoo-enemy) #eSokkooHeartBox{
   display:none !important;
 }
-
 .hidden,
 .controls .card-btn.hidden,
 .panel.enemy .mini-card.hidden{
@@ -584,9 +585,11 @@ body {
   box-shadow:0 0 12px rgba(255,210,90,.25) !important;
 }
 
-/* 相手側・自分側のカード＋数字を同じ部品として扱う */
+/* 相手側・自分側を同じ「カード＋数字」部品として扱う */
 .controls .card-btn,
 .panel.enemy .mini-card{
+  width:100% !important;
+  min-width:0 !important;
   border-width:3px !important;
   border-style:solid !important;
   border-radius:6px !important;
@@ -602,16 +605,18 @@ body {
 .panel.enemy .mini-card img{
   display:block !important;
   width:auto !important;
+  max-width:100% !important;
   aspect-ratio:63 / 89;
   object-fit:contain !important;
-  margin:0 auto 2px !important;
   flex:0 0 auto !important;
+  margin:0 !important;
 }
 .controls .card-btn span,
 .panel.enemy .mini-card span{
   display:block !important;
   width:100% !important;
-  margin:0 !important;
+  margin:var(--remain-gap) 0 0 !important;
+  padding:0 !important;
   text-align:center !important;
   font-weight:900 !important;
   line-height:1 !important;
@@ -619,8 +624,15 @@ body {
   flex:0 0 auto !important;
 }
 .controls .card-btn b,
-.panel.enemy .mini-card b{
+.panel.enemy .mini-card b,
+.card-btn span b,
+.panel.enemy .mini-card span b{
+  display:inline !important;
   margin:0 !important;
+  padding:0 !important;
+  color:#ffe784 !important;
+  font-size:1em !important;
+  font-weight:1000 !important;
   line-height:1 !important;
 }
 
@@ -644,8 +656,9 @@ body.game-over-view .panel.enemy .mini-card{
   opacity:1 !important;
 }
 
-/* 縦画面・スマホ：縦画面の相手側を基準に全て統一 */
+/* 縦画面：縦画面の相手アイコンの見え方を基準に、自分側も同じ数値へ統一 */
 @media (max-width:767px){
+  :root{--remain-gap:var(--remain-mobile-gap);}
   body{padding-bottom:calc(238px + env(safe-area-inset-bottom));}
   .controls{
     align-items:stretch !important;
@@ -668,24 +681,21 @@ body.game-over-view .panel.enemy .mini-card{
   }
   .controls .card-btn,
   .panel.enemy .mini-card{
-    width:100% !important;
-    min-width:0 !important;
-    height:88px !important;
-    min-height:88px !important;
-    max-height:88px !important;
+    height:var(--remain-mobile-frame-h) !important;
+    min-height:var(--remain-mobile-frame-h) !important;
+    max-height:var(--remain-mobile-frame-h) !important;
     padding:6px 6px 4px !important;
     flex:1 1 0 !important;
   }
   .controls .card-btn img,
   .panel.enemy .mini-card img{
-    height:48px !important;
-    max-width:100% !important;
+    height:var(--remain-mobile-img-h) !important;
   }
   .controls .card-btn span,
   .panel.enemy .mini-card span,
   .controls .card-btn b,
   .panel.enemy .mini-card b{
-    font-size:13px !important;
+    font-size:var(--remain-mobile-font) !important;
   }
   .controls .call-btn{
     grid-column:1 / -1 !important;
@@ -695,8 +705,9 @@ body.game-over-view .panel.enemy .mini-card{
   }
 }
 
-/* 横画面・タブレット・PC：相手側と自分側を同じ列幅/同じ高さで統一 */
+/* 横画面・タブレット・PC：縦画面基準の比率で、離れすぎない間隔に統一 */
 @media (min-width:768px){
+  :root{--remain-gap:var(--remain-wide-gap);}
   body{padding-bottom:20px !important;}
   .controls{
     position:static !important;
@@ -730,26 +741,22 @@ body.game-over-view .panel.enemy .mini-card{
   }
   .controls .card-btn,
   .panel.enemy .mini-card{
-    width:100% !important;
-    min-width:0 !important;
     max-width:none !important;
-    height:132px !important;
-    min-height:132px !important;
-    max-height:132px !important;
+    height:var(--remain-wide-frame-h) !important;
+    min-height:var(--remain-wide-frame-h) !important;
+    max-height:var(--remain-wide-frame-h) !important;
     padding:9px 8px 7px !important;
   }
   .controls .card-btn img,
   .panel.enemy .mini-card img{
-    height:78px !important;
-    max-width:100% !important;
-    margin-bottom:5px !important;
+    height:var(--remain-wide-img-h) !important;
   }
   .controls .card-btn span,
   .panel.enemy .mini-card span,
   .controls .card-btn b,
   .panel.enemy .mini-card b{
-    font-size:18px !important;
-    line-height:1.05 !important;
+    font-size:var(--remain-wide-font) !important;
+    line-height:1 !important;
   }
   #btnSokkooDagger span br,
   #btnSokkooHeart span br,
