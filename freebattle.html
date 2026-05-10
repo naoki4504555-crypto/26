@@ -3695,6 +3695,185 @@ function setupBackButton(){
 })();
 </script>
 
+
+
+<!-- HDG FINAL PATCH 2026-05-10: device/orientation unified remaining-card sizing -->
+<style>
+/*
+  残りカード欄の最終ルール。
+  - スマホ横：相手/自分とも「枠＋中カード」を同じ比率で拡大。
+  - タブレット：縦横とも高さ・中カードサイズは固定し、横向きでは横幅だけ広げる。
+  - JS実測同期は使わず、CSSだけで相手側/自分側を統一する。
+*/
+#controls.controls,
+.controls,
+.panel.enemy .counts{
+  box-sizing:border-box !important;
+}
+
+.panel.enemy .mini-card,
+#controls .card-btn,
+.controls .card-btn{
+  box-sizing:border-box !important;
+  flex-shrink:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+}
+
+.panel.enemy .mini-card img,
+#controls .card-btn img,
+.controls .card-btn img{
+  flex:0 0 auto !important;
+  width:auto !important;
+  max-width:100% !important;
+  object-fit:contain !important;
+  margin:0 auto !important;
+  transform:translateY(6px) !important;
+}
+
+.panel.enemy .mini-card span,
+#controls .card-btn span,
+.controls .card-btn span{
+  flex:0 0 auto !important;
+  margin:0 !important;
+  line-height:1 !important;
+}
+
+/* スマホ縦：現状で正常なので、従来サイズを維持 */
+@media (max-width:767px) and (orientation:portrait){
+  .panel.enemy .mini-card,
+  #controls .card-btn,
+  .controls .card-btn{
+    height:88px !important;
+    min-height:88px !important;
+    max-height:88px !important;
+  }
+  .panel.enemy .mini-card img,
+  #controls .card-btn img,
+  .controls .card-btn img{
+    height:48px !important;
+  }
+}
+
+/* スマホ横：他の表示と同じく、相手/自分の残りカードも全体拡大方式へ統一 */
+@media (max-width:767px) and (orientation:landscape){
+  html body .panel.enemy .counts,
+  html body #controls.controls,
+  html body .controls{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    justify-content:stretch !important;
+    justify-items:stretch !important;
+    align-items:stretch !important;
+  }
+
+  html body .panel.enemy:not(.sokkoo-enemy) .counts,
+  html body #controls.controls.normal-layout,
+  html body #controls.controls:not(.sokkoo-layout),
+  html body .controls.normal-layout,
+  html body .controls:not(.sokkoo-layout){
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  html body .panel.enemy.sokkoo-enemy .counts,
+  html body #controls.controls.sokkoo-layout,
+  html body .controls.sokkoo-layout{
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  }
+
+  html body .panel.enemy .mini-card,
+  html body #controls .card-btn,
+  html body .controls .card-btn{
+    width:100% !important;
+    height:108px !important;
+    min-height:108px !important;
+    max-height:108px !important;
+    padding:6px !important;
+  }
+
+  html body .panel.enemy .mini-card img,
+  html body #controls .card-btn img,
+  html body .controls .card-btn img{
+    height:62px !important;
+  }
+}
+
+/* タブレット：縦横とも枠と中カードの高さは固定。横向きでも高さ方向は拡大しない */
+@media (min-width:768px) and (max-width:1366px){
+  html body .panel.enemy .mini-card,
+  html body #controls .card-btn,
+  html body .controls .card-btn{
+    width:100% !important;
+    height:132px !important;
+    min-height:132px !important;
+    max-height:132px !important;
+    padding:8px !important;
+  }
+
+  html body .panel.enemy .mini-card img,
+  html body #controls .card-btn img,
+  html body .controls .card-btn img{
+    height:78px !important;
+  }
+
+  html body .panel.enemy .counts,
+  html body #controls.controls,
+  html body .controls{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    justify-content:stretch !important;
+    justify-items:stretch !important;
+    align-items:stretch !important;
+  }
+
+  html body .panel.enemy:not(.sokkoo-enemy) .counts,
+  html body #controls.controls.normal-layout,
+  html body #controls.controls:not(.sokkoo-layout),
+  html body .controls.normal-layout,
+  html body .controls:not(.sokkoo-layout){
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  html body .panel.enemy.sokkoo-enemy .counts,
+  html body #controls.controls.sokkoo-layout,
+  html body .controls.sokkoo-layout{
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  }
+}
+</style>
+
+<script>
+/* 古い同期処理が残した inline important を端末回転/操作後に掃除する */
+(function(){
+  var targets = '#controls,.controls,#controls .card-btn,.controls .card-btn,.panel.enemy .mini-card,#controls .card-btn img,.controls .card-btn img,.panel.enemy .mini-card img';
+  var props = ['width','max-width','min-width','height','min-height','max-height','grid-template-columns','column-gap','row-gap','transform'];
+  function clean(){
+    document.querySelectorAll(targets).forEach(function(el){
+      props.forEach(function(prop){
+        if(el.style && el.style.getPropertyPriority(prop)==='important'){
+          el.style.removeProperty(prop);
+        }
+      });
+    });
+  }
+  function schedule(){ clean(); requestAnimationFrame(clean); setTimeout(clean,120); setTimeout(clean,320); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', schedule); else schedule();
+  window.addEventListener('load', schedule);
+  window.addEventListener('resize', schedule);
+  window.addEventListener('orientationchange', schedule);
+  document.addEventListener('click', function(){ setTimeout(schedule,0); }, true);
+})();
+</script>
+
 </body>
 </html>
 
@@ -4174,163 +4353,11 @@ function setupBackButton(){
 .hidden{display:none!important;}
 </style>
 
-<!-- HDG PATCH: opponent-based remaining-card sync (2026-05-08) -->
+<!-- HDG PATCH REMOVED 2026-05-10: opponent-based remaining-card sync disabled.
+     サイズは端末別CSSで統一し、相手側の実測値を自分側へコピーしない。 -->
 <script>
 (function(){
-  function visible(el){
-    if(!el) return false;
-    var cs = getComputedStyle(el);
-    return cs.display !== 'none' && cs.visibility !== 'hidden' && !el.classList.contains('hidden');
-  }
-  function setImp(el, prop, value){
-    if(el && value !== undefined && value !== null && value !== '') el.style.setProperty(prop, value, 'important');
-  }
-  function syncRemainingCardUI(){
-    var enemyPanel = document.querySelector('.panel.enemy');
-    var enemyCounts = document.querySelector('.panel.enemy .counts');
-    var controls = document.getElementById('controls');
-    if(!enemyPanel || !enemyCounts || !controls) return;
-
-    // hidden クラスが付いたソッコー専用UIは、過去に付いた inline display:flex!important を打ち消す。
-    // 逆に hidden が外れたら display:none!important を解除して、表示モードへ復帰できるようにする。
-    Array.prototype.forEach.call(
-      document.querySelectorAll('#btnSokkooDagger,#btnSokkooHeart,#eSokkooDaggerBox,#eSokkooHeartBox,#pSokkooDaggerBox,#pSokkooHeartBox'),
-      function(el){
-        if(el.classList.contains('hidden')){
-          setImp(el, 'display', 'none');
-        }else if(el.style.getPropertyValue('display') === 'none'){
-          el.style.removeProperty('display');
-        }
-      }
-    );
-
-    var enemyCards = Array.prototype.filter.call(enemyCounts.querySelectorAll('.mini-card'), visible);
-    var ownCards = Array.prototype.filter.call(controls.querySelectorAll('.card-btn[data-card]'), visible);
-    if(enemyCards.length === 0 || ownCards.length === 0) return;
-
-    var enemyRect = enemyCounts.getBoundingClientRect();
-    var enemyCardRect = enemyCards[0].getBoundingClientRect();
-    if(enemyRect.width < 10 || enemyCardRect.width < 10 || enemyCardRect.height < 10) return;
-
-    var enemyStyle = getComputedStyle(enemyCounts);
-    var cardStyle = getComputedStyle(enemyCards[0]);
-    var enemyImg = enemyCards[0].querySelector('img');
-    var enemyText = enemyCards[0].querySelector('span');
-    var enemyCountText = enemyCards[0].querySelector('b');
-    var imgRect = enemyImg ? enemyImg.getBoundingClientRect() : null;
-    var textStyle = enemyText ? getComputedStyle(enemyText) : null;
-    var bStyle = enemyCountText ? getComputedStyle(enemyCountText) : null;
-
-    var columns = enemyCards.length;
-    var gap = enemyStyle.columnGap && enemyStyle.columnGap !== 'normal' ? enemyStyle.columnGap : enemyStyle.gap;
-    if(!gap || gap === 'normal') gap = '8px';
-
-    // 親コンテナの幅を相手側の残りカード列に完全同期する。
-    setImp(controls, 'box-sizing', 'border-box');
-    setImp(controls, 'display', 'grid');
-    setImp(controls, 'grid-template-columns', 'repeat(' + columns + ', minmax(0, 1fr))');
-    setImp(controls, 'column-gap', gap);
-    setImp(controls, 'row-gap', 'var(--hdg-call-row-gap, 10px)');
-    setImp(controls, 'width', Math.round(enemyRect.width) + 'px');
-    setImp(controls, 'max-width', 'calc(100vw - 16px)');
-    setImp(controls, 'min-width', '0');
-    setImp(controls, 'justify-content', 'stretch');
-    setImp(controls, 'justify-items', 'stretch');
-    setImp(controls, 'align-items', 'stretch');
-
-    var pos = getComputedStyle(controls).position;
-    if(pos === 'fixed'){
-      setImp(controls, 'left', '50%');
-      setImp(controls, 'right', 'auto');
-      setImp(controls, 'transform', 'translateX(-50%)');
-    }else{
-      setImp(controls, 'margin-left', 'auto');
-      setImp(controls, 'margin-right', 'auto');
-      setImp(controls, 'transform', 'none');
-    }
-
-    // HDG FIX 2026-05-08:
-    // 自分側カードの「高さ・padding・画像サイズ」を相手側の実測値からコピーしない。
-    // タップ直後に相手側高さが一瞬だけ小さく測定されると、自分側が縦だけ縮むため。
-    // ここではグリッド内で収めるための横幅/表示系だけを維持し、カード本体サイズはCSSに任せる。
-    ownCards.forEach(function(btn){
-      setImp(btn, 'box-sizing', 'border-box');
-      setImp(btn, 'width', '100%');
-      setImp(btn, 'min-width', '0');
-      setImp(btn, 'max-width', 'none');
-      setImp(btn, 'border-radius', cardStyle.borderRadius);
-      setImp(btn, 'display', 'flex');
-      setImp(btn, 'flex-direction', 'column');
-      setImp(btn, 'align-items', 'center');
-      setImp(btn, 'justify-content', 'center');
-      setImp(btn, 'text-align', 'center');
-      setImp(btn, 'overflow', 'hidden');
-
-      var img = btn.querySelector('img');
-      if(img && imgRect){
-        setImp(img, 'max-width', '100%');
-        setImp(img, 'object-fit', getComputedStyle(enemyImg).objectFit || 'cover');
-        setImp(img, 'border-radius', getComputedStyle(enemyImg).borderRadius);
-        setImp(img, 'display', 'block');
-      }
-
-      var span = btn.querySelector('span');
-      if(span && textStyle){
-        /* HDG font-only fix: font-size is controlled by CSS, not inline sync. */
-        setImp(span, 'line-height', textStyle.lineHeight);
-        setImp(span, 'font-weight', textStyle.fontWeight);
-        setImp(span, 'width', '100%');
-        setImp(span, 'text-align', 'center');
-        setImp(span, 'margin', getComputedStyle(enemyText).margin);
-      }
-      var b = btn.querySelector('b');
-      if(b && bStyle){
-        /* HDG font-only fix: count font-size is controlled by CSS, not inline sync. */
-        setImp(b, 'line-height', bStyle.lineHeight);
-        setImp(b, 'font-weight', bStyle.fontWeight);
-        setImp(b, 'margin', bStyle.margin);
-      }
-    });
-
-    var callBtn = controls.querySelector('.call-btn');
-    if(callBtn){
-      setImp(callBtn, 'grid-column', '1 / -1');
-      setImp(callBtn, 'width', '100%');
-      setImp(callBtn, 'max-width', '100%');
-    }
-  }
-
-  function scheduleSync(){
-    syncRemainingCardUI();
-    requestAnimationFrame(syncRemainingCardUI);
-    setTimeout(syncRemainingCardUI, 80);
-    setTimeout(syncRemainingCardUI, 250);
-  }
-
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleSync);
-  else scheduleSync();
-  window.addEventListener('load', scheduleSync);
-  window.addEventListener('resize', scheduleSync);
-  window.addEventListener('orientationchange', scheduleSync);
-  document.addEventListener('click', function(){ setTimeout(scheduleSync, 0); }, true);
-
-  var mo = new MutationObserver(scheduleSync);
-  function observeTargets(){
-    var controls = document.getElementById('controls');
-    var enemy = document.querySelector('.panel.enemy');
-    if(controls) mo.observe(controls, {attributes:true, childList:true, subtree:true, characterData:true});
-    if(enemy) mo.observe(enemy, {attributes:true, childList:true, subtree:true, characterData:true});
-  }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observeTargets);
-  else observeTargets();
-
-  // 初期描画直後のCSS競合対策。
-  var n = 0;
-  var timer = setInterval(function(){
-    scheduleSync();
-    n++;
-    if(n > 20) clearInterval(timer);
-  }, 200);
+  // no-op: old inline width/size sync caused player/enemy orientation mismatch.
 })();
 </script>
 
