@@ -5013,3 +5013,141 @@ html body #controls.controls .card-btn.hidden{display:none !important;}
   document.addEventListener('click', function(){ setTimeout(schedule, 0); }, true);
 })();
 </script>
+
+<!-- HDG FINAL PATCH 2026-05-10: remaining card icon+number lower-center set -->
+<style>
+/*
+  カード画像＋数字を1セットとして扱い、相手側/自分側で同じ基準に統一。
+  数字サイズは維持。セット全体を枠中央より少しだけ下へ寄せる。
+  タブレットで安定した横幅のみ変化の挙動には触れず、スマホ縦/横を最後に上書きする。
+*/
+@media (max-width: 767px) and (orientation: portrait){
+  html body .panel.enemy .mini-card,
+  html body #controls.controls > button.card-btn,
+  html body #controls.controls .card-btn,
+  html body .controls .card-btn{
+    height:88px !important;
+    min-height:88px !important;
+    max-height:88px !important;
+    padding:6px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:0 !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  html body .panel.enemy .mini-card > img,
+  html body #controls.controls > button.card-btn > img,
+  html body #controls.controls .card-btn > img,
+  html body .controls .card-btn > img{
+    height:48px !important;
+    width:auto !important;
+    max-width:100% !important;
+    margin:0 auto !important;
+    display:block !important;
+    object-fit:contain !important;
+    flex:0 0 auto !important;
+    transform:translateY(3px) !important;
+  }
+
+  html body .panel.enemy .mini-card > span,
+  html body #controls.controls > button.card-btn > span,
+  html body #controls.controls .card-btn > span,
+  html body .controls .card-btn > span{
+    display:block !important;
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-size:17px !important;
+    line-height:1 !important;
+    font-weight:1000 !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+    flex:0 0 auto !important;
+    transform:translateY(3px) !important;
+  }
+
+  html body .panel.enemy .mini-card > span > b,
+  html body #controls.controls > button.card-btn > span > b,
+  html body #controls.controls .card-btn > span > b,
+  html body .controls .card-btn > span > b{
+    display:inline !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-size:17px !important;
+    line-height:1 !important;
+    font-weight:1000 !important;
+    color:#ffe784 !important;
+    transform:none !important;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 620px){
+  html body .panel.enemy .mini-card,
+  html body #controls.controls > button.card-btn,
+  html body #controls.controls .card-btn,
+  html body .controls .card-btn{
+    height:132px !important;
+    min-height:132px !important;
+    max-height:132px !important;
+    padding:8px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:1px !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  html body .panel.enemy .mini-card > img,
+  html body #controls.controls > button.card-btn > img,
+  html body #controls.controls .card-btn > img,
+  html body .controls .card-btn > img{
+    height:78px !important;
+    width:auto !important;
+    max-width:100% !important;
+    margin:0 auto !important;
+    display:block !important;
+    object-fit:contain !important;
+    flex:0 0 auto !important;
+    transform:translateY(4px) !important;
+  }
+
+  html body .panel.enemy .mini-card > span,
+  html body #controls.controls > button.card-btn > span,
+  html body #controls.controls .card-btn > span,
+  html body .controls .card-btn > span{
+    display:block !important;
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-size:22px !important;
+    line-height:1 !important;
+    font-weight:1000 !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+    flex:0 0 auto !important;
+    transform:translateY(4px) !important;
+  }
+
+  html body .panel.enemy .mini-card > span > b,
+  html body #controls.controls > button.card-btn > span > b,
+  html body #controls.controls .card-btn > span > b,
+  html body .controls .card-btn > span > b{
+    display:inline !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-size:22px !important;
+    line-height:1 !important;
+    font-weight:1000 !important;
+    color:#ffe784 !important;
+    transform:none !important;
+  }
+}
+</style>
