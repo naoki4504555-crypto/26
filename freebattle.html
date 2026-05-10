@@ -1530,20 +1530,22 @@ body.sokkoo-special-shake {
 
 /* ===== HDG remaining-card UI system =====
    残りカード表示の根本ルール。
-   ここでは「カード枚数の列」を JS の状態クラス（normal-layout / sokkoo-layout）で決める。
-   VS表示や横長カード用の幅ルールに巻き込まれないよう、#controls を専用の flex 行として定義する。 */
+   HTML側のカード種別クラス（dagger-card / shield-card / heart-card / sokkoo-...）を正とし、
+   自分側ボタンと相手側ミニカードを同じ構造・同じ変数で描画する。
+   5枚表示のソッコーモードでも、カード幅は親幅から算出して必ず1行に収める。 */
 :root{
   --remain-card-h: 86px;
   --remain-card-radius: 18px;
   --remain-card-pad: 4px;
   --remain-card-img-h: 48px;
-  --remain-inner-card-radius: 8px;
-  --remain-count-size: 17px;
+  --remain-inner-card-radius: 10px;
+  --remain-count-size: 15px;
   --remain-label-size: 11px;
-  --remain-gap: 7px;
-  --remain-player-normal-w: clamp(96px, 30vw, 118px);
-  --remain-player-sokkoo-w: clamp(58px, 18vw, 96px);
+  --remain-gap: 6px;
   --remain-enemy-max-w: 760px;
+  --remain-dagger-color: #e34242;
+  --remain-shield-color: #f0c94a;
+  --remain-heart-color: #3b9cff;
 }
 
 .hidden,
@@ -1557,7 +1559,8 @@ body.sokkoo-special-shake {
   margin: 10px auto calc(112px + env(safe-area-inset-bottom)) !important;
 }
 
-/* 自分側：残りカード行。gridではなく、表示中カードだけが横に並ぶ専用flex行にする。 */
+/* 自分側：残りカード行。
+   幅はカード枚数から算出するため、ソッコーモードの5枚も縦画面で折り返さない。 */
 #controls.controls,
 .controls{
   display: flex !important;
@@ -1577,19 +1580,21 @@ body.sokkoo-special-shake {
 
 #controls.controls.normal-layout,
 .controls.normal-layout{
-  --remain-player-card-w: var(--remain-player-normal-w);
+  --remain-player-card-basis: calc((100% - var(--remain-gap) - var(--remain-gap)) / 3);
+  --remain-player-card-max: 118px;
 }
 
 #controls.controls.sokkoo-layout,
 .controls.sokkoo-layout{
-  --remain-player-card-w: var(--remain-player-sokkoo-w);
+  --remain-player-card-basis: calc((100% - var(--remain-gap) - var(--remain-gap) - var(--remain-gap) - var(--remain-gap)) / 5);
+  --remain-player-card-max: 96px;
 }
 
 #controls .card-btn,
 .controls .card-btn{
-  flex: 0 0 var(--remain-player-card-w) !important;
-  width: var(--remain-player-card-w) !important;
-  max-width: var(--remain-player-card-w) !important;
+  flex: 0 0 min(var(--remain-player-card-max), var(--remain-player-card-basis)) !important;
+  width: min(var(--remain-player-card-max), var(--remain-player-card-basis)) !important;
+  max-width: var(--remain-player-card-max) !important;
 }
 
 #controls .call-btn,
@@ -1636,7 +1641,7 @@ body.sokkoo-special-shake {
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
 }
 
-/* 共通カード枠：自分側ボタンと相手側ミニカードを同じ土台にする */
+/* 共通カード枠：色はカード種別クラスで決める。灰色は未選択の既定色としてだけ使う。 */
 #controls .card-btn,
 .controls .card-btn,
 .mini-card,
@@ -1660,6 +1665,7 @@ body.sokkoo-special-shake {
   overflow: hidden !important;
 }
 
+/* 小さいカード画像：斜めカットに見えないよう、border-radiusだけでなくclip-pathでも丸角に統一する。 */
 #controls .card-btn img,
 .controls .card-btn img,
 .mini-card img,
@@ -1668,13 +1674,15 @@ body.sokkoo-special-shake {
   width: auto !important;
   max-width: 100% !important;
   aspect-ratio: 63 / 89 !important;
-  object-fit: contain !important;
+  object-fit: cover !important;
   border-radius: var(--remain-inner-card-radius) !important;
+  clip-path: inset(0 round var(--remain-inner-card-radius)) !important;
   overflow: hidden !important;
   display: block !important;
   margin: 0 auto !important;
   transform: translateY(6px) !important;
   flex: 0 0 auto !important;
+  background: #eef3f6 !important;
 }
 
 #controls .card-btn span,
@@ -1710,38 +1718,33 @@ body.sokkoo-special-shake {
   transform: translateY(1px) !important;
 }
 
+.card-btn.dagger-card,
 .card-btn.dagger,
-.mini-card.dagger-card{
-  border-color: #e34242 !important;
-  box-shadow: 0 0 12px rgba(227,66,66,.22) !important;
-}
-
-.card-btn.shield,
-.mini-card.shield-card{
-  border-color: #f0c94a !important;
-  box-shadow: 0 0 12px rgba(240,201,74,.22) !important;
-}
-
-.card-btn.heart,
-.mini-card.heart-card{
-  border-color: #3b9cff !important;
-  box-shadow: 0 0 12px rgba(59,156,255,.22) !important;
-}
-
-.card-btn.sokkoo-dagger,
+.mini-card.dagger-card,
+.card-btn.sokkoo-dagger-card,
 .mini-card.sokkoo-dagger-card,
 #btnSokkooDagger,
 #eSokkooDaggerBox{
-  border-color: #e34242 !important;
-  box-shadow: 0 0 12px rgba(227,66,66,.25) !important;
+  border-color: var(--remain-dagger-color) !important;
+  box-shadow: 0 0 12px rgba(227,66,66,.24) !important;
 }
 
-.card-btn.sokkoo-heart,
+.card-btn.shield-card,
+.card-btn.shield,
+.mini-card.shield-card{
+  border-color: var(--remain-shield-color) !important;
+  box-shadow: 0 0 12px rgba(240,201,74,.24) !important;
+}
+
+.card-btn.heart-card,
+.card-btn.heart,
+.mini-card.heart-card,
+.card-btn.sokkoo-heart-card,
 .mini-card.sokkoo-heart-card,
 #btnSokkooHeart,
 #eSokkooHeartBox{
-  border-color: #3b9cff !important;
-  box-shadow: 0 0 12px rgba(59,156,255,.25) !important;
+  border-color: var(--remain-heart-color) !important;
+  box-shadow: 0 0 12px rgba(59,156,255,.24) !important;
 }
 
 .card-empty,
@@ -1762,15 +1765,7 @@ body.sokkoo-special-shake {
 /* スマホ横画面：数字だけ相手側も自分側も同じ倍率 */
 @media (orientation: landscape) and (max-height: 620px){
   :root{
-    --remain-count-size: 20px;
-  }
-}
-
-/* iPad横向きなど、高さに余裕がある画面 */
-@media (orientation: landscape) and (min-width: 860px) and (max-width: 1366px){
-  :root{
-    --remain-player-normal-w: 142px;
-    --remain-player-sokkoo-w: 118px;
+    --remain-count-size: 18px;
   }
 }
 
@@ -1781,19 +1776,20 @@ body.sokkoo-special-shake {
     --remain-card-pad: 8px;
     --remain-card-radius: 16px;
     --remain-card-img-h: 82px;
-    --remain-count-size: 20px;
+    --remain-count-size: 18px;
     --remain-label-size: 22px;
-    --remain-inner-card-radius: 10px;
+    --remain-inner-card-radius: 14px;
     --remain-gap: 12px;
-    --remain-player-normal-w: 142px;
-    --remain-player-sokkoo-w: 118px;
   }
 
-  #controls .card-btn img,
-  .controls .card-btn img,
-  .mini-card img,
-  .panel.enemy .mini-card img{
-    border-radius: var(--remain-inner-card-radius) !important;
+  #controls.controls.normal-layout,
+  .controls.normal-layout{
+    --remain-player-card-max: 142px;
+  }
+
+  #controls.controls.sokkoo-layout,
+  .controls.sokkoo-layout{
+    --remain-player-card-max: 118px;
   }
 
   #controls .call-btn,
@@ -1860,11 +1856,11 @@ body.sokkoo-special-shake {
       <div class="panel enemy">
         <h3>相手の残りカード</h3>
         <div class="counts">
-          <div id="eSokkooDaggerBox" data-card="ソッコーダガー" class="mini-card dagger-card sokkoo-mini hidden"><img src="sokkoo_dagger.jpeg"><span><b id="eSokkooDagger">1</b></span></div>
+          <div id="eSokkooDaggerBox" data-card="ソッコーダガー" class="mini-card dagger-card sokkoo-dagger-card sokkoo-mini hidden"><img src="sokkoo_dagger.jpeg"><span><b id="eSokkooDagger">1</b></span></div>
           <div data-card="短剣" class="mini-card dagger-card"><img src="dagger.jpeg"><span><b id="eDagger">5</b></span></div>
           <div data-card="盾" class="mini-card shield-card"><img src="shield.jpeg"><span><b id="eShield">5</b></span></div>
           <div data-card="心臓" class="mini-card heart-card"><img src="heart.jpeg"><span><b id="eHeart">5</b></span></div>
-          <div id="eSokkooHeartBox" data-card="ソッコーハート" class="mini-card heart-card sokkoo-mini hidden"><img src="sokkoo_heart.jpeg"><span><b id="eSokkooHeart">1</b></span></div>
+          <div id="eSokkooHeartBox" data-card="ソッコーハート" class="mini-card heart-card sokkoo-heart-card sokkoo-mini hidden"><img src="sokkoo_heart.jpeg"><span><b id="eSokkooHeart">1</b></span></div>
         
         
         </div>
@@ -1905,19 +1901,19 @@ body.sokkoo-special-shake {
     </div>
 
 <section id="controls" class="controls normal-layout">
-      <button id="btnSokkooDagger" data-card="ソッコーダガー" class="card-btn dagger hidden" onclick="buttonTap(); play('ソッコーダガー')">
+      <button id="btnSokkooDagger" data-card="ソッコーダガー" class="card-btn dagger-card sokkoo-dagger-card hidden" onclick="buttonTap(); play('ソッコーダガー')">
         <img src="sokkoo_dagger.jpeg"><span><b id="cSD">1</b></span>
       </button>
-      <button id="btnDagger" data-card="短剣" class="card-btn dagger" onclick="buttonTap(); play('短剣')">
+      <button id="btnDagger" data-card="短剣" class="card-btn dagger-card" onclick="buttonTap(); play('短剣')">
         <img src="dagger.jpeg"><span><b id="cDagger">5</b></span>
       </button>
-      <button id="btnShield" data-card="盾" class="card-btn shield" onclick="buttonTap(); play('盾')">
+      <button id="btnShield" data-card="盾" class="card-btn shield-card" onclick="buttonTap(); play('盾')">
         <img src="shield.jpeg"><span><b id="cShield">5</b></span>
       </button>
-      <button id="btnHeart" data-card="心臓" class="card-btn heart" onclick="buttonTap(); play('心臓')">
+      <button id="btnHeart" data-card="心臓" class="card-btn heart-card" onclick="buttonTap(); play('心臓')">
         <img src="heart.jpeg"><span><b id="cHeart">5</b></span>
       </button>
-      <button id="btnSokkooHeart" data-card="ソッコーハート" class="card-btn heart hidden" onclick="buttonTap(); play('ソッコーハート')">
+      <button id="btnSokkooHeart" data-card="ソッコーハート" class="card-btn heart-card sokkoo-heart-card hidden" onclick="buttonTap(); play('ソッコーハート')">
         <img src="sokkoo_heart.jpeg"><span><b id="cSH">1</b></span>
       </button>
       <button id="callBtn" class="call-btn" onclick="buttonTap(); playerCall()">
