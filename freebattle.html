@@ -40,6 +40,7 @@ try{
 <style>
 :root{--blue:#39a8ff;--red:#e04248;--gold:#f0c35a;}
 *{box-sizing:border-box}
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 body{margin:0;flex: 0 0 auto;
   min-height:100vh;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:#fff;background:linear-gradient(135deg,#07111f,#170909 55%,#050505);overflow-x:hidden}
 .wrap{max-width:1180px;margin:0 auto;padding:16px}
@@ -283,7 +284,7 @@ body {
 }
 
 /* 横幅が広い端末・PCでは従来寄りに戻す */
-@media (min-width: 860px) {
+@media (min-width: 860px) and (min-height: 621px) {
   body {
     padding-bottom: 20px;
   }
@@ -401,7 +402,7 @@ body {
   .mode-title{font-size:13px;margin-bottom:6px}
   .mode-btn{font-size:13px;padding:8px 9px}
 }
-@media(min-width:860px){
+@media (min-width: 860px) and (min-height: 621px){
   .controls {
   position: fixed;
   bottom: 0;
@@ -454,8 +455,8 @@ body {
 
 .controls .call-btn {
   grid-column: 1 / -1 !important;
-  min-height: 58px !important;
-  font-size: 20px !important;
+  min-height: var(--hd-call-min-h, 58px) !important;
+  font-size: var(--hd-call-font-size, 20px) !important;
   line-height: 1.15 !important;
 }
 
@@ -464,7 +465,7 @@ body {
   display: none !important;
 }
 
-@media (min-width: 860px) {
+@media (min-width: 860px) and (min-height: 621px) {
   body {
     padding-bottom: 20px !important;
   }
@@ -488,8 +489,8 @@ body {
     font-size: 18px !important;
   }
   .controls .call-btn {
-    min-height: 80px !important;
-    font-size: 24px !important;
+    min-height: var(--hd-call-min-h, 80px) !important;
+    font-size: var(--hd-call-font-size, 24px) !important;
   }
 }
 
@@ -1520,8 +1521,11 @@ body.sokkoo-special-shake {
   --remain-card-img-h: 48px;
   --remain-image-radius: 4px;
   --remain-count-size: 15px;
+  --remain-count-y: 4px;
   --remain-label-size: 11px;
   --remain-gap: 6px;
+  --hd-call-font-size: 20px;
+  --hd-call-min-h: 58px;
   --hd-screen-gutter: 10px;
   --hd-game-row-w: min(760px, calc(100vw - (var(--hd-screen-gutter) * 2)));
   --remain-row-w: var(--hd-game-row-w);
@@ -1637,6 +1641,9 @@ body.sokkoo-special-shake {
   flex: 0 0 100% !important;
   width: 100% !important;
   max-width: none !important;
+  min-height: var(--hd-call-min-h) !important;
+  font-size: var(--hd-call-font-size) !important;
+  line-height: 1.15 !important;
 }
 
 #controls .card-btn,
@@ -1696,6 +1703,7 @@ body.sokkoo-special-shake {
   text-align: center !important;
   white-space: nowrap !important;
   flex: 0 0 auto !important;
+  transform: translateY(var(--remain-count-y)) !important;
 }
 
 .card-btn span b,
@@ -1711,7 +1719,6 @@ body.sokkoo-special-shake {
   line-height: 1 !important;
   font-weight: 1000 !important;
   white-space: nowrap !important;
-  transform: translateY(1px) !important;
 }
 
 #controls .card-btn[data-card="短剣"],
@@ -1756,16 +1763,19 @@ body.sokkoo-special-shake {
   filter: grayscale(.65) brightness(.72) !important;
 }
 
-@media (min-width: 860px){
+@media (min-width: 860px) and (min-height: 621px){
   :root{
     --remain-card-h: 142px;
     --remain-card-pad: 8px;
     --remain-card-radius: 16px;
     --remain-card-img-h: 82px;
     --remain-count-size: 18px;
+    --remain-count-y: 4px;
     --remain-label-size: 22px;
     --remain-image-radius: 6px;
     --remain-gap: 12px;
+    --hd-call-font-size: 24px;
+    --hd-call-min-h: 80px;
     --hd-screen-gutter: 16px;
     --hd-game-row-w: min(820px, calc(100vw - (var(--hd-screen-gutter) * 2)));
     --remain-row-w: var(--hd-game-row-w);
@@ -1785,6 +1795,8 @@ body.sokkoo-special-shake {
     flex-basis: 100% !important;
     width: 100% !important;
     max-width: none !important;
+    min-height: var(--hd-call-min-h) !important;
+    font-size: var(--hd-call-font-size) !important;
   }
 
   #btnSokkooDagger span br,
@@ -1814,8 +1826,11 @@ body.sokkoo-special-shake {
     --remain-image-radius: 4px;
     --remain-card-radius: 16px;
     --remain-count-size: 15px;
+    --remain-count-y: 4px;
     --remain-label-size: 11px;
     --remain-gap: 6px;
+    --hd-call-font-size: 20px;
+    --hd-call-min-h: 58px;
     --hd-battle-side-h: 248px;
     --hd-battle-card-img-w: 126px;
     --hd-battle-card-label-size: 18px;
@@ -1899,6 +1914,8 @@ body.sokkoo-special-shake {
     flex: 0 0 100% !important;
     width: 100% !important;
     max-width: none !important;
+    min-height: var(--hd-call-min-h) !important;
+    font-size: var(--hd-call-font-size) !important;
   }
 }
 
