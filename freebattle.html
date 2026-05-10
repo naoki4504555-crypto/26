@@ -1509,9 +1509,9 @@ body.sokkoo-special-shake {
 
 /* ===== HDG remaining-card UI system =====
    残りカード表示の根本ルール。
-   HTML側のカード種別クラス（dagger-card / shield-card / heart-card / sokkoo-...）を正とし、
-   自分側ボタンと相手側ミニカードを同じ構造・同じ変数で描画する。
-   5枚表示のソッコーモードでも、カード幅は親幅から算出して必ず1行に収める。 */
+   相手側ミニカードと自分側ボタンは、同じ data-card と同じCSS変数で描画する。
+   スマホ横画面では「場のVSカード表示エリア」と同じ横幅を1つの基準にして、
+   残りカード行もその幅いっぱいに均等配分する。 */
 :root{
   --remain-card-h: 86px;
   --remain-card-radius: 18px;
@@ -1521,7 +1521,7 @@ body.sokkoo-special-shake {
   --remain-count-size: 15px;
   --remain-label-size: 11px;
   --remain-gap: 6px;
-  --remain-enemy-max-w: 760px;
+  --remain-row-w: min(100%, 760px);
   --remain-dagger-color: #e34242;
   --remain-shield-color: #f0c94a;
   --remain-heart-color: #3b9cff;
@@ -1533,13 +1533,50 @@ body.sokkoo-special-shake {
   display: none !important;
 }
 
-/* もう一度ボタンのSafari下余白だけ維持 */
 .restart-area{
   margin: 10px auto calc(112px + env(safe-area-inset-bottom)) !important;
 }
 
-/* 自分側：残りカード行。
-   幅はカード枚数から算出するため、ソッコーモードの5枚も縦画面で折り返さない。 */
+.panel.player{
+  display: none !important;
+}
+
+.panel.enemy{
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.top-panels{
+  grid-template-columns: 1fr !important;
+}
+
+/* 残りカード行の共通コンテナ。
+   ここで相手側・自分側の横幅基準を統一する。 */
+.counts,
+.panel.enemy .counts,
+#controls.controls,
+.controls{
+  width: var(--remain-row-w) !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+  gap: var(--remain-gap) !important;
+}
+
+.counts,
+.panel.enemy .counts{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+}
+
+.panel.enemy.sokkoo-enemy .counts{
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
 #controls.controls,
 .controls{
   display: flex !important;
@@ -1548,32 +1585,22 @@ body.sokkoo-special-shake {
   justify-content: center !important;
   align-items: stretch !important;
   align-content: center !important;
-  gap: var(--remain-gap) !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  box-sizing: border-box !important;
   overflow: visible !important;
 }
 
-#controls.controls.normal-layout,
-.controls.normal-layout{
-  --remain-player-card-basis: calc((100% - var(--remain-gap) - var(--remain-gap)) / 3);
-  --remain-player-card-max: 118px;
+/* 自分側のカードボタンは、通常3枚・ソッコー5枚を同じ行幅いっぱいに均等配分する。 */
+#controls.controls.normal-layout .card-btn:not(.hidden),
+.controls.normal-layout .card-btn:not(.hidden){
+  flex: 1 1 calc((100% - (var(--remain-gap) * 2)) / 3) !important;
+  width: auto !important;
+  max-width: 118px !important;
 }
 
-#controls.controls.sokkoo-layout,
-.controls.sokkoo-layout{
-  --remain-player-card-basis: calc((100% - var(--remain-gap) - var(--remain-gap) - var(--remain-gap) - var(--remain-gap)) / 5);
-  --remain-player-card-max: 96px;
-}
-
-#controls .card-btn,
-.controls .card-btn{
-  flex: 0 0 min(var(--remain-player-card-max), var(--remain-player-card-basis)) !important;
-  width: min(var(--remain-player-card-max), var(--remain-player-card-basis)) !important;
-  max-width: var(--remain-player-card-max) !important;
+#controls.controls.sokkoo-layout .card-btn:not(.hidden),
+.controls.sokkoo-layout .card-btn:not(.hidden){
+  flex: 1 1 calc((100% - (var(--remain-gap) * 4)) / 5) !important;
+  width: auto !important;
+  max-width: 96px !important;
 }
 
 #controls .call-btn,
@@ -1590,39 +1617,6 @@ body.sokkoo-special-shake {
   max-width: min(100%, 512px) !important;
 }
 
-/* 相手側：残りカードパネルの並び */
-.panel.player{
-  display: none !important;
-}
-
-.panel.enemy{
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
-.top-panels{
-  grid-template-columns: 1fr !important;
-}
-
-.counts,
-.panel.enemy .counts{
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: var(--remain-gap) !important;
-  width: 100% !important;
-  max-width: var(--remain-enemy-max-w) !important;
-  margin: 0 auto !important;
-}
-
-.panel.enemy.sokkoo-enemy .counts{
-  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-}
-
-/* 共通カード枠：色は data-card のカード種別を正として決める。
-   class はJSで同期するが、色判定そのものはHTML/JS共通の data-card に寄せる。
-   灰色はカード種別がない場合の既定色としてだけ使う。 */
 #controls .card-btn,
 .controls .card-btn,
 .mini-card,
@@ -1646,9 +1640,6 @@ body.sokkoo-special-shake {
   overflow: hidden !important;
 }
 
-/* 小さいカード画像：画像データ内の白フチだけを自然に角丸化する。
-   内側の印刷面・色付きラインは画像データのまま触らない。
-   斜めカットに見える原因になる clip-path は使わない。 */
 #controls .card-btn img,
 .controls .card-btn img,
 .mini-card img,
@@ -1741,7 +1732,6 @@ body.sokkoo-special-shake {
   filter: grayscale(.65) brightness(.72) !important;
 }
 
-/* PC / 大きめタブレット */
 @media (min-width: 860px){
   :root{
     --remain-card-h: 142px;
@@ -1752,16 +1742,17 @@ body.sokkoo-special-shake {
     --remain-label-size: 22px;
     --remain-image-radius: 10px;
     --remain-gap: 12px;
+    --remain-row-w: min(100%, 760px);
   }
 
-  #controls.controls.normal-layout,
-  .controls.normal-layout{
-    --remain-player-card-max: 142px;
+  #controls.controls.normal-layout .card-btn:not(.hidden),
+  .controls.normal-layout .card-btn:not(.hidden){
+    max-width: 142px !important;
   }
 
-  #controls.controls.sokkoo-layout,
-  .controls.sokkoo-layout{
-    --remain-player-card-max: 118px;
+  #controls.controls.sokkoo-layout .card-btn:not(.hidden),
+  .controls.sokkoo-layout .card-btn:not(.hidden){
+    max-width: 118px !important;
   }
 
   #controls .call-btn,
@@ -1793,61 +1784,74 @@ body.sokkoo-special-shake {
   }
 }
 
-/* スマホ横画面：大きなVSカードの横幅を基準に、
-   相手側・自分側の残りカード外枠を同じ幅へ揃える根本ルール。
-   個別カードに後付けで幅を足すのではなく、VSカード画像と残りカードUIが
-   同じ --battle-card-landscape-w を参照する。 */
+/* スマホ横画面：VSカード表示エリアと残りカード行の横幅を同一基準にする。
+   1枚ずつの固定幅ではなく、行全体の幅を共有し、その中で3枚/5枚を均等配分する。 */
 @media (orientation: landscape) and (max-height: 620px){
   :root{
-    --battle-card-landscape-w: clamp(112px, 17vw, 136px);
+    --hd-landscape-vs-row-w: clamp(430px, 76vw, 660px);
+    --remain-row-w: min(100%, var(--hd-landscape-vs-row-w));
+    --remain-card-h: 88px;
+    --remain-card-img-h: 48px;
     --remain-count-size: 18px;
-    --remain-enemy-max-w: none;
+    --remain-label-size: 11px;
+    --remain-gap: 8px;
   }
 
-  .card-img{
-    width: var(--battle-card-landscape-w) !important;
-    max-width: 100% !important;
-  }
-
-  .counts,
-  .panel.enemy .counts,
-  #controls.controls,
-  .controls{
-    width: max-content !important;
+  .battle{
+    width: var(--hd-landscape-vs-row-w) !important;
     max-width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+    align-items: center !important;
+  }
+
+  .side{
+    min-width: 0 !important;
+  }
+
+  .card-stage{
+    width: 100% !important;
+  }
+
+  .card-img{
+    width: min(100%, 136px) !important;
+    max-width: 136px !important;
   }
 
   .counts,
   .panel.enemy .counts{
-    justify-content: center !important;
-    grid-auto-rows: auto !important;
-  }
-
-  .panel.enemy:not(.sokkoo-enemy) .counts{
-    grid-template-columns: repeat(3, var(--battle-card-landscape-w)) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
   .panel.enemy.sokkoo-enemy .counts{
-    grid-template-columns: repeat(5, var(--battle-card-landscape-w)) !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   }
 
   #controls.controls,
   .controls{
-    flex-wrap: nowrap !important;
+    flex-wrap: wrap !important;
     justify-content: center !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible !important;
   }
 
-  #controls .card-btn,
-  .controls .card-btn,
-  .mini-card,
-  .panel.enemy .mini-card{
-    flex: 0 0 var(--battle-card-landscape-w) !important;
-    width: var(--battle-card-landscape-w) !important;
-    max-width: var(--battle-card-landscape-w) !important;
+  #controls.controls.normal-layout .card-btn:not(.hidden),
+  .controls.normal-layout .card-btn:not(.hidden){
+    flex: 1 1 calc((100% - (var(--remain-gap) * 2)) / 3) !important;
+    max-width: none !important;
+  }
+
+  #controls.controls.sokkoo-layout .card-btn:not(.hidden),
+  .controls.sokkoo-layout .card-btn:not(.hidden){
+    flex: 1 1 calc((100% - (var(--remain-gap) * 4)) / 5) !important;
+    max-width: none !important;
+  }
+
+  #controls .call-btn,
+  .controls .call-btn{
+    flex: 0 0 min(100%, 360px) !important;
+    width: min(100%, 360px) !important;
+    max-width: min(100%, 360px) !important;
   }
 }
 
