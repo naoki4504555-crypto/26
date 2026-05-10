@@ -2481,53 +2481,6 @@ body.sokkoo-special-shake {
 }
 
 </style>
-
-<!-- HDG PATCH 2026-05-10: smartphone landscape remaining-card height/image unify -->
-<style>
-/*
-  縦画面は触らず、スマホ横向きだけ最終上書き。
-  iPhone横向きは viewport 幅が 768px を超えてタブレット扱いになることがあるため、
-  max-width ではなく max-height で横向きスマホを判定する。
-*/
-@media (orientation: landscape) and (max-height: 620px){
-  html body .panel.enemy .mini-card,
-  html body #controls.controls .card-btn,
-  html body .controls .card-btn{
-    height: 88px !important;
-    min-height: 88px !important;
-    max-height: 88px !important;
-    padding: 5px !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    overflow: hidden !important;
-  }
-
-  html body .panel.enemy .mini-card img,
-  html body #controls.controls .card-btn img,
-  html body .controls .card-btn img{
-    height: 54px !important;
-    width: auto !important;
-    max-width: 100% !important;
-    aspect-ratio: 63 / 89 !important;
-    object-fit: contain !important;
-    flex: 0 0 auto !important;
-    margin: 0 auto !important;
-    transform: translateY(6px) !important;
-  }
-
-  html body .panel.enemy .mini-card span,
-  html body #controls.controls .card-btn span,
-  html body .controls .card-btn span{
-    flex: 0 0 auto !important;
-    margin: 0 !important;
-    line-height: 1 !important;
-  }
-}
-</style>
-
 </head>
 <body>
 <div id="sokkooFinishOverlay" class="sokkoo-finish-overlay"></div>
