@@ -4913,3 +4913,103 @@ html body #controls.controls .card-btn.hidden{display:none !important;}
   }
 }
 </style>
+
+<!-- HDG FINAL PATCH 2026-05-10: phone landscape enemy/player number parity -->
+<style>
+/*
+  原因対策：スマホ横で相手側の数字だけ、後段のスマホ調整CSS/旧PC幅CSSの影響で
+  自分側の22px拡大ルールと別の20px/18pxルールに落ちることがあった。
+  タブレット成功部分は触らず、heightの低いスマホ横だけを最後に上書きして、
+  相手/自分のカード+数字セットを完全同一寸法にする。
+*/
+@media (orientation: landscape) and (max-height: 620px){
+  html body .panel.enemy .mini-card,
+  html body #controls.controls > button.card-btn,
+  html body #controls.controls .card-btn,
+  html body .controls .card-btn{
+    height:132px !important;
+    min-height:132px !important;
+    max-height:132px !important;
+    padding:8px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:2px !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  html body .panel.enemy .mini-card > img,
+  html body #controls.controls > button.card-btn > img,
+  html body #controls.controls .card-btn > img,
+  html body .controls .card-btn > img{
+    height:78px !important;
+    width:auto !important;
+    max-width:100% !important;
+    margin:0 auto !important;
+    display:block !important;
+    object-fit:contain !important;
+    flex:0 0 auto !important;
+    transform:none !important;
+  }
+
+  html body .panel.enemy .mini-card > span,
+  html body #controls.controls > button.card-btn > span,
+  html body #controls.controls .card-btn > span,
+  html body .controls .card-btn > span{
+    display:block !important;
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-size:22px !important;
+    line-height:1 !important;
+    font-weight:1000 !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+    flex:0 0 auto !important;
+    transform:none !important;
+  }
+
+  html body .panel.enemy .mini-card > span > b,
+  html body #controls.controls > button.card-btn > span > b,
+  html body #controls.controls .card-btn > span > b,
+  html body .controls .card-btn > span > b{
+    display:inline !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-size:22px !important;
+    line-height:1 !important;
+    font-weight:1000 !important;
+    color:#ffe784 !important;
+    transform:none !important;
+  }
+}
+</style>
+
+<script>
+/* スマホ横の向き変更後、相手/自分の数字に古いinline font-sizeが残っても最後に消す */
+(function(){
+  function isPhoneLandscape(){
+    return window.matchMedia && window.matchMedia('(orientation: landscape) and (max-height: 620px)').matches;
+  }
+  function cleanRemainNumberInline(){
+    if(!isPhoneLandscape()) return;
+    document.querySelectorAll('.panel.enemy .mini-card span, .panel.enemy .mini-card b, #controls .card-btn span, #controls .card-btn b').forEach(function(el){
+      ['font-size','line-height','margin','padding','transform'].forEach(function(prop){ el.style.removeProperty(prop); });
+    });
+  }
+  function schedule(){
+    cleanRemainNumberInline();
+    requestAnimationFrame(cleanRemainNumberInline);
+    setTimeout(cleanRemainNumberInline,80);
+    setTimeout(cleanRemainNumberInline,240);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule); else schedule();
+  window.addEventListener('load', schedule);
+  window.addEventListener('resize', schedule);
+  window.addEventListener('orientationchange', schedule);
+  document.addEventListener('click', function(){ setTimeout(schedule, 0); }, true);
+})();
+</script>
