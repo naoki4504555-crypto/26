@@ -530,15 +530,30 @@ body {
 
 
 /* ===== 残りカード表示：統一ルール ===== */
+/*
+  縦画面の「相手の残りカード」を基準に、
+  上部の相手側・下部の自分側・横画面を同じ部品比率で管理する。
+  触る範囲は .panel.enemy .mini-card と .controls .card-btn のみ。
+*/
 :root{
-  --remain-mobile-frame-h:88px;
-  --remain-mobile-img-h:48px;
-  --remain-mobile-font:13px;
-  --remain-mobile-gap:4px;
-  --remain-wide-frame-h:132px;
-  --remain-wide-img-h:78px;
-  --remain-wide-font:18px;
-  --remain-wide-gap:3px;
+  --hd-rem-card-h:88px;
+  --hd-rem-img-h:48px;
+  --hd-rem-gap:4px;
+  --hd-rem-font:13px;
+  --hd-rem-pad-top:6px;
+  --hd-rem-pad-side:6px;
+  --hd-rem-pad-bottom:5px;
+  --hd-rem-radius:6px;
+}
+
+.card-btn span b,
+.panel.enemy .mini-card span b{
+  display:inline;
+  margin:0;
+  color:#ffe784;
+  font-size:1em;
+  font-weight:1000;
+  line-height:1;
 }
 
 /* 自分側の上部パネルは使わず、相手残りカードだけを上部に表示 */
@@ -585,14 +600,18 @@ body {
   box-shadow:0 0 12px rgba(255,210,90,.25) !important;
 }
 
-/* 相手側・自分側を同じ「カード＋数字」部品として扱う */
+/* カード＋数字を一つの部品として統一 */
 .controls .card-btn,
 .panel.enemy .mini-card{
   width:100% !important;
   min-width:0 !important;
+  height:var(--hd-rem-card-h) !important;
+  min-height:var(--hd-rem-card-h) !important;
+  max-height:var(--hd-rem-card-h) !important;
+  padding:var(--hd-rem-pad-top) var(--hd-rem-pad-side) var(--hd-rem-pad-bottom) !important;
   border-width:3px !important;
   border-style:solid !important;
-  border-radius:6px !important;
+  border-radius:var(--hd-rem-radius) !important;
   text-align:center !important;
   box-sizing:border-box !important;
   overflow:hidden !important;
@@ -600,39 +619,34 @@ body {
   flex-direction:column !important;
   align-items:center !important;
   justify-content:center !important;
+  flex:1 1 0 !important;
 }
 .controls .card-btn img,
 .panel.enemy .mini-card img{
   display:block !important;
   width:auto !important;
+  height:var(--hd-rem-img-h) !important;
   max-width:100% !important;
   aspect-ratio:63 / 89;
   object-fit:contain !important;
+  margin:0 auto var(--hd-rem-gap) !important;
   flex:0 0 auto !important;
-  margin:0 !important;
 }
 .controls .card-btn span,
 .panel.enemy .mini-card span{
   display:block !important;
   width:100% !important;
-  margin:var(--remain-gap) 0 0 !important;
-  padding:0 !important;
+  margin:0 !important;
   text-align:center !important;
+  font-size:var(--hd-rem-font) !important;
   font-weight:900 !important;
   line-height:1 !important;
   white-space:normal !important;
   flex:0 0 auto !important;
 }
 .controls .card-btn b,
-.panel.enemy .mini-card b,
-.card-btn span b,
-.panel.enemy .mini-card span b{
-  display:inline !important;
-  margin:0 !important;
-  padding:0 !important;
-  color:#ffe784 !important;
-  font-size:1em !important;
-  font-weight:1000 !important;
+.panel.enemy .mini-card b{
+  font-size:var(--hd-rem-font) !important;
   line-height:1 !important;
 }
 
@@ -656,9 +670,17 @@ body.game-over-view .panel.enemy .mini-card{
   opacity:1 !important;
 }
 
-/* 縦画面：縦画面の相手アイコンの見え方を基準に、自分側も同じ数値へ統一 */
+/* 縦画面：相手側のベストバランスを自分側にも適用 */
 @media (max-width:767px){
-  :root{--remain-gap:var(--remain-mobile-gap);}
+  :root{
+    --hd-rem-card-h:88px;
+    --hd-rem-img-h:48px;
+    --hd-rem-gap:4px;
+    --hd-rem-font:13px;
+    --hd-rem-pad-top:6px;
+    --hd-rem-pad-side:6px;
+    --hd-rem-pad-bottom:5px;
+  }
   body{padding-bottom:calc(238px + env(safe-area-inset-bottom));}
   .controls{
     align-items:stretch !important;
@@ -679,24 +701,6 @@ body.game-over-view .panel.enemy .mini-card{
     gap:7px !important;
     justify-content:center !important;
   }
-  .controls .card-btn,
-  .panel.enemy .mini-card{
-    height:var(--remain-mobile-frame-h) !important;
-    min-height:var(--remain-mobile-frame-h) !important;
-    max-height:var(--remain-mobile-frame-h) !important;
-    padding:6px 6px 4px !important;
-    flex:1 1 0 !important;
-  }
-  .controls .card-btn img,
-  .panel.enemy .mini-card img{
-    height:var(--remain-mobile-img-h) !important;
-  }
-  .controls .card-btn span,
-  .panel.enemy .mini-card span,
-  .controls .card-btn b,
-  .panel.enemy .mini-card b{
-    font-size:var(--remain-mobile-font) !important;
-  }
   .controls .call-btn{
     grid-column:1 / -1 !important;
     min-height:58px !important;
@@ -705,9 +709,17 @@ body.game-over-view .panel.enemy .mini-card{
   }
 }
 
-/* 横画面・タブレット・PC：縦画面基準の比率で、離れすぎない間隔に統一 */
+/* 横画面・タブレット・PC：縦画面基準の比率を拡大して適用 */
 @media (min-width:768px){
-  :root{--remain-gap:var(--remain-wide-gap);}
+  :root{
+    --hd-rem-card-h:132px;
+    --hd-rem-img-h:78px;
+    --hd-rem-gap:3px;
+    --hd-rem-font:18px;
+    --hd-rem-pad-top:9px;
+    --hd-rem-pad-side:8px;
+    --hd-rem-pad-bottom:7px;
+  }
   body{padding-bottom:20px !important;}
   .controls{
     position:static !important;
@@ -738,25 +750,6 @@ body.game-over-view .panel.enemy .mini-card{
     display:grid !important;
     grid-template-columns:repeat(5,1fr) !important;
     gap:12px !important;
-  }
-  .controls .card-btn,
-  .panel.enemy .mini-card{
-    max-width:none !important;
-    height:var(--remain-wide-frame-h) !important;
-    min-height:var(--remain-wide-frame-h) !important;
-    max-height:var(--remain-wide-frame-h) !important;
-    padding:9px 8px 7px !important;
-  }
-  .controls .card-btn img,
-  .panel.enemy .mini-card img{
-    height:var(--remain-wide-img-h) !important;
-  }
-  .controls .card-btn span,
-  .panel.enemy .mini-card span,
-  .controls .card-btn b,
-  .panel.enemy .mini-card b{
-    font-size:var(--remain-wide-font) !important;
-    line-height:1 !important;
   }
   #btnSokkooDagger span br,
   #btnSokkooHeart span br,
