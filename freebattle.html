@@ -843,27 +843,6 @@ body {
 }
 
 
-/* ===== 残りカードアイコン：しっかり丸み ===== */
-.controls .card-btn{
-  border-radius: 18px !important;
-}
-
-.controls .card-btn img{
-  border-radius: 14px !important;
-}
-
-
-/* ===== 外枠は丸く・内側カードは完全に角あり ===== */
-.controls .card-btn{
-  border-radius: 18px !important;
-  overflow: hidden; /* 枠は丸く */
-}
-
-.controls .card-btn img{
-  border-radius: 0 !important;
-  clip-path: inset(0 0 0 0) !important;
-}
-
 
 /* ===== スコア欄内ターン表示 ===== */
 .score #turnText {
@@ -1538,7 +1517,7 @@ body.sokkoo-special-shake {
   --remain-card-radius: 18px;
   --remain-card-pad: 4px;
   --remain-card-img-h: 48px;
-  --remain-inner-card-radius: 10px;
+  --remain-image-radius: 7px;
   --remain-count-size: 15px;
   --remain-label-size: 11px;
   --remain-gap: 6px;
@@ -1667,7 +1646,9 @@ body.sokkoo-special-shake {
   overflow: hidden !important;
 }
 
-/* 小さいカード画像：斜めカットに見えないよう、border-radiusだけでなくclip-pathでも丸角に統一する。 */
+/* 小さいカード画像：画像データ内の白フチだけを自然に角丸化する。
+   内側の印刷面・色付きラインは画像データのまま触らない。
+   斜めカットに見える原因になる clip-path は使わない。 */
 #controls .card-btn img,
 .controls .card-btn img,
 .mini-card img,
@@ -1676,15 +1657,13 @@ body.sokkoo-special-shake {
   width: auto !important;
   max-width: 100% !important;
   aspect-ratio: 63 / 89 !important;
-  object-fit: cover !important;
-  border-radius: var(--remain-inner-card-radius) !important;
-  clip-path: inset(0 round var(--remain-inner-card-radius)) !important;
-  overflow: hidden !important;
+  object-fit: contain !important;
+  border-radius: var(--remain-image-radius) !important;
   display: block !important;
   margin: 0 auto !important;
   transform: translateY(6px) !important;
   flex: 0 0 auto !important;
-  background: #eef3f6 !important;
+  background: transparent !important;
 }
 
 #controls .card-btn span,
@@ -1778,7 +1757,7 @@ body.sokkoo-special-shake {
     --remain-card-img-h: 82px;
     --remain-count-size: 18px;
     --remain-label-size: 22px;
-    --remain-inner-card-radius: 14px;
+    --remain-image-radius: 10px;
     --remain-gap: 12px;
   }
 
