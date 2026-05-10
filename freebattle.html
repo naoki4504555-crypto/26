@@ -3874,6 +3874,84 @@ function setupBackButton(){
 })();
 </script>
 
+
+
+<!-- HDG FINAL HOTFIX 2026-05-10B: smartphone landscape enemy remaining cards enlarge too -->
+<style>
+/*
+  直前のスマホ横HOTFIXは自分側 controls だけが対象だったため、
+  相手側の残りカード数字だけが縦画面サイズのまま残っていた。
+  モード選択サムネ等には触れず、相手パネル内の mini-card のみ同条件で拡大する。
+*/
+@media (orientation: landscape) and (max-height: 620px){
+  html body .panel.enemy .counts{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    display:grid !important;
+    justify-content:stretch !important;
+    justify-items:stretch !important;
+    align-items:stretch !important;
+    transform:none !important;
+    box-sizing:border-box !important;
+  }
+
+  html body .panel.enemy:not(.sokkoo-enemy) .counts{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  html body .panel.enemy.sokkoo-enemy .counts{
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  }
+
+  html body .panel.enemy .mini-card,
+  html body .panel.enemy .mini-card:not(.hidden){
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:132px !important;
+    min-height:132px !important;
+    max-height:132px !important;
+    padding:8px !important;
+    box-sizing:border-box !important;
+    display:flex !important;
+    flex:none !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:2px !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  html body .panel.enemy .mini-card.hidden{
+    display:none !important;
+  }
+
+  html body .panel.enemy .mini-card > img{
+    height:78px !important;
+    width:auto !important;
+    max-width:100% !important;
+    aspect-ratio:63/89 !important;
+    object-fit:contain !important;
+    display:block !important;
+    margin:4px auto 0 !important;
+    flex:0 0 auto !important;
+    transform:none !important;
+  }
+
+  html body .panel.enemy .mini-card > span,
+  html body .panel.enemy .mini-card > span > b,
+  html body .panel.enemy .mini-card > b{
+    font-size:22px !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+    flex:0 0 auto !important;
+  }
+}
+</style>
+
 </body>
 </html>
 
