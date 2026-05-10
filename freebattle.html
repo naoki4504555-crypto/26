@@ -1521,7 +1521,9 @@ body.sokkoo-special-shake {
   --remain-count-size: 15px;
   --remain-label-size: 11px;
   --remain-gap: 6px;
-  --remain-row-w: min(100%, 760px);
+  --hd-screen-gutter: 10px;
+  --hd-game-row-w: min(760px, calc(100vw - (var(--hd-screen-gutter) * 2)));
+  --remain-row-w: var(--hd-game-row-w);
   --remain-dagger-color: #e34242;
   --remain-shield-color: #f0c94a;
   --remain-heart-color: #3b9cff;
@@ -1534,7 +1536,17 @@ body.sokkoo-special-shake {
 }
 
 .restart-area{
+  width: var(--hd-game-row-w) !important;
+  max-width: 100% !important;
   margin: 10px auto calc(112px + env(safe-area-inset-bottom)) !important;
+  text-align: center !important;
+}
+
+.restart-area .restart-btn{
+  width: 100% !important;
+  max-width: none !important;
+  font-size: 20px !important;
+  padding: 12px 28px !important;
 }
 
 .panel.player{
@@ -1593,28 +1605,23 @@ body.sokkoo-special-shake {
 .controls.normal-layout .card-btn:not(.hidden){
   flex: 1 1 calc((100% - (var(--remain-gap) * 2)) / 3) !important;
   width: auto !important;
-  max-width: 118px !important;
+  max-width: none !important;
 }
 
 #controls.controls.sokkoo-layout .card-btn:not(.hidden),
 .controls.sokkoo-layout .card-btn:not(.hidden){
   flex: 1 1 calc((100% - (var(--remain-gap) * 4)) / 5) !important;
   width: auto !important;
-  max-width: 96px !important;
+  max-width: none !important;
 }
 
 #controls .call-btn,
-.controls .call-btn{
-  flex: 0 0 min(100%, 368px) !important;
-  width: min(100%, 368px) !important;
-  max-width: min(100%, 368px) !important;
-}
-
+.controls .call-btn,
 #controls.sokkoo-layout .call-btn,
 .controls.sokkoo-layout .call-btn{
-  flex-basis: min(100%, 512px) !important;
-  width: min(100%, 512px) !important;
-  max-width: min(100%, 512px) !important;
+  flex: 0 0 100% !important;
+  width: 100% !important;
+  max-width: none !important;
 }
 
 #controls .card-btn,
@@ -1742,31 +1749,25 @@ body.sokkoo-special-shake {
     --remain-label-size: 22px;
     --remain-image-radius: 10px;
     --remain-gap: 12px;
-    --remain-row-w: min(100%, 760px);
+    --hd-screen-gutter: 16px;
+    --hd-game-row-w: min(760px, calc(100vw - (var(--hd-screen-gutter) * 2)));
+    --remain-row-w: var(--hd-game-row-w);
   }
 
   #controls.controls.normal-layout .card-btn:not(.hidden),
-  .controls.normal-layout .card-btn:not(.hidden){
-    max-width: 142px !important;
-  }
-
+  .controls.normal-layout .card-btn:not(.hidden),
   #controls.controls.sokkoo-layout .card-btn:not(.hidden),
   .controls.sokkoo-layout .card-btn:not(.hidden){
-    max-width: 118px !important;
+    max-width: none !important;
   }
 
   #controls .call-btn,
-  .controls .call-btn{
-    flex-basis: min(100%, 462px) !important;
-    width: min(100%, 462px) !important;
-    max-width: min(100%, 462px) !important;
-  }
-
+  .controls .call-btn,
   #controls.sokkoo-layout .call-btn,
   .controls.sokkoo-layout .call-btn{
-    flex-basis: min(100%, 638px) !important;
-    width: min(100%, 638px) !important;
-    max-width: min(100%, 638px) !important;
+    flex-basis: 100% !important;
+    width: 100% !important;
+    max-width: none !important;
   }
 
   #btnSokkooDagger span br,
@@ -1788,8 +1789,9 @@ body.sokkoo-special-shake {
    1枚ずつの固定幅ではなく、行全体の幅を共有し、その中で3枚/5枚を均等配分する。 */
 @media (orientation: landscape) and (max-height: 620px){
   :root{
-    --hd-landscape-vs-row-w: clamp(430px, 76vw, 660px);
-    --remain-row-w: min(100%, var(--hd-landscape-vs-row-w));
+    --hd-screen-gutter: 10px;
+    --hd-landscape-vs-row-w: var(--hd-game-row-w);
+    --remain-row-w: var(--hd-game-row-w);
     --remain-card-h: 88px;
     --remain-card-img-h: 48px;
     --remain-count-size: 18px;
@@ -1849,9 +1851,9 @@ body.sokkoo-special-shake {
 
   #controls .call-btn,
   .controls .call-btn{
-    flex: 0 0 min(100%, 360px) !important;
-    width: min(100%, 360px) !important;
-    max-width: min(100%, 360px) !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: none !important;
   }
 }
 
@@ -1958,8 +1960,8 @@ body.sokkoo-special-shake {
 
 <div id="log" class="log"></div>
 
-<div class="restart-area" style="text-align:center">
-      <button class="big-btn" style="font-size:20px;padding:12px 28px" onclick="buttonTap(); startGame()">もう一度はじめる</button>
+<div class="restart-area">
+      <button class="big-btn restart-btn" onclick="buttonTap(); startGame()">もう一度はじめる</button>
     </div>
 
 </main>
