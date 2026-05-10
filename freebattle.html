@@ -1741,13 +1741,6 @@ body.sokkoo-special-shake {
   filter: grayscale(.65) brightness(.72) !important;
 }
 
-/* スマホ横画面：数字だけ相手側も自分側も同じ倍率 */
-@media (orientation: landscape) and (max-height: 620px){
-  :root{
-    --remain-count-size: 18px;
-  }
-}
-
 /* PC / 大きめタブレット */
 @media (min-width: 860px){
   :root{
@@ -1799,6 +1792,65 @@ body.sokkoo-special-shake {
     white-space: nowrap !important;
   }
 }
+
+/* スマホ横画面：大きなVSカードの横幅を基準に、
+   相手側・自分側の残りカード外枠を同じ幅へ揃える根本ルール。
+   個別カードに後付けで幅を足すのではなく、VSカード画像と残りカードUIが
+   同じ --battle-card-landscape-w を参照する。 */
+@media (orientation: landscape) and (max-height: 620px){
+  :root{
+    --battle-card-landscape-w: clamp(112px, 17vw, 136px);
+    --remain-count-size: 18px;
+    --remain-enemy-max-w: none;
+  }
+
+  .card-img{
+    width: var(--battle-card-landscape-w) !important;
+    max-width: 100% !important;
+  }
+
+  .counts,
+  .panel.enemy .counts,
+  #controls.controls,
+  .controls{
+    width: max-content !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .counts,
+  .panel.enemy .counts{
+    justify-content: center !important;
+    grid-auto-rows: auto !important;
+  }
+
+  .panel.enemy:not(.sokkoo-enemy) .counts{
+    grid-template-columns: repeat(3, var(--battle-card-landscape-w)) !important;
+  }
+
+  .panel.enemy.sokkoo-enemy .counts{
+    grid-template-columns: repeat(5, var(--battle-card-landscape-w)) !important;
+  }
+
+  #controls.controls,
+  .controls{
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #controls .card-btn,
+  .controls .card-btn,
+  .mini-card,
+  .panel.enemy .mini-card{
+    flex: 0 0 var(--battle-card-landscape-w) !important;
+    width: var(--battle-card-landscape-w) !important;
+    max-width: var(--battle-card-landscape-w) !important;
+  }
+}
+
 
 </style>
 </head>
