@@ -493,111 +493,6 @@ body {
   }
 }
 
-/* ===== 残数表示・相手カード表示の統一 ===== */
-.card-btn span b {
-  display: inline-block;
-  margin-left: 2px;
-  color: #ffe784;
-  font-size: 1em;
-}
-
-.panel.player {
-  display: none !important;
-}
-
-.top-panels {
-  grid-template-columns: 1fr !important;
-}
-
-
-/* ===== 自分のカードボタンと相手残数表示を統一 ===== */
-.controls .card-btn span{
-  display: block !important;
-  font-weight: 900 !important;
-  line-height: 1.05 !important;
-}
-
-.controls .card-btn span b{
-  display: inline !important;
-  margin-left: 3px !important;
-  color: #ffe784 !important;
-  font-size: 1em !important;
-  font-weight: 1000 !important;
-}
-
-.controls .card-btn img{
-  aspect-ratio: 63 / 89;
-  object-fit: cover;
-}
-
-/* ===== カード種類ごとの枠色・中央配置修正 ===== */
-/* 短剣：赤 / 盾：黄 / 心臓：青 */
-.card-btn.dagger{
-  border-color: #e34242 !important;
-  box-shadow: 0 0 12px rgba(227,66,66,.22) !important;
-}
-
-.card-btn.shield{
-  border-color: #f0c94a !important;
-  box-shadow: 0 0 12px rgba(240,201,74,.22) !important;
-}
-
-.card-btn.heart{
-  border-color: #3b9cff !important;
-  box-shadow: 0 0 12px rgba(59,156,255,.22) !important;
-}
-
-/* 自分ボタン・相手残りカードの中身を同じ見た目で中央配置 */
-.controls .card-btn{
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-align: center !important;
-}
-
-.controls .card-btn img{
-  display: block !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  object-fit: cover !important;
-}
-
-.controls .card-btn span{
-  width: 100% !important;
-  text-align: center !important;
-}
-
-/* ===== v16 fix: duplicate ID removal support + true hidden ===== */
-.hidden,
-.controls .card-btn.hidden{
-  display: none !important;
-}
-
-/* 通常モードの相手表示は3枚だけ */
-.panel.enemy:not(.sokkoo-enemy) #eSokkooDaggerBox,
-.panel.enemy:not(.sokkoo-enemy) #eSokkooHeartBox {
-  display: none !important;
-}
-
-/* ソッコーモードでは5枚を均一に並べる */
-
-
-/* ===== remove enemy big panel frame & unify border thickness ===== */
-.panel.enemy{
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
-.controls .card-btn{
-  border-width: 3px !important;
-  border-style: solid !important;
-}
-
-
-
 /* ===== 0枚表示・速攻演出 ===== */
 .card-empty,
 .controls .card-btn.card-empty{
@@ -1448,192 +1343,6 @@ body.game-over-view .card-empty img,
 }
 
 
-/* ===== PC/タブレット：ソッコー系ラベル1行化＋画像中央揃え ===== */
-@media (min-width: 768px) {
-  /* ソッコーダガー / ソッコーハート の改行だけ消して一行化 */
-  #btnSokkooDagger span br,
-  #btnSokkooHeart span br,
-  #eSokkooDaggerBox span br,
-  #eSokkooHeartBox span br {
-    display: none !important;
-  }
-
-  #btnSokkooDagger span,
-  #btnSokkooHeart span,
-  #eSokkooDaggerBox span,
-  #eSokkooHeartBox span {
-    white-space: nowrap !important;
-    text-align: center !important;
-    font-size: 16px !important;
-    line-height: 1.05 !important;
-  }
-
-  /* ソッコー系も通常カードと同じ中央配置 */
-  #btnSokkooDagger,
-  #btnSokkooHeart,
-  #eSokkooDaggerBox,
-  #eSokkooHeartBox {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-  }
-
-  #btnSokkooDagger img,
-  #btnSokkooHeart img,
-  #eSokkooDaggerBox img,
-  #eSokkooHeartBox img {
-    display: block !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    align-self: center !important;
-  }
-}
-
-
-/* ===== PC/タブレット：残りカードアイコン横幅統一 ===== */
-@media (min-width: 768px) {
-  :root {
-    --remain-card-width-normal: 260px;
-    --remain-card-width-sokkoo: 160px;
-    --remain-card-height-desktop: 132px;
-  }
-
-  /* 通常モード：3枚で横幅を揃える */
-  .controls.normal-layout{
-    display: grid !important;
-    grid-template-columns: repeat(3, var(--remain-card-width-normal)) !important;
-    justify-content: center !important;
-    gap: 14px !important;
-  }
-
-  /* ソッコーモード：5枚で同じ列幅に統一 */
-  .controls.sokkoo-layout{
-    display: grid !important;
-    grid-template-columns: repeat(5, var(--remain-card-width-sokkoo)) !important;
-    justify-content: center !important;
-    gap: 10px !important;
-  }
-
-  /* 自分側・相手側の外枠サイズを完全統一 */
-  .controls.normal-layout .card-btn,
-.controls.sokkoo-layout .card-btn{
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    height: var(--remain-card-height-desktop) !important;
-    min-height: var(--remain-card-height-desktop) !important;
-    max-height: var(--remain-card-height-desktop) !important;
-    box-sizing: border-box !important;
-  }
-
-  /* 中のカード画像サイズは統一。外枠幅だけを揃える */
-  .controls .card-btn img{
-    height: 78px !important;
-    width: auto !important;
-    max-width: 100% !important;
-    object-fit: contain !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-}
-
-/* iPad縦向き〜横向きでの見た目を安定させる */
-@media (min-width: 768px) and (max-width: 1024px) {
-  :root {
-    --remain-card-width-normal: 230px;
-    --remain-card-width-sokkoo: 140px;
-  }
-}
-
-/* PCなど広い画面では少しゆったり */
-@media (min-width: 1200px) {
-  :root {
-    --remain-card-width-normal: 300px;
-    --remain-card-width-sokkoo: 180px;
-  }
-}
-
-
-/* ===== PC/タブレット：残りカード列の全体幅をVSエリア幅に合わせる ===== */
-@media (min-width: 768px) {
-  :root {
-    /* VSの大きなカード2枚の外側に近い横幅 */
-    --remain-row-width-desktop: 1080px;
-    --remain-gap-normal: 14px;
-    --remain-gap-sokkoo: 12px;
-    --remain-card-height-desktop: 132px;
-  }
-
-  /* 相手側・自分側とも、残りカード列全体の横幅を同じにする */
-  .controls.normal-layout,
-.controls.sokkoo-layout{
-    width: min(var(--remain-row-width-desktop), calc(100vw - 120px)) !important;
-    max-width: min(var(--remain-row-width-desktop), calc(100vw - 120px)) !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-  }
-
-  /* 通常モード：同じ全体幅を3等分 */
-  .controls.normal-layout{
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: var(--remain-gap-normal) !important;
-  }
-
-  /* ソッコーモード：同じ全体幅を5等分 */
-  .controls.sokkoo-layout{
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important;
-    gap: var(--remain-gap-sokkoo) !important;
-  }
-
-  /* 個々の外枠は列幅いっぱいに広げる */
-  .controls .card-btn{
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    height: var(--remain-card-height-desktop) !important;
-    min-height: var(--remain-card-height-desktop) !important;
-    max-height: var(--remain-card-height-desktop) !important;
-    box-sizing: border-box !important;
-  }
-
-  /* 中のカード画像は統一・中央配置 */
-  .controls .card-btn img{
-    height: 78px !important;
-    width: auto !important;
-    max-width: 100% !important;
-    object-fit: contain !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-}
-
-/* iPad縦向きは画面幅に合わせて同じ比率で縮める */
-@media (min-width: 768px) and (max-width: 1024px) {
-  :root {
-    --remain-row-width-desktop: 920px;
-  }
-
-  .controls.normal-layout,
-.controls.sokkoo-layout{
-    width: min(var(--remain-row-width-desktop), calc(100vw - 80px)) !important;
-    max-width: min(var(--remain-row-width-desktop), calc(100vw - 80px)) !important;
-  }
-}
-
-/* 大きいPCでは少し広めに */
-@media (min-width: 1200px) {
-  :root {
-    --remain-row-width-desktop: 1120px;
-  }
-}
-
-
 /* ===== BGM ON/OFFボタン ===== */
 .bgm-toggle-btn {
   background: linear-gradient(#dff6ff, #55aee8) !important;
@@ -1819,237 +1528,25 @@ body.sokkoo-special-shake {
 }
 
 
-/* ===== EXACT SIZE RESTORE FROM REFERENCE: card icons only ===== */
-/* 参考ファイルの残りカードアイコン寸法を忠実移植。固定バー化はしない。 */
-
-/* controls containerは固定に戻さない */
-#controls.controls,
-.controls{
-  position: static !important;
-  inset: auto !important;
-  left: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  top: auto !important;
-  width: 100% !important;
-  margin: 12px auto 10px !important;
-  transform: none !important;
-  z-index: auto !important;
-  background: transparent !important;
-  border-top: 0 !important;
-  box-shadow: none !important;
-  display: grid !important;
-  gap: 7px !important;
+/* ===== HDG remaining-card UI system =====
+   残りカード表示は「枠サイズ」「中カード」「数字」「配置」をここで一元管理。
+   自分側（下の選択ボタン）と相手側（上パネル）は同じ寸法トークンを使う。 */
+:root{
+  --remain-card-h: 86px;
+  --remain-card-radius: 18px;
+  --remain-card-pad: 4px;
+  --remain-card-img-h: 48px;
+  --remain-count-size: 19px;
+  --remain-label-size: 11px;
+  --remain-gap: 7px;
+  --remain-player-normal-w: 118px;
+  --remain-player-sokkoo-w: 96px;
+  --remain-enemy-max-w: 760px;
 }
 
-/* 通常3枚／ソッコー5枚の横並びは維持 */
-#controls.controls.normal-layout,
-.controls.normal-layout,
-#controls.controls:not(.sokkoo-layout),
-.controls:not(.sokkoo-layout){
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-}
-
-#controls.controls.sokkoo-layout,
-.controls.sokkoo-layout{
-  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-}
-
-#controls .call-btn,
-.controls .call-btn{
-  grid-column: 1 / -1 !important;
-}
-
-/* 相手残りカード欄：参考ファイルと同じグリッド */
-.panel.player{
-  display: none !important;
-}
-
-.top-panels{
-  grid-template-columns: 1fr !important;
-}
-
-.panel.enemy{
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
-
-.panel.enemy:not(.sokkoo-enemy) #eSokkooDaggerBox,
-.panel.enemy:not(.sokkoo-enemy) #eSokkooHeartBox,
-.controls.normal-layout #btnSokkooDagger,
-.controls.normal-layout #btnSokkooHeart{
-  display: none !important;
-}
-
-/* ===== スマホ基準：参考ファイルの見た目へ ===== */
-#controls .card-btn,
-.controls .card-btn{
-  width: 100% !important;
-  min-width: 0 !important;
-  min-height: 92px !important;
-  height: 92px !important;
-  padding: 5px !important;
-  border-width: 3px !important;
-  border-style: solid !important;
-  border-radius: 18px !important;
-  box-sizing: border-box !important;
-  background: rgba(255,255,255,.08) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-align: center !important;
-  overflow: hidden !important;
-}
-
-#controls .card-btn img,
-.controls .card-btn img{
-  height: 58px !important;
-  width: auto !important;
-  max-width: 100% !important;
-  aspect-ratio: 63 / 89 !important;
-  object-fit: cover !important;
-  border-radius: 5px !important;
-  display: block !important;
-  margin: 0 auto 2px !important;
-}
-
-#controls .card-btn span,
-.controls .card-btn span{
-  display: block !important;
-  width: 100% !important;
-  font-size: 17px !important;
-  line-height: 1.05 !important;
-  font-weight: 900 !important;
-  text-align: center !important;
-  white-space: nowrap !important;
-  letter-spacing: 0 !important;
-}
-
-#controls .card-btn span b,
-.controls .card-btn span b{
-  display: inline !important;
-  margin-left: 3px !important;
-  color: #ffe784 !important;
-  font-size: 1em !important;
-  font-weight: 1000 !important;
-  line-height: 1.05 !important;
-  white-space: nowrap !important;
-}
-
-/* 枠色・発光：参考ファイルの最終系 */
-.card-btn.dagger{
-  border-color: #e34242 !important;
-  box-shadow: 0 0 12px rgba(227,66,66,.22) !important;
-}
-
-.card-btn.shield{
-  border-color: #f0c94a !important;
-  box-shadow: 0 0 12px rgba(240,201,74,.22) !important;
-}
-
-.card-btn.heart{
-  border-color: #3b9cff !important;
-  box-shadow: 0 0 12px rgba(59,156,255,.22) !important;
-}
-
-.card-btn.sokkoo-dagger,
-#btnSokkooDagger,
-#eSokkooDaggerBox{
-  border-color: #e34242 !important;
-  box-shadow: 0 0 12px rgba(227,66,66,.25) !important;
-}
-
-.card-btn.sokkoo-heart,
-#btnSokkooHeart,
-#eSokkooHeartBox{
-  border-color: #3b9cff !important;
-  box-shadow: 0 0 12px rgba(59,156,255,.25) !important;
-}
-
-/* コールボタン寸法は参考ファイルのスマホ値 */
-#controls .call-btn,
-.controls .call-btn{
-  min-height: 62px !important;
-  font-size: 22px !important;
-  line-height: 1.15 !important;
-}
-
-/* 小さめスマホ：参考ファイルの値 */
-@media (max-width: 390px){
-  #controls .card-btn,
-.controls .card-btn{
-    min-height: 86px !important;
-    height: 86px !important;
-    padding: 5px !important;
-    border-radius: 18px !important;
-  }
-
-  #controls .card-btn img,
-.controls .card-btn img{
-    height: 52px !important;
-  }
-
-  #controls .card-btn span,
-.controls .card-btn span{
-    font-size: 16px !important;
-    letter-spacing: -0.03em !important;
-  }
-
-  #controls .call-btn,
-  .controls .call-btn{
-    min-height: 58px !important;
-    font-size: 20px !important;
-  }
-}
-
-/* タブレット・PC：参考ファイルの広幅値 */
-@media (min-width: 860px){
-  #controls.controls,
-  .controls{
-    position: static !important;
-    background: transparent !important;
-    border-top: 0 !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    margin: 12px 0 !important;
-  }
-
-  
-
-  #controls .card-btn,
-.controls .card-btn{
-    min-height: 142px !important;
-    height: 142px !important;
-    padding: 8px !important;
-    border-radius: 16px !important;
-  }
-
-  #controls .card-btn img,
-.controls .card-btn img{
-    height: 94px !important;
-    border-radius: 8px !important;
-    margin-bottom: 5px !important;
-  }
-
-  #controls .card-btn span,
-.controls .card-btn span{
-    font-size: 23px !important;
-  }
-
-  #controls .call-btn,
-  .controls .call-btn{
-    min-height: 142px !important;
-    font-size: 24px !important;
-  }
-}
-
-/* 0枚表示・hidden維持 */
 .hidden,
-.controls .card-btn.hidden{
+.controls .card-btn.hidden,
+.panel.enemy .mini-card.hidden{
   display: none !important;
 }
 
@@ -2058,212 +1555,76 @@ body.sokkoo-special-shake {
   margin: 10px auto calc(112px + env(safe-area-inset-bottom)) !important;
 }
 
-
-/* ===== GOD VERSION small icon unify ===== */
-/* 上下の小カードを完全統一 */
-
-#controls .card-btn,
-.controls .card-btn{
-  min-height: 86px !important;
-  height: 86px !important;
-  border-radius: 18px !important;
-  padding: 4px !important;
-}
-
-#controls .card-btn img,
-.controls .card-btn img{
-  height: 48px !important;
-  width: auto !important;
-  aspect-ratio: 63/89 !important;
-  object-fit: contain !important;
-  margin: 0 auto 2px !important;
-  display:block !important;
-}
-
-#controls .card-btn span,
-#controls .card-btn b,
-.controls .card-btn span,
-.controls .card-btn b{
-  font-size: 11px !important;
-  line-height: 1.05 !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.02em !important;
-}
-
-#controls .card-btn b,
-.controls .card-btn b{
-  font-size: 19px !important;
-  margin-left: 2px !important;
-}
-
-@media (min-width:860px){
-  #controls .card-btn,
-.controls .card-btn{
-    min-height: 142px !important;
-    height: 142px !important;
-    padding: 8px !important;
-  }
-
-  #controls .card-btn img,
-.controls .card-btn img{
-    height: 82px !important;
-  }
-
-  #controls .card-btn span,
-#controls .card-btn b,
-.controls .card-btn span,
-.controls .card-btn b{
-    font-size: 22px !important;
-  }
-}
-
-
-/* ===== HDG landscape controls centering fix ===== */
-/* スマホ/タブレットのランドスケープ時、自分カードアイコンが左詰めになるのを防ぐ */
-@media (orientation: landscape) and (max-height: 620px){
-  #controls.controls,
-  .controls{
-    width: max-content !important;
-    max-width: calc(100vw - 24px) !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    justify-content: center !important;
-    justify-items: center !important;
-    align-items: stretch !important;
-  }
-
-  #controls.controls.normal-layout,
-  .controls.normal-layout,
-  #controls.controls:not(.sokkoo-layout),
-  .controls:not(.sokkoo-layout){
-    grid-template-columns: repeat(3, 118px) !important;
-  }
-
-  #controls.controls.sokkoo-layout,
-  .controls.sokkoo-layout{
-    grid-template-columns: repeat(5, 96px) !important;
-  }
-
-  #controls .card-btn,
-  .controls .card-btn{
-    width: 100% !important;
-  }
-
-  #controls .call-btn,
-  .controls .call-btn{
-    width: 100% !important;
-  }
-}
-
-/* iPad横向きなど高さがあるランドスケープも中央に揃える */
-@media (orientation: landscape) and (min-width: 860px) and (max-width: 1366px){
-  #controls.controls,
-  .controls{
-    width: max-content !important;
-    max-width: calc(100vw - 32px) !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    justify-content: center !important;
-    justify-items: center !important;
-  }
-
-  #controls.controls.normal-layout,
-  .controls.normal-layout,
-  #controls.controls:not(.sokkoo-layout),
-  .controls:not(.sokkoo-layout){
-    grid-template-columns: repeat(3, 142px) !important;
-  }
-
-  #controls.controls.sokkoo-layout,
-  .controls.sokkoo-layout{
-    grid-template-columns: repeat(5, 118px) !important;
-  }
-}
-
-
-/* ===== HDG 2026-05-10: 残りカード表示を数字のみ＋カードを少し下げる ===== */
-.controls .card-btn{
+/* 自分側：残りカードボタンの並び */
+#controls.controls,
+.controls{
   justify-content: center !important;
-  align-items: center !important;
-  gap: 6px !important;
+  justify-items: center !important;
+  align-items: stretch !important;
 }
 
-.controls .card-btn img{
-  flex: 0 0 auto !important;
-  margin: 0 auto !important;
-  transform: translateY(6px) !important;
+#controls.controls.normal-layout,
+.controls.normal-layout,
+#controls.controls:not(.sokkoo-layout),
+.controls:not(.sokkoo-layout){
+  grid-template-columns: repeat(3, minmax(0, var(--remain-player-normal-w))) !important;
 }
 
-.controls .card-btn span{
-  flex: 0 0 auto !important;
-  margin: 0 !important;
-  line-height: 1 !important;
+#controls.controls.sokkoo-layout,
+.controls.sokkoo-layout{
+  grid-template-columns: repeat(5, minmax(0, var(--remain-player-sokkoo-w))) !important;
 }
 
-.controls .card-btn span b{
-  display: inline-block !important;
-  margin: 0 !important;
-  line-height: 1 !important;
-  transform: translateY(1px) !important;
-}
-
-@media (max-width: 767px) {
-  .controls .card-btn{
-    gap: 4px !important;
-  }
-}
-
-/* ===== HDG consolidated remaining-card icons (clean base) =====
-   残りカードアイコン関連はここで一元管理。
-   以前の .counts / .mini-card 系の積み重ね指定は削除済み。 */
-.card-btn span b {
-  display: inline-block;
-  margin-left: 2px;
-  color: #ffe784;
-  font-size: 1em;
-  font-weight: 1000;
-}
-
-.panel.player {
+/* 相手側：残りカードパネルの並び */
+.panel.player{
   display: none !important;
 }
 
-.top-panels {
+
+.panel.enemy{
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#controls .call-btn,
+.controls .call-btn{
+  grid-column: 1 / -1 !important;
+}
+
+
+.top-panels{
   grid-template-columns: 1fr !important;
 }
 
-.counts {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.panel.enemy .counts {
+.counts,
+.panel.enemy .counts{
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 7px;
-  max-width: 760px;
+  gap: var(--remain-gap);
+  width: 100%;
+  max-width: var(--remain-enemy-max-w);
   margin: 0 auto;
 }
 
-.panel.enemy.sokkoo-enemy .counts {
+.panel.enemy.sokkoo-enemy .counts{
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-.panel.enemy:not(.sokkoo-enemy) #eSokkooDaggerBox,
-.panel.enemy:not(.sokkoo-enemy) #eSokkooHeartBox,
-.panel.enemy .mini-card.hidden {
-  display: none !important;
-}
-
+/* 共通カード枠：自分側ボタンと相手側ミニカードを同じ土台にする */
+#controls .card-btn,
+.controls .card-btn,
 .mini-card,
-.panel.enemy .mini-card {
-  width: 100%;
-  min-width: 0;
-  min-height: 86px;
-  height: 86px;
-  padding: 4px;
-  border-radius: 18px;
+.panel.enemy .mini-card{
+  width: 100% !important;
+  min-width: 0 !important;
+  height: var(--remain-card-h) !important;
+  min-height: var(--remain-card-h) !important;
+  max-height: var(--remain-card-h) !important;
+  padding: var(--remain-card-pad) !important;
+  box-sizing: border-box !important;
+  border-radius: var(--remain-card-radius) !important;
   background: rgba(255,255,255,.08);
   border: 3px solid rgba(255,255,255,.25);
   box-shadow: 0 10px 18px rgba(0,0,0,.3);
@@ -2276,27 +1637,31 @@ body.sokkoo-special-shake {
   overflow: hidden;
 }
 
+#controls .card-btn img,
+.controls .card-btn img,
 .mini-card img,
-.panel.enemy .mini-card img {
-  height: 48px;
-  width: auto;
-  max-width: 100%;
-  aspect-ratio: 63 / 89;
-  object-fit: contain;
+.panel.enemy .mini-card img{
+  height: var(--remain-card-img-h) !important;
+  width: auto !important;
+  max-width: 100% !important;
+  aspect-ratio: 63 / 89 !important;
+  object-fit: contain !important;
   border-radius: 5px;
-  display: block;
-  margin: 0 auto;
+  display: block !important;
+  margin: 0 auto !important;
   transform: translateY(6px);
   flex: 0 0 auto;
 }
 
+#controls .card-btn span,
+.controls .card-btn span,
 .mini-card span,
-.panel.enemy .mini-card span {
+.panel.enemy .mini-card span{
   display: block;
   width: 100%;
   margin: 0;
   color: #fff;
-  font-size: 11px;
+  font-size: var(--remain-label-size) !important;
   line-height: 1;
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -2305,13 +1670,16 @@ body.sokkoo-special-shake {
   flex: 0 0 auto;
 }
 
+.card-btn span b,
+#controls .card-btn b,
+.controls .card-btn b,
 .mini-card b,
 .panel.enemy .mini-card b,
-.panel.enemy .mini-card span b {
+.panel.enemy .mini-card span b{
   display: inline-block;
-  margin: 0 0 0 2px;
+  margin: 0 0 0 2px !important;
   color: #ffe784;
-  font-size: 19px;
+  font-size: var(--remain-count-size) !important;
   line-height: 1;
   font-weight: 1000;
   white-space: nowrap;
@@ -2319,80 +1687,103 @@ body.sokkoo-special-shake {
 }
 
 .card-btn.dagger,
-.mini-card.dagger-card {
-  border-color: #e34242;
-  box-shadow: 0 0 12px rgba(227,66,66,.22);
+.mini-card.dagger-card{
+  border-color: #e34242 !important;
+  box-shadow: 0 0 12px rgba(227,66,66,.22) !important;
 }
 
 .card-btn.shield,
-.mini-card.shield-card {
-  border-color: #f0c94a;
-  box-shadow: 0 0 12px rgba(240,201,74,.22);
+.mini-card.shield-card{
+  border-color: #f0c94a !important;
+  box-shadow: 0 0 12px rgba(240,201,74,.22) !important;
 }
 
 .card-btn.heart,
-.mini-card.heart-card {
-  border-color: #3b9cff;
-  box-shadow: 0 0 12px rgba(59,156,255,.22);
+.mini-card.heart-card{
+  border-color: #3b9cff !important;
+  box-shadow: 0 0 12px rgba(59,156,255,.22) !important;
 }
 
 .card-btn.sokkoo-dagger,
 .mini-card.sokkoo-dagger-card,
 #btnSokkooDagger,
-#eSokkooDaggerBox {
-  border-color: #e34242;
-  box-shadow: 0 0 12px rgba(227,66,66,.25);
+#eSokkooDaggerBox{
+  border-color: #e34242 !important;
+  box-shadow: 0 0 12px rgba(227,66,66,.25) !important;
 }
 
 .card-btn.sokkoo-heart,
 .mini-card.sokkoo-heart-card,
 #btnSokkooHeart,
-#eSokkooHeartBox {
-  border-color: #3b9cff;
-  box-shadow: 0 0 12px rgba(59,156,255,.25);
+#eSokkooHeartBox{
+  border-color: #3b9cff !important;
+  box-shadow: 0 0 12px rgba(59,156,255,.25) !important;
 }
 
-@media (max-width: 390px) {
-  .panel.enemy .mini-card {
-    min-height: 86px;
-    height: 86px;
+/* スマホ横画面：自分側は横幅を固定して中央寄せ、数字は相手側も自分側も同じ倍率 */
+@media (orientation: landscape) and (max-height: 620px){
+  :root{
+    --remain-count-size: 22px;
   }
 
-  .panel.enemy .mini-card img {
-    height: 48px;
+  #controls.controls,
+  .controls{
+    width: max-content !important;
+    max-width: calc(100vw - 24px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 }
 
-@media (min-width: 860px) {
-  .panel.enemy .counts {
-    gap: 12px;
+/* iPad横向きなど、高さに余裕がある画面 */
+@media (orientation: landscape) and (min-width: 860px) and (max-width: 1366px){
+  :root{
+    --remain-player-normal-w: 142px;
+    --remain-player-sokkoo-w: 118px;
   }
 
-  .panel.enemy .mini-card {
-    min-height: 142px;
-    height: 142px;
-    padding: 8px;
-    border-radius: 16px;
+  #controls.controls,
+  .controls{
+    width: max-content !important;
+    max-width: calc(100vw - 32px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* PC / 大きめタブレット */
+@media (min-width: 860px){
+  :root{
+    --remain-card-h: 142px;
+    --remain-card-pad: 8px;
+    --remain-card-radius: 16px;
+    --remain-card-img-h: 82px;
+    --remain-count-size: 22px;
+    --remain-label-size: 22px;
+    --remain-gap: 12px;
   }
 
-  .panel.enemy .mini-card img {
-    height: 82px;
+  #controls .card-btn img,
+  .controls .card-btn img,
+  .mini-card img,
+  .panel.enemy .mini-card img{
     border-radius: 8px;
   }
 
-  .panel.enemy .mini-card span,
-  .panel.enemy .mini-card b,
-  .panel.enemy .mini-card span b {
-    font-size: 22px;
+  #btnSokkooDagger span br,
+  #btnSokkooHeart span br,
+  #eSokkooDaggerBox span br,
+  #eSokkooHeartBox span br{
+    display: none !important;
   }
-}
 
-@media (orientation: landscape) and (max-height: 620px) {
-  .panel.enemy .mini-card span,
-  .panel.enemy .mini-card b,
-  .panel.enemy .mini-card span b {
-    font-size: 22px;
+  #btnSokkooDagger span,
+  #btnSokkooHeart span,
+  #eSokkooDaggerBox span,
+  #eSokkooHeartBox span{
+    white-space: nowrap !important;
   }
+
 }
 
 </style>
@@ -2709,32 +2100,65 @@ clearEnemyCallTimer();
   playSound("start");
 }
 
+const REMAINING_CARD_ITEMS = [
+  { side: "player", card: "短剣", countId: "cDagger", boxId: "btnDagger", mode: "all" },
+  { side: "player", card: "盾", countId: "cShield", boxId: "btnShield", mode: "all" },
+  { side: "player", card: "心臓", countId: "cHeart", boxId: "btnHeart", mode: "all" },
+  { side: "player", card: "ソッコーダガー", countId: "cSD", boxId: "btnSokkooDagger", mode: "sokkoo" },
+  { side: "player", card: "ソッコーハート", countId: "cSH", boxId: "btnSokkooHeart", mode: "sokkoo" },
+  { side: "enemy", card: "短剣", countId: "eDagger", boxSelector: '.panel.enemy .mini-card[data-card="短剣"]', mode: "all" },
+  { side: "enemy", card: "盾", countId: "eShield", boxSelector: '.panel.enemy .mini-card[data-card="盾"]', mode: "all" },
+  { side: "enemy", card: "心臓", countId: "eHeart", boxSelector: '.panel.enemy .mini-card[data-card="心臓"]', mode: "all" },
+  { side: "enemy", card: "ソッコーダガー", countId: "eSokkooDagger", boxId: "eSokkooDaggerBox", mode: "sokkoo" },
+  { side: "enemy", card: "ソッコーハート", countId: "eSokkooHeart", boxId: "eSokkooHeartBox", mode: "sokkoo" }
+];
+
+function getRemainingBox(item){
+  if(item.boxId) return document.getElementById(item.boxId);
+  if(item.boxSelector) return document.querySelector(item.boxSelector);
+  return null;
+}
+
+function getRemainingHand(side){
+  return side === "player" ? player : enemy;
+}
+
+function updateRemainingCardUI(){
+  const enemyPanel = document.querySelector(".panel.enemy");
+  if(enemyPanel) enemyPanel.classList.toggle("sokkoo-enemy", sokkooMode);
+
+  const controls = document.getElementById("controls");
+  if(controls){
+    controls.classList.toggle("normal-layout", !sokkooMode);
+    controls.classList.toggle("sokkoo-layout", sokkooMode);
+  }
+
+  REMAINING_CARD_ITEMS.forEach(item => {
+    const hand = getRemainingHand(item.side);
+    const count = hand ? (hand[item.card] || 0) : 0;
+    const countEl = document.getElementById(item.countId);
+    const box = getRemainingBox(item);
+    const visible = item.mode !== "sokkoo" || sokkooMode;
+
+    if(countEl) countEl.innerText = count;
+
+    if(box){
+      box.classList.toggle("hidden", !visible);
+      box.classList.toggle("card-empty", visible && count === 0);
+      box.removeAttribute("style");
+      if(item.side === "player"){
+        box.disabled = gameOver || !visible || count === 0;
+      }
+    }
+  });
+}
+
 function setCardEmptyState(){
-  const playerMap = {
-    "短剣": player.短剣,
-    "盾": player.盾,
-    "心臓": player.心臓,
-    "ソッコーダガー": player.ソッコーダガー || 0,
-    "ソッコーハート": player.ソッコーハート || 0
-  };
+  updateRemainingCardUI();
+}
 
-  const enemyMap = {
-    "短剣": enemy.短剣,
-    "盾": enemy.盾,
-    "心臓": enemy.心臓,
-    "ソッコーダガー": enemy.ソッコーダガー || 0,
-    "ソッコーハート": enemy.ソッコーハート || 0
-  };
-
-  document.querySelectorAll(".controls .card-btn[data-card]").forEach(btn => {
-    const card = btn.getAttribute("data-card");
-    btn.classList.toggle("card-empty", (playerMap[card] || 0) === 0);
-  });
-
-  document.querySelectorAll(".panel.enemy .mini-card[data-card]").forEach(box => {
-    const card = box.getAttribute("data-card");
-    box.classList.toggle("card-empty", (enemyMap[card] || 0) === 0);
-  });
+function applyModeSpecificVisibility(){
+  updateRemainingCardUI();
 }
 
 function triggerSokkooEffect(kind){
@@ -2768,107 +2192,17 @@ function triggerSokkooEffect(kind){
 }
 
 
-function forceMobileRemainCardFrameSize(){
-  if(!window.matchMedia("(max-width: 767px)").matches) return;
-
-  const targets = document.querySelectorAll(
-    ".controls.normal-layout .card-btn:not(.hidden), " +
-    ".controls.sokkoo-layout .card-btn:not(.hidden), " +
-    ".panel.enemy:not(.sokkoo-enemy) .mini-card:not(.hidden), " +
-    ".panel.enemy.sokkoo-enemy .mini-card:not(.hidden)"
-  );
-
-  targets.forEach(el => {
-    // HDG TEST FIX: 連打時の縦方向だけの微縮み対策。
-    // サイズの土台だけ固定し、中身配置・padding は既存CSSに任せる。
-    el.style.height = "88px";
-    el.style.minHeight = "88px";
-    el.style.maxHeight = "88px";
-    el.style.boxSizing = "border-box";
-    el.style.overflow = "hidden";
-  });
-}
-
-
-function forceSmartphoneRemainIconSize(){}
-
-/* HDG FIX: ソッコーモード専用カードの表示状態を、inline style まで含めて正規化する。
-   前回のサイズ同期処理が display:flex!important を直接付与するため、
-   通常モードへ戻した後も hidden クラスだけではソッコーカードが消えないことがあった。 */
-function applyModeSpecificVisibility(){
-  const modeOnlyIds = [
-    "btnSokkooDagger", "btnSokkooHeart",
-    "eSokkooDaggerBox", "eSokkooHeartBox",
-    "pSokkooDaggerBox", "pSokkooHeartBox"
-  ];
-
-  modeOnlyIds.forEach(id => {
-    const el = document.getElementById(id);
-    if(!el) return;
-
-    el.classList.toggle("hidden", !sokkooMode);
-
-    if(sokkooMode){
-      // 通常モード時に付けた display:none!important を解除して、
-      // その後の共通サイズ同期処理に任せる。
-      if(el.style.getPropertyValue("display") === "none"){
-        el.style.removeProperty("display");
-      }
-    } else {
-      // inline の display:flex!important が残っていても必ず非表示にする。
-      el.style.setProperty("display", "none", "important");
-    }
-  });
-}
-
 function updateUI(){
   document.body.classList.toggle("game-over-view", gameOver);
-  // 自分の残り枚数を下のカード選択ボタンに表示
-  document.getElementById("cDagger").innerText = player.短剣;
-  document.getElementById("cShield").innerText = player.盾;
-  document.getElementById("cHeart").innerText = player.心臓;
-  document.getElementById("cSD").innerText = player.ソッコーダガー || 0;
-  document.getElementById("cSH").innerText = player.ソッコーハート || 0;
+  updateRemainingCardUI();
 
-  // 上部の自分パネルは廃止済み。古いIDが存在する場合だけ更新。
-  if(document.getElementById("pDagger")) document.getElementById("pDagger").innerText = player.短剣;
-  if(document.getElementById("pShield")) document.getElementById("pShield").innerText = player.盾;
-  if(document.getElementById("pHeart")) document.getElementById("pHeart").innerText = player.心臓;
-  if(document.getElementById("pSokkooDagger")) document.getElementById("pSokkooDagger").innerText = player.ソッコーダガー || 0;
-  if(document.getElementById("pSokkooHeart")) document.getElementById("pSokkooHeart").innerText = player.ソッコーハート || 0;
-  if(document.getElementById("pSokkooDaggerBox")) document.getElementById("pSokkooDaggerBox").classList.toggle("hidden", !sokkooMode);
-  if(document.getElementById("pSokkooHeartBox")) document.getElementById("pSokkooHeartBox").classList.toggle("hidden", !sokkooMode);
-  document.getElementById("eDagger").innerText = enemy.短剣;
-  document.getElementById("eShield").innerText = enemy.盾;
-  document.getElementById("eHeart").innerText = enemy.心臓;
-  document.getElementById("eSokkooDagger").innerText = enemy.ソッコーダガー || 0;
-  document.getElementById("eSokkooHeart").innerText = enemy.ソッコーハート || 0;
-  document.getElementById("eSokkooDaggerBox").classList.toggle("hidden", !sokkooMode);
-  document.getElementById("eSokkooHeartBox").classList.toggle("hidden", !sokkooMode);
-  document.querySelector(".panel.enemy").classList.toggle("sokkoo-enemy", sokkooMode);
   document.getElementById("turnText").innerText = turnNumber + "ターン目";
   document.getElementById("pScore").innerText = pScore;
   document.getElementById("eScore").innerText = eScore;
 
-  document.getElementById("btnDagger").disabled = gameOver || player.短剣 === 0;
-  document.getElementById("btnShield").disabled = gameOver || player.盾 === 0;
-  document.getElementById("btnHeart").disabled = gameOver || player.心臓 === 0;
-  document.getElementById("btnSokkooDagger").classList.toggle("hidden", !sokkooMode);
-  document.getElementById("btnSokkooHeart").classList.toggle("hidden", !sokkooMode);
-  applyModeSpecificVisibility();
-  document.getElementById("btnSokkooDagger").disabled = gameOver || !sokkooMode || (player.ソッコーダガー || 0) === 0;
-  document.getElementById("btnSokkooHeart").disabled = gameOver || !sokkooMode || (player.ソッコーハート || 0) === 0;
-  const controls = document.getElementById("controls");
-  controls.classList.toggle("normal-layout", !sokkooMode);
-  controls.classList.toggle("sokkoo-layout", sokkooMode);
-
   const callBtn = document.getElementById("callBtn");
   callBtn.disabled = gameOver;
   callBtn.classList.remove("call-ready", "call-hidden");
-  setCardEmptyState();
-  
-  forceMobileRemainCardFrameSize();
-  applyModeSpecificVisibility();
 }
 
 function randomEnemy(){
@@ -3006,7 +2340,6 @@ function finishSokkoo(kind, pCard, eCard){
   triggerSokkooEffect(kind);
   showBattleResultLabels(kind);
   triggerSokkooFinishSpecial(kind);
-  forceMobileRemainCardFrameSize();
   setCardEmptyState();
   logBattle(pCard, eCard, result);
   updateUI();
@@ -3440,9 +2773,6 @@ function closeRules(){
 }
 
 
-window.addEventListener("resize", forceMobileRemainCardFrameSize);
-window.addEventListener("load", forceMobileRemainCardFrameSize);
-setTimeout(forceMobileRemainCardFrameSize, 100);
 
 
 
