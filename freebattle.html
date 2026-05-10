@@ -1641,7 +1641,9 @@ body.sokkoo-special-shake {
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
 }
 
-/* 共通カード枠：色はカード種別クラスで決める。灰色は未選択の既定色としてだけ使う。 */
+/* 共通カード枠：色は data-card のカード種別を正として決める。
+   class はJSで同期するが、色判定そのものはHTML/JS共通の data-card に寄せる。
+   灰色はカード種別がない場合の既定色としてだけ使う。 */
 #controls .card-btn,
 .controls .card-btn,
 .mini-card,
@@ -1718,31 +1720,29 @@ body.sokkoo-special-shake {
   transform: translateY(1px) !important;
 }
 
-.card-btn.dagger-card,
-.card-btn.dagger,
-.mini-card.dagger-card,
-.card-btn.sokkoo-dagger-card,
-.mini-card.sokkoo-dagger-card,
-#btnSokkooDagger,
-#eSokkooDaggerBox{
+#controls .card-btn[data-card="短剣"],
+.controls .card-btn[data-card="短剣"],
+.panel.enemy .mini-card[data-card="短剣"],
+#controls .card-btn[data-card="ソッコーダガー"],
+.controls .card-btn[data-card="ソッコーダガー"],
+.panel.enemy .mini-card[data-card="ソッコーダガー"]{
   border-color: var(--remain-dagger-color) !important;
   box-shadow: 0 0 12px rgba(227,66,66,.24) !important;
 }
 
-.card-btn.shield-card,
-.card-btn.shield,
-.mini-card.shield-card{
+#controls .card-btn[data-card="盾"],
+.controls .card-btn[data-card="盾"],
+.panel.enemy .mini-card[data-card="盾"]{
   border-color: var(--remain-shield-color) !important;
   box-shadow: 0 0 12px rgba(240,201,74,.24) !important;
 }
 
-.card-btn.heart-card,
-.card-btn.heart,
-.mini-card.heart-card,
-.card-btn.sokkoo-heart-card,
-.mini-card.sokkoo-heart-card,
-#btnSokkooHeart,
-#eSokkooHeartBox{
+#controls .card-btn[data-card="心臓"],
+.controls .card-btn[data-card="心臓"],
+.panel.enemy .mini-card[data-card="心臓"],
+#controls .card-btn[data-card="ソッコーハート"],
+.controls .card-btn[data-card="ソッコーハート"],
+.panel.enemy .mini-card[data-card="ソッコーハート"]{
   border-color: var(--remain-heart-color) !important;
   box-shadow: 0 0 12px rgba(59,156,255,.24) !important;
 }
@@ -1949,6 +1949,25 @@ const CARD_IMAGES = {
   "ソッコーハート": "sokkoo_heart.jpeg",
   "裏": "card_back.jpeg"
 };
+
+const REMAINING_CARD_CLASS_MAP = {
+  "短剣": ["dagger-card"],
+  "盾": ["shield-card"],
+  "心臓": ["heart-card"],
+  "ソッコーダガー": ["dagger-card", "sokkoo-dagger-card", "sokkoo-mini"],
+  "ソッコーハート": ["heart-card", "sokkoo-heart-card", "sokkoo-mini"]
+};
+
+function syncRemainingCardKindClass(el, card){
+  if(!el || !card) return;
+  el.classList.remove(
+    "dagger", "shield", "heart",
+    "dagger-card", "shield-card", "heart-card",
+    "sokkoo-dagger-card", "sokkoo-heart-card", "sokkoo-mini"
+  );
+  const classes = REMAINING_CARD_CLASS_MAP[card] || [];
+  classes.forEach(cls => el.classList.add(cls));
+}
 
 function setMode(isSokkoo){
   sokkooMode = isSokkoo;
@@ -2178,6 +2197,8 @@ function updateRemainingCardUI(){
     if(countEl) countEl.innerText = count;
 
     if(box){
+      if(!box.getAttribute("data-card")) box.setAttribute("data-card", item.card);
+      syncRemainingCardKindClass(box, item.card);
       box.classList.toggle("hidden", !visible);
       box.classList.toggle("card-empty", visible && count === 0);
       box.removeAttribute("style");
