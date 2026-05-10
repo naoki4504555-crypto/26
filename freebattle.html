@@ -390,7 +390,7 @@ body {
   }
 }
 
-.mode-box{max-width:640px;margin:8px auto 10px;padding:10px;border-radius:16px;background:rgba(0,0,0,.42);border:2px solid rgba(240,195,90,.55);text-align:center}
+.mode-box{width:var(--hd-game-row-w);max-width:100%;margin:8px auto 10px;padding:10px;border-radius:16px;background:rgba(0,0,0,.42);border:2px solid rgba(240,195,90,.55);text-align:center}
 .mode-title{font-weight:900;color:#ffe784;margin-bottom:8px}
 .mode-btn{font-size:16px;font-weight:900;padding:10px 14px;border-radius:14px;background:linear-gradient(#fff,#d8d8d8);color:#241006;border:3px solid rgba(255,255,255,.65)}
 .mode-btn.active{background:linear-gradient(#ffe98d,#d79520);border-color:#fff0a8;box-shadow:0 0 20px rgba(255,210,90,.45)}
@@ -575,7 +575,8 @@ body {
 
 /* ===== モード選択ボタン画像化 ===== */
 .mode-box {
-  max-width: 820px !important;
+  width: var(--hd-game-row-w) !important;
+  max-width: 100% !important;
 }
 
 .mode-card-btn {
@@ -1510,8 +1511,8 @@ body.sokkoo-special-shake {
 /* ===== HDG remaining-card UI system =====
    残りカード表示の根本ルール。
    相手側ミニカードと自分側ボタンは、同じ data-card と同じCSS変数で描画する。
-   スマホ横画面では「場のVSカード表示エリア」と同じ横幅を1つの基準にして、
-   残りカード行もその幅いっぱいに均等配分する。 */
+   スマホ横画面では「一番上のゲームモード欄」と同じ横幅を1つの基準にして、
+   残りカード行・VSエリア・操作ボタンもその幅いっぱいに均等配分する。 */
 :root{
   --remain-card-h: 86px;
   --remain-card-radius: 18px;
@@ -1750,7 +1751,7 @@ body.sokkoo-special-shake {
     --remain-image-radius: 10px;
     --remain-gap: 12px;
     --hd-screen-gutter: 16px;
-    --hd-game-row-w: min(760px, calc(100vw - (var(--hd-screen-gutter) * 2)));
+    --hd-game-row-w: min(820px, calc(100vw - (var(--hd-screen-gutter) * 2)));
     --remain-row-w: var(--hd-game-row-w);
   }
 
@@ -1789,7 +1790,7 @@ body.sokkoo-special-shake {
    横向き専用の拡大はここで廃止し、サイズは残りカードUIの基本変数を使う。 */
 @media (orientation: landscape) and (max-height: 620px){
   :root{
-    --hd-screen-gutter: 10px;
+    --hd-screen-gutter: 16px;
     --hd-landscape-vs-row-w: var(--hd-game-row-w);
     --remain-row-w: var(--hd-game-row-w);
     --remain-card-h: 88px;
