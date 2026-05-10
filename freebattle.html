@@ -1785,8 +1785,8 @@ body.sokkoo-special-shake {
   }
 }
 
-/* スマホ横画面：VSカード表示エリアと残りカード行の横幅を同一基準にする。
-   1枚ずつの固定幅ではなく、行全体の幅を共有し、その中で3枚/5枚を均等配分する。 */
+/* スマホ横画面：縦画面と同じサイズ感のまま、共通横幅レールだけを画面端まで伸ばす。
+   横向き専用の拡大はここで廃止し、サイズは残りカードUIの基本変数を使う。 */
 @media (orientation: landscape) and (max-height: 620px){
   :root{
     --hd-screen-gutter: 10px;
@@ -1794,9 +1794,9 @@ body.sokkoo-special-shake {
     --remain-row-w: var(--hd-game-row-w);
     --remain-card-h: 88px;
     --remain-card-img-h: 48px;
-    --remain-count-size: 18px;
+    --remain-count-size: 15px;
     --remain-label-size: 11px;
-    --remain-gap: 8px;
+    --remain-gap: 6px;
   }
 
   .battle{
@@ -1817,8 +1817,8 @@ body.sokkoo-special-shake {
   }
 
   .card-img{
-    width: min(100%, 136px) !important;
-    max-width: 136px !important;
+    width: min(94%, 126px) !important;
+    max-width: 126px !important;
   }
 
   .counts,
