@@ -4832,3 +4832,42 @@ html body #controls.controls .card-btn.hidden{display:none !important;}
   document.addEventListener('click', function(){ setTimeout(schedule,0); }, true);
 })();
 </script>
+
+<!-- HDG TUNE 2026-05-10D: center remaining card artwork only -->
+<style>
+/*
+  目的：残りカード枠の中で「カード画像」だけを枠のぴったり中心へ固定する。
+  数字の位置調整は次工程に残すため、span/b のサイズや位置は変更しない。
+  対象：相手側(.panel.enemy .mini-card) と 自分側(#controls .card-btn)
+  縦画面・横画面・通常/ソッコーのすべてで最後に上書きする。
+*/
+html body .panel.enemy .mini-card,
+html body #controls.controls > button.card-btn,
+html body section#controls.controls > button.card-btn{
+  position:relative !important;
+}
+
+html body .panel.enemy .mini-card img,
+html body #controls.controls > button.card-btn > img,
+html body section#controls.controls > button.card-btn > img{
+  position:absolute !important;
+  left:50% !important;
+  top:50% !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:translate(-50%, -50%) !important;
+  margin:0 !important;
+  z-index:1 !important;
+}
+
+/* 数字は後で調整するため、画像より前面にだけ置いておく */
+html body .panel.enemy .mini-card span,
+html body .panel.enemy .mini-card b,
+html body #controls.controls > button.card-btn > span,
+html body #controls.controls > button.card-btn > span > b,
+html body section#controls.controls > button.card-btn > span,
+html body section#controls.controls > button.card-btn > span > b{
+  position:relative !important;
+  z-index:2 !important;
+}
+</style>
