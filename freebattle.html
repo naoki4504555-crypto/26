@@ -4833,41 +4833,78 @@ html body #controls.controls .card-btn.hidden{display:none !important;}
 })();
 </script>
 
-<!-- HDG TUNE 2026-05-10D: center remaining card artwork only -->
+<!-- HDG FIX 2026-05-10E: safe center remaining card artwork without landscape drift -->
 <style>
 /*
-  目的：残りカード枠の中で「カード画像」だけを枠のぴったり中心へ固定する。
-  数字の位置調整は次工程に残すため、span/b のサイズや位置は変更しない。
-  対象：相手側(.panel.enemy .mini-card) と 自分側(#controls .card-btn)
-  縦画面・横画面・通常/ソッコーのすべてで最後に上書きする。
+  原因：前回の中心化ではカード画像を absolute にしたため、
+  スマホ横画面の既存HOTFIXと競合して、画像の基準位置が大きくズレる場合があった。
+  対策：カード画像は通常フローに戻して、枠自体の flex/grid 中央でぴったり中心に置く。
+  数字は次工程で調整できるよう、見た目を残しつつ画像の中心計算から外す。
 */
 html body .panel.enemy .mini-card,
 html body #controls.controls > button.card-btn,
 html body section#controls.controls > button.card-btn{
   position:relative !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
 }
 
 html body .panel.enemy .mini-card img,
 html body #controls.controls > button.card-btn > img,
 html body section#controls.controls > button.card-btn > img{
-  position:absolute !important;
-  left:50% !important;
-  top:50% !important;
+  position:static !important;
+  left:auto !important;
+  top:auto !important;
   right:auto !important;
   bottom:auto !important;
-  transform:translate(-50%, -50%) !important;
-  margin:0 !important;
+  transform:none !important;
+  margin:0 auto !important;
+  display:block !important;
+  flex:0 0 auto !important;
+  align-self:center !important;
   z-index:1 !important;
 }
 
-/* 数字は後で調整するため、画像より前面にだけ置いておく */
+/* 数字は画像の中心位置に影響させない。位置は後工程で微調整可能。 */
 html body .panel.enemy .mini-card span,
-html body .panel.enemy .mini-card b,
 html body #controls.controls > button.card-btn > span,
-html body #controls.controls > button.card-btn > span > b,
-html body section#controls.controls > button.card-btn > span,
-html body section#controls.controls > button.card-btn > span > b{
-  position:relative !important;
+html body section#controls.controls > button.card-btn > span{
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:8px !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  text-align:center !important;
   z-index:2 !important;
+  pointer-events:none !important;
+}
+
+html body .panel.enemy .mini-card span b,
+html body .panel.enemy .mini-card b,
+html body #controls.controls > button.card-btn > span > b,
+html body section#controls.controls > button.card-btn > span > b{
+  position:static !important;
+  z-index:auto !important;
+}
+
+@media (max-width:767px) and (orientation:portrait){
+  html body .panel.enemy .mini-card span,
+  html body #controls.controls > button.card-btn > span,
+  html body section#controls.controls > button.card-btn > span{
+    bottom:6px !important;
+  }
+}
+
+@media (orientation:landscape) and (max-height:620px){
+  html body .panel.enemy .mini-card img,
+  html body #controls.controls > button.card-btn > img,
+  html body section#controls.controls > button.card-btn > img{
+    transform:none !important;
+    margin:0 auto !important;
+  }
 }
 </style>
