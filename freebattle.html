@@ -4714,3 +4714,116 @@ html body #controls.controls .card-btn.hidden{display:none !important;}
   document.addEventListener('click', function(){ setTimeout(schedule,0); }, true);
 })();
 </script>
+
+<!-- HDG FINAL HOTFIX 2026-05-10B: smartphone landscape enemy remaining numbers enlarge too -->
+<style>
+/*
+  原因：直前のスマホ横HOTFIXが自分側(#controls)だけを直接指定しており、
+  相手側(.panel.enemy .mini-card)の数字は旧指定のまま残る場合があった。
+  対策：スマホ横(max-height判定)で、相手側の枠・中カード・数字にも
+  自分側と同じ最終サイズを最高詳細度で上書きする。
+*/
+@media (orientation: landscape) and (max-height: 620px){
+  html body .panel.enemy .counts{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    display:grid !important;
+    justify-content:stretch !important;
+    justify-items:stretch !important;
+    align-items:stretch !important;
+    transform:none !important;
+  }
+
+  html body .panel.enemy:not(.sokkoo-enemy) .counts{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  html body .panel.enemy.sokkoo-enemy .counts{
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  }
+
+  html body .panel.enemy .mini-card,
+  html body .panel.enemy .mini-card:not(.hidden){
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:132px !important;
+    min-height:132px !important;
+    max-height:132px !important;
+    padding:8px !important;
+    box-sizing:border-box !important;
+    display:flex !important;
+    flex:none !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:2px !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+
+  html body .panel.enemy .mini-card img,
+  html body .panel.enemy .mini-card:not(.hidden) img{
+    height:78px !important;
+    width:auto !important;
+    max-width:100% !important;
+    aspect-ratio:63/89 !important;
+    object-fit:contain !important;
+    display:block !important;
+    margin:4px auto 0 !important;
+    flex:0 0 auto !important;
+    transform:none !important;
+  }
+
+  html body .panel.enemy .mini-card span,
+  html body .panel.enemy .mini-card span b,
+  html body .panel.enemy .mini-card b,
+  html body .panel.enemy .mini-card:not(.hidden) span,
+  html body .panel.enemy .mini-card:not(.hidden) span b,
+  html body .panel.enemy .mini-card:not(.hidden) b{
+    display:block !important;
+    width:100% !important;
+    font-size:22px !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-weight:1000 !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+    flex:0 0 auto !important;
+  }
+
+  html body .panel.enemy .mini-card span b,
+  html body .panel.enemy .mini-card b,
+  html body .panel.enemy .mini-card:not(.hidden) span b,
+  html body .panel.enemy .mini-card:not(.hidden) b{
+    display:inline !important;
+    color:#ffe784 !important;
+    font-size:22px !important;
+  }
+}
+</style>
+
+<script>
+/* スマホ横で相手側カードに残ったinlineサイズも掃除する */
+(function(){
+  function isPhoneLandscape(){
+    return window.matchMedia && window.matchMedia('(orientation: landscape) and (max-height: 620px)').matches;
+  }
+  function cleanEnemyRemainInline(){
+    if(!isPhoneLandscape()) return;
+    document.querySelectorAll('.panel.enemy .counts, .panel.enemy .mini-card, .panel.enemy .mini-card img, .panel.enemy .mini-card span, .panel.enemy .mini-card b').forEach(function(el){
+      ['width','min-width','max-width','height','min-height','max-height','font-size','line-height','transform','margin','padding','flex'].forEach(function(prop){
+        el.style.removeProperty(prop);
+      });
+    });
+  }
+  function schedule(){ cleanEnemyRemainInline(); requestAnimationFrame(cleanEnemyRemainInline); setTimeout(cleanEnemyRemainInline,120); setTimeout(cleanEnemyRemainInline,360); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', schedule); else schedule();
+  window.addEventListener('load', schedule);
+  window.addEventListener('resize', schedule);
+  window.addEventListener('orientationchange', schedule);
+  document.addEventListener('click', function(){ setTimeout(schedule,0); }, true);
+})();
+</script>
