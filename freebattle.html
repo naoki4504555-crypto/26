@@ -1527,7 +1527,8 @@ body.sokkoo-special-shake {
   --hd-call-font-size: 20px;
   --hd-call-min-h: 58px;
   --hd-screen-gutter: 10px;
-  --hd-game-row-w: min(760px, calc(100vw - (var(--hd-screen-gutter) * 2)));
+  --hd-vs-row-w: 100%;
+  --hd-game-row-w: var(--hd-vs-row-w);
   --remain-row-w: var(--hd-game-row-w);
   --remain-dagger-color: #e34242;
   --remain-shield-color: #f0c94a;
@@ -1570,7 +1571,8 @@ body.sokkoo-special-shake {
 }
 
 /* ゲーム画面の共通横幅レール。
-   ゲームモード欄を基準幅にして、結果表示・スコア・履歴・残りカード行を同じ幅で統一する。 */
+   VSカードエリア（.battle）の横幅を基準にして、主要UIを同じ幅で統一する。 */
+.battle,
 .mode-box,
 .result-box,
 .score,
@@ -1777,7 +1779,8 @@ body.sokkoo-special-shake {
     --hd-call-font-size: 24px;
     --hd-call-min-h: 80px;
     --hd-screen-gutter: 16px;
-    --hd-game-row-w: min(820px, calc(100vw - (var(--hd-screen-gutter) * 2)));
+    --hd-vs-row-w: 100%;
+    --hd-game-row-w: var(--hd-vs-row-w);
     --remain-row-w: var(--hd-game-row-w);
   }
 
