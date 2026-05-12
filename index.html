@@ -425,6 +425,299 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 
 
 
+
+/* HDG story battle screen */
+#storyBattleScreen{
+  position:fixed;
+  inset:0;
+  z-index:70;
+  display:none;
+  color:#fff;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255,255,255,.45), transparent 26%),
+    linear-gradient(135deg,#55d6ff 0%,#7b5cff 38%,#ff5bbd 72%,#ffd65c 100%);
+  overflow:hidden;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+}
+#storyBattleScreen.active{display:block;}
+.story-battle-root{
+  height:100dvh;
+  min-height:100svh;
+  width:100vw;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  gap:8px;
+  padding:calc(8px + env(safe-area-inset-top)) clamp(8px,2.4vw,18px) calc(8px + env(safe-area-inset-bottom));
+  overflow:hidden;
+}
+.story-battle-top{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:10px;
+}
+.story-battle-back,.story-battle-next-round,.story-battle-stage-select{
+  border:3px solid #172044;
+  border-radius:999px;
+  background:#fff7cf;
+  color:#172044;
+  font-weight:1000;
+  padding:8px 13px;
+  box-shadow:0 4px 0 rgba(23,32,68,.95);
+  cursor:pointer;
+}
+.story-battle-title{
+  min-width:0;
+  text-align:center;
+  font-weight:1000;
+  letter-spacing:.05em;
+  color:#fff;
+  text-shadow:0 3px 0 rgba(23,32,68,.75),0 0 18px rgba(255,255,255,.5);
+  font-size:clamp(18px,4.2vw,34px);
+}
+.story-battle-match{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  border:3px solid rgba(255,255,255,.9);
+  border-radius:18px;
+  background:rgba(23,32,68,.38);
+  box-shadow:inset 0 0 0 2px rgba(23,32,68,.18),0 4px 0 rgba(23,32,68,.45);
+  padding:6px 10px;
+  font-weight:1000;
+  text-shadow:0 2px 0 rgba(0,0,0,.55);
+}
+.story-battle-rule{font-size:11px;color:#fff7b7;}
+.story-battle-wins{font-size:clamp(12px,2.6vw,17px);white-space:nowrap;}
+.story-battle-arena{
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(190px,.82fr) minmax(0,1fr);
+  gap:10px;
+  align-items:stretch;
+}
+.story-fighter{
+  position:relative;
+  min-width:0;
+  border:4px solid rgba(255,255,255,.9);
+  border-radius:24px;
+  background:linear-gradient(to bottom,rgba(255,255,255,.58),rgba(255,255,255,.22));
+  box-shadow:0 8px 0 rgba(23,32,68,.35), inset 0 0 0 2px rgba(23,32,68,.14);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+}
+.story-fighter.enemy{background:linear-gradient(to bottom,rgba(255,255,255,.58),rgba(255,218,245,.25));}
+.story-fighter-name{
+  position:absolute;
+  top:8px;
+  left:8px;
+  right:8px;
+  z-index:3;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:6px;
+  font-size:clamp(14px,3vw,23px);
+  font-weight:1000;
+  color:#172044;
+  text-shadow:0 1px 0 #fff;
+}
+.story-fighter-badge{
+  border:2px solid #172044;
+  border-radius:999px;
+  background:#fff;
+  padding:3px 9px;
+  box-shadow:0 3px 0 rgba(23,32,68,.28);
+}
+.story-fighter-mode{
+  font-size:11px;
+  color:#fff;
+  text-shadow:0 2px 0 rgba(0,0,0,.55);
+  background:rgba(23,32,68,.5);
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:999px;
+  padding:4px 8px;
+}
+.story-fighter-img{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center bottom;
+  filter:drop-shadow(0 16px 18px rgba(0,0,0,.36));
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.story-fighter-shadow{
+  position:absolute;
+  left:12%;
+  right:12%;
+  bottom:10px;
+  height:34px;
+  background:radial-gradient(ellipse at center,rgba(23,32,68,.36),transparent 70%);
+  z-index:0;
+}
+.story-battle-center{
+  min-width:0;
+  display:grid;
+  grid-template-rows:auto auto 1fr auto;
+  gap:8px;
+  align-content:center;
+}
+.story-score-card,.story-result-card{
+  border:4px solid #172044;
+  border-radius:20px;
+  background:rgba(255,255,255,.9);
+  color:#172044;
+  box-shadow:0 6px 0 rgba(23,32,68,.65);
+  padding:8px;
+  text-align:center;
+  font-weight:1000;
+}
+.story-score-line{font-size:clamp(22px,5.2vw,42px);line-height:1;}
+.story-turn-line{font-size:12px;margin-top:4px;color:#5b5276;}
+.story-vs-medal{
+  justify-self:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:clamp(74px,13vw,118px);
+  aspect-ratio:1;
+  border-radius:50%;
+  border:5px solid #fff;
+  background:radial-gradient(circle,#fff36a 0%,#ff8f38 52%,#e42a7b 100%);
+  color:#fff;
+  font-weight:1000;
+  font-size:clamp(26px,5vw,46px);
+  text-shadow:0 3px 0 #172044;
+  box-shadow:0 8px 0 rgba(23,32,68,.4),0 0 24px rgba(255,255,255,.7);
+}
+.story-reveal-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.story-reveal-card{
+  min-height:90px;
+  border:3px solid rgba(255,255,255,.9);
+  border-radius:18px;
+  background:rgba(23,32,68,.38);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px;
+}
+.story-reveal-card img{max-width:100%;max-height:110px;border-radius:10px;box-shadow:0 4px 0 rgba(0,0,0,.35);}
+.story-result-card{min-height:58px;display:flex;align-items:center;justify-content:center;font-size:clamp(13px,2.8vw,18px);}
+.story-battle-bottom{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(220px,.62fr);
+  gap:10px;
+  align-items:end;
+}
+.story-message-window{
+  min-height:74px;
+  border:4px solid #172044;
+  border-radius:20px;
+  background:rgba(255,255,255,.92);
+  color:#172044;
+  box-shadow:0 6px 0 rgba(23,32,68,.55);
+  padding:9px 12px;
+  font-weight:900;
+}
+.story-message-speaker{font-size:12px;color:#e42a7b;font-weight:1000;margin-bottom:3px;}
+.story-message-text{font-size:clamp(13px,2.8vw,18px);line-height:1.35;}
+.story-hand-panel{
+  border:4px solid rgba(255,255,255,.9);
+  border-radius:20px;
+  background:rgba(23,32,68,.38);
+  box-shadow:0 6px 0 rgba(23,32,68,.42);
+  padding:8px;
+}
+.story-hand-title{text-align:center;font-size:12px;font-weight:1000;text-shadow:0 2px 0 rgba(0,0,0,.45);margin-bottom:6px;}
+.story-card-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;}
+.story-card-btn{
+  border:3px solid #172044;
+  border-radius:16px;
+  background:#fff;
+  color:#172044;
+  padding:5px 4px 6px;
+  box-shadow:0 4px 0 rgba(23,32,68,.75);
+  font-weight:1000;
+  cursor:pointer;
+}
+.story-card-btn:disabled{filter:grayscale(.9) brightness(.72);opacity:.68;cursor:not-allowed;transform:none;}
+.story-card-btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 rgba(23,32,68,.75);}
+.story-card-btn img{display:block;width:100%;max-height:64px;object-fit:contain;margin:0 auto 2px;border-radius:7px;}
+.story-card-count{font-size:12px;}
+.story-battle-overlay{
+  position:absolute;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:6;
+  background:rgba(23,32,68,.46);
+  padding:18px;
+}
+.story-battle-overlay.show{display:flex;}
+.story-battle-finish{
+  width:min(560px,94vw);
+  border:5px solid #172044;
+  border-radius:26px;
+  background:#fffdf0;
+  color:#172044;
+  box-shadow:0 12px 0 rgba(23,32,68,.65),0 0 30px rgba(255,255,255,.8);
+  padding:20px;
+  text-align:center;
+  font-weight:1000;
+}
+.story-battle-finish h2{margin:0 0 10px;font-size:clamp(28px,7vw,48px);color:#e42a7b;}
+.story-battle-finish p{margin:8px 0 16px;font-size:clamp(14px,3.6vw,20px);}
+.story-finish-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+@media (orientation:portrait){
+  .story-battle-root{grid-template-rows:auto minmax(0,1fr) auto;gap:6px;}
+  .story-battle-top{grid-template-columns:auto 1fr;}
+  .story-battle-match{grid-column:1/3;}
+  .story-battle-arena{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr) auto;gap:7px;}
+  .story-battle-center{grid-column:1/3;grid-row:2;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;align-items:center;}
+  .story-score-card{grid-column:1/4;}
+  .story-vs-medal{width:62px;font-size:24px;}
+  .story-reveal-row{grid-column:2;}
+  .story-result-card{grid-column:1/4;min-height:42px;}
+  .story-fighter{min-height:0;}
+  .story-fighter-img{height:100%;max-height:33vh;}
+  .story-battle-bottom{grid-template-columns:1fr;gap:7px;}
+  .story-message-window{min-height:58px;}
+  .story-card-btn img{max-height:52px;}
+}
+@media (max-height:430px) and (orientation:landscape){
+  .story-battle-root{gap:5px;padding-top:calc(5px + env(safe-area-inset-top));padding-bottom:calc(5px + env(safe-area-inset-bottom));}
+  .story-battle-top{gap:6px;}
+  .story-battle-back{padding:6px 10px;font-size:12px;}
+  .story-battle-title{font-size:20px;}
+  .story-battle-match{padding:4px 8px;}
+  .story-battle-arena{gap:7px;grid-template-columns:minmax(0,1fr) minmax(170px,.72fr) minmax(0,1fr);}
+  .story-fighter{border-radius:18px;border-width:3px;}
+  .story-fighter-name{top:5px;left:5px;right:5px;font-size:14px;}
+  .story-score-card,.story-result-card{padding:6px;border-radius:16px;border-width:3px;}
+  .story-reveal-card{min-height:54px;padding:4px;}
+  .story-reveal-card img{max-height:62px;}
+  .story-battle-bottom{grid-template-columns:minmax(0,1fr) minmax(210px,.58fr);}
+  .story-message-window{min-height:50px;padding:6px 9px;border-radius:16px;border-width:3px;}
+  .story-message-text{font-size:13px;line-height:1.25;}
+  .story-hand-panel{padding:5px;border-radius:16px;border-width:3px;}
+  .story-hand-title{display:none;}
+  .story-card-btn{padding:3px;border-radius:12px;border-width:2px;}
+  .story-card-btn img{max-height:42px;}
+  .story-card-count{font-size:10px;}
+}
+
 </style>
 </head>
 <body>
@@ -525,6 +818,61 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 </section>
 
 
+
+
+<section id="storyBattleScreen">
+  <div class="story-battle-root">
+    <div class="story-battle-top">
+      <button class="story-battle-back" onclick="backToStageSelectFromStoryBattle()">← ステージ選択</button>
+      <div class="story-battle-title" id="storyBattleTitle">STAGE 1 STORY BATTLE</div>
+      <div class="story-battle-match">
+        <div class="story-battle-rule" id="storyBattleRule">先に3勝した方が勝ち</div>
+        <div class="story-battle-wins" id="storyBattleWins">ツルギ 0勝　マモル 0勝</div>
+      </div>
+    </div>
+    <div class="story-battle-arena">
+      <div class="story-fighter player">
+        <div class="story-fighter-name"><span class="story-fighter-badge" id="storyPlayerName">ツルギ</span><span class="story-fighter-mode" id="storyPlayerMode">通常</span></div>
+        <div class="story-fighter-shadow"></div>
+        <img class="story-fighter-img" id="storyPlayerImage" src="./tsurugi.png" alt="ツルギ">
+      </div>
+      <div class="story-battle-center">
+        <div class="story-score-card">
+          <div class="story-score-line" id="storyRoundScore">0 - 0</div>
+          <div class="story-turn-line" id="storyTurnLine">1戦目 / 0ターン目</div>
+        </div>
+        <div class="story-vs-medal">VS</div>
+        <div class="story-reveal-row">
+          <div class="story-reveal-card"><img id="storyPlayerReveal" src="./card_back.jpeg" alt="あなたのカード"></div>
+          <div class="story-reveal-card"><img id="storyEnemyReveal" src="./card_back.jpeg" alt="相手のカード"></div>
+        </div>
+        <div class="story-result-card" id="storyResultText">カードを選んで勝負！</div>
+      </div>
+      <div class="story-fighter enemy">
+        <div class="story-fighter-name"><span class="story-fighter-badge" id="storyEnemyName">マモル</span><span class="story-fighter-mode" id="storyEnemyMode">通常</span></div>
+        <div class="story-fighter-shadow"></div>
+        <img class="story-fighter-img" id="storyEnemyImage" src="./mamoru.png" alt="マモル">
+      </div>
+    </div>
+    <div class="story-battle-bottom">
+      <div class="story-message-window">
+        <div class="story-message-speaker" id="storyMessageSpeaker">マモル</div>
+        <div class="story-message-text" id="storyMessageText">いくぞ、ツルギ！ まずは3勝先取で勝負だ！</div>
+      </div>
+      <div class="story-hand-panel">
+        <div class="story-hand-title">あなたの手札</div>
+        <div class="story-card-buttons" id="storyCardButtons"></div>
+      </div>
+    </div>
+  </div>
+  <div class="story-battle-overlay" id="storyBattleOverlay">
+    <div class="story-battle-finish">
+      <h2 id="storyBattleFinishTitle">WIN!</h2>
+      <p id="storyBattleFinishText">ステージクリア！</p>
+      <div class="story-finish-actions" id="storyFinishActions"></div>
+    </div>
+  </div>
+</section>
 
 <section id="freeBattleScreen" class="screen">
   <iframe id="freeBattleFrame" title="フリーバトル" src="about:blank"></iframe>
@@ -762,11 +1110,13 @@ function showStoryModeScreen(){
   const story=document.getElementById('storyScreen');
   const novel=document.getElementById('novelScreen');
   const free=document.getElementById('freeBattleScreen');
+  const storyBattle=document.getElementById('storyBattleScreen');
   const frame=document.getElementById('freeBattleFrame');
 
   if(title)title.classList.remove('active');
   if(novel)novel.classList.remove('active');
   if(free)free.classList.remove('active');
+  if(storyBattle)storyBattle.classList.remove('active');
   if(frame)frame.src='about:blank';
 
   if(story)story.classList.add('active');
@@ -802,6 +1152,7 @@ function showTitle(){
   }
 
   document.getElementById('novelScreen')?.classList.remove('active');
+  document.getElementById('storyBattleScreen')?.classList.remove('active');
   document.getElementById('storyScreen').classList.remove('active');
   document.getElementById('titleScreen').classList.add('active');
   startTitleBgm();
@@ -860,6 +1211,7 @@ function goBattle(){
   document.getElementById('titleScreen').classList.remove('active');
   document.getElementById('storyScreen').classList.remove('active');
   document.getElementById('novelScreen')?.classList.remove('active');
+  document.getElementById('storyBattleScreen')?.classList.remove('active');
 
   const screen=document.getElementById('freeBattleScreen');
   const frame=document.getElementById('freeBattleFrame');
@@ -875,6 +1227,228 @@ function goBattle(){
     }catch(e){}
   }
 }
+
+const novelLinesByStage = {
+  1: [
+    {speaker:'ツルギ', char:'tsurugi', text:'よし、ついに最初のバトルだな！'},
+    {speaker:'マモル', char:'mamoru', text:'油断するなよ、ツルギ。ハート＆ダガーは読み合いが命だ。'},
+    {speaker:'ツルギ', char:'tsurugi', text:'分かってる！ 先に3勝した方が勝ちってことでいこう！'},
+    {speaker:'マモル', char:'mamoru', text:'いいだろう。まずは通常ルールで勝負だ！'}
+  ]
+};
+
+const STORY_BATTLE_STAGES = {
+  1: {
+    stage:1,
+    title:'STAGE 1　ツルギ VS マモル',
+    mode:'normal',
+    targetWins:3,
+    player:{name:'ツルギ', image:'./tsurugi.png'},
+    enemy:{name:'マモル', image:'./mamoru.png'},
+    opening:{speaker:'マモル', text:'いくぞ、ツルギ！ まずは3勝先取で勝負だ！'},
+    enemyLines:{
+      start:['守りだけじゃないところを見せてやる！','ここはじっくり読むぞ。','シールドのタイミング、見切れるかな？'],
+      point:['よし、一本取った！','この流れ、もらったぞ！'],
+      losePoint:['やるな、ツルギ！','今の読みは見事だ。'],
+      draw:['まだまだここからだ。','次で流れを変える！']
+    }
+  }
+};
+
+const STORY_CARD_IMAGES = {
+  '短剣':'dagger.jpeg',
+  '盾':'shield.jpeg',
+  '心臓':'heart.jpeg',
+  'ソッコーダガー':'sokkoo_dagger.jpeg',
+  'ソッコーハート':'sokkoo_heart.jpeg',
+  '裏':'card_back.jpeg'
+};
+
+let storyBattleState = null;
+
+function makeStoryHand(mode){
+  return mode === 'sokkoo'
+    ? {'短剣':4,'盾':5,'心臓':4,'ソッコーダガー':1,'ソッコーハート':1}
+    : {'短剣':5,'盾':5,'心臓':5};
+}
+function storyHandTotal(hand){return Object.values(hand).reduce((a,b)=>a+b,0);}
+function storyAvailableCards(hand){return Object.keys(hand).filter(k=>hand[k]>0);}
+function storyPickEnemyCard(hand){
+  const cards = storyAvailableCards(hand);
+  return cards[Math.floor(Math.random()*cards.length)];
+}
+function storyCardImage(card){return './'+(STORY_CARD_IMAGES[card] || STORY_CARD_IMAGES['裏']);}
+function storyRandomLine(list){return list && list.length ? list[Math.floor(Math.random()*list.length)] : '';}
+
+function startStoryBattle(stage){
+  playClick();
+  const cfg = STORY_BATTLE_STAGES[stage] || STORY_BATTLE_STAGES[1];
+  storyBattleState = {
+    cfg,
+    roundNo:1,
+    turn:0,
+    pScore:0,
+    eScore:0,
+    pWins:0,
+    eWins:0,
+    playerHand:makeStoryHand(cfg.mode),
+    enemyHand:makeStoryHand(cfg.mode),
+    roundOver:false,
+    matchOver:false
+  };
+  hideAllScreens();
+  stopTitleBgm();
+  startStoryBgm();
+  const screen=document.getElementById('storyBattleScreen');
+  if(screen)screen.classList.add('active');
+  setupStoryBattleVisuals();
+  renderStoryBattle();
+  setStoryMessage(cfg.opening.speaker,cfg.opening.text);
+}
+
+function setupStoryBattleVisuals(){
+  const s=storyBattleState, cfg=s.cfg;
+  document.getElementById('storyBattleTitle').textContent=cfg.title;
+  document.getElementById('storyBattleRule').textContent=`先に${cfg.targetWins}勝した方が勝ち`;
+  document.getElementById('storyPlayerName').textContent=cfg.player.name;
+  document.getElementById('storyEnemyName').textContent=cfg.enemy.name;
+  document.getElementById('storyPlayerImage').src=cfg.player.image;
+  document.getElementById('storyEnemyImage').src=cfg.enemy.image;
+  const modeLabel=cfg.mode==='sokkoo'?'ソッコー':'通常';
+  document.getElementById('storyPlayerMode').textContent=modeLabel;
+  document.getElementById('storyEnemyMode').textContent=modeLabel;
+}
+
+function renderStoryBattle(){
+  const s=storyBattleState, cfg=s.cfg;
+  document.getElementById('storyBattleWins').textContent=`${cfg.player.name} ${s.pWins}勝　${cfg.enemy.name} ${s.eWins}勝`;
+  document.getElementById('storyRoundScore').textContent=`${s.pScore} - ${s.eScore}`;
+  document.getElementById('storyTurnLine').textContent=`${s.roundNo}戦目 / ${s.turn}ターン目`;
+  const box=document.getElementById('storyCardButtons');
+  box.innerHTML='';
+  const order = cfg.mode==='sokkoo' ? ['短剣','盾','心臓','ソッコーダガー','ソッコーハート'] : ['短剣','盾','心臓'];
+  order.forEach(card=>{
+    const btn=document.createElement('button');
+    btn.className='story-card-btn';
+    const count=s.playerHand[card]||0;
+    btn.disabled=count<=0 || s.roundOver || s.matchOver;
+    btn.innerHTML=`<img src="${storyCardImage(card)}" alt="${card}"><div>${card}</div><div class="story-card-count">残り ${count}</div>`;
+    btn.onclick=()=>playStoryTurn(card);
+    box.appendChild(btn);
+  });
+}
+
+function setStoryMessage(speaker,text){
+  document.getElementById('storyMessageSpeaker').textContent=speaker || '';
+  document.getElementById('storyMessageText').textContent=text || '';
+}
+
+function storyPointResult(pCard,eCard,mode){
+  if(mode==='sokkoo'){
+    if(pCard==='ソッコーダガー' && (eCard==='心臓' || eCard==='ソッコーハート')) return {instant:'player', text:'速攻勝利！ ソッコーダガーが決まった！'};
+    if(eCard==='ソッコーダガー' && (pCard==='心臓' || pCard==='ソッコーハート')) return {instant:'enemy', text:'速攻敗北！ ソッコーダガーを受けてしまった！'};
+    if(pCard==='ソッコーハート' && (eCard==='短剣' || eCard==='ソッコーダガー')) return {instant:'enemy', text:'速攻敗北！ ソッコーハートを刺された！'};
+    if(eCard==='ソッコーハート' && (pCard==='短剣' || pCard==='ソッコーダガー')) return {instant:'player', text:'速攻勝利！ 相手のソッコーハートを刺した！'};
+  }
+  const pD = pCard==='短剣' || pCard==='ソッコーダガー';
+  const eD = eCard==='短剣' || eCard==='ソッコーダガー';
+  const pH = pCard==='心臓' || pCard==='ソッコーハート';
+  const eH = eCard==='心臓' || eCard==='ソッコーハート';
+  if(pD && eH) return {point:'player', text:'ツルギが1ポイント獲得！'};
+  if(eD && pH) return {point:'enemy', text:'マモルが1ポイント獲得！'};
+  return {point:'none', text:'ポイントなし！'};
+}
+
+function playStoryTurn(pCard){
+  const s=storyBattleState;
+  if(!s || s.roundOver || s.matchOver || !s.playerHand[pCard]) return;
+  playClick();
+  const eCard=storyPickEnemyCard(s.enemyHand);
+  s.playerHand[pCard]--;
+  s.enemyHand[eCard]--;
+  s.turn++;
+  document.getElementById('storyPlayerReveal').src=storyCardImage(pCard);
+  document.getElementById('storyEnemyReveal').src=storyCardImage(eCard);
+  const result=storyPointResult(pCard,eCard,s.cfg.mode);
+  if(result.instant==='player'){s.pScore=99; endStoryRound('player', result.text); return;}
+  if(result.instant==='enemy'){s.eScore=99; endStoryRound('enemy', result.text); return;}
+  if(result.point==='player') s.pScore++;
+  if(result.point==='enemy') s.eScore++;
+  document.getElementById('storyResultText').textContent=`${pCard} VS ${eCard}　${result.text}`;
+  if(result.point==='player') setStoryMessage(s.cfg.enemy.name, storyRandomLine(s.cfg.enemyLines.losePoint));
+  else if(result.point==='enemy') setStoryMessage(s.cfg.enemy.name, storyRandomLine(s.cfg.enemyLines.point));
+  else setStoryMessage(s.cfg.enemy.name, storyRandomLine(s.cfg.enemyLines.draw));
+  if(storyHandTotal(s.playerHand)===0 || storyHandTotal(s.enemyHand)===0){
+    if(s.pScore>s.eScore) endStoryRound('player', `${s.cfg.player.name}がこの勝負を取った！`);
+    else if(s.eScore>s.pScore) endStoryRound('enemy', `${s.cfg.enemy.name}がこの勝負を取った！`);
+    else endStoryRound('draw', 'この勝負は引き分け！もう一戦！');
+    return;
+  }
+  renderStoryBattle();
+}
+
+function endStoryRound(winner,text){
+  const s=storyBattleState;
+  s.roundOver=true;
+  if(winner==='player') s.pWins++;
+  if(winner==='enemy') s.eWins++;
+  document.getElementById('storyResultText').textContent=text;
+  setStoryMessage(winner==='enemy'?s.cfg.enemy.name:s.cfg.player.name, text);
+  renderStoryBattle();
+  if(s.pWins>=s.cfg.targetWins || s.eWins>=s.cfg.targetWins){
+    endStoryMatch(s.pWins>=s.cfg.targetWins);
+  }else{
+    showStoryBattleOverlay('NEXT ROUND', `${s.cfg.player.name} ${s.pWins}勝　${s.cfg.enemy.name} ${s.eWins}勝`, `<button class="story-battle-next-round" onclick="startNextStoryRound()">次の勝負へ</button>`);
+  }
+}
+
+function startNextStoryRound(){
+  const s=storyBattleState;
+  playClick();
+  document.getElementById('storyBattleOverlay').classList.remove('show');
+  s.roundNo++;
+  s.turn=0; s.pScore=0; s.eScore=0; s.roundOver=false;
+  s.playerHand=makeStoryHand(s.cfg.mode);
+  s.enemyHand=makeStoryHand(s.cfg.mode);
+  document.getElementById('storyPlayerReveal').src=storyCardImage('裏');
+  document.getElementById('storyEnemyReveal').src=storyCardImage('裏');
+  document.getElementById('storyResultText').textContent='カードを選んで勝負！';
+  renderStoryBattle();
+  setStoryMessage(s.cfg.enemy.name, storyRandomLine(s.cfg.enemyLines.start));
+}
+
+function endStoryMatch(playerWon){
+  const s=storyBattleState;
+  s.matchOver=true;
+  if(playerWon){
+    clearedStage=Math.max(clearedStage,s.cfg.stage);
+    unlockedStage=Math.min(8,Math.max(unlockedStage,s.cfg.stage+1));
+    localStorage.setItem('hd_story_cleared',String(clearedStage));
+    localStorage.setItem('hd_story_unlocked',String(unlockedStage));
+    showStoryBattleOverlay('STAGE CLEAR!', `${s.cfg.player.name} ${s.pWins}勝　${s.cfg.enemy.name} ${s.eWins}勝`, `<button class="story-battle-stage-select" onclick="backToStageSelectFromStoryBattle()">ステージ選択へ</button>`);
+  }else{
+    showStoryBattleOverlay('敗北…', `${s.cfg.player.name} ${s.pWins}勝　${s.cfg.enemy.name} ${s.eWins}勝`, `<button class="story-battle-next-round" onclick="startStoryBattle(${s.cfg.stage})">もう一度挑戦</button><button class="story-battle-stage-select" onclick="backToStageSelectFromStoryBattle()">ステージ選択へ</button>`);
+  }
+}
+function showStoryBattleOverlay(title,text,actionsHtml){
+  document.getElementById('storyBattleFinishTitle').textContent=title;
+  document.getElementById('storyBattleFinishText').textContent=text;
+  document.getElementById('storyFinishActions').innerHTML=actionsHtml;
+  document.getElementById('storyBattleOverlay').classList.add('show');
+}
+function backToStageSelectFromStoryBattle(){
+  playClick();
+  const overlay=document.getElementById('storyBattleOverlay');
+  if(overlay)overlay.classList.remove('show');
+  hideAllScreens();
+  renderStages();
+  document.getElementById('storyScreen').classList.add('active');
+  startStoryBgm();
+}
+function restoreTitleFromFreebattle(){
+  // 旧フリーバトル遷移から戻るための互換フック。ストーリーバトルは同一ページ内で完結する。
+}
+
 let novelIdx = 0;
 let currentNovelStage = 1;
 let novelInputLocked = false;
@@ -887,6 +1461,8 @@ function hideAllScreens(){
   if(novel)novel.classList.remove('active');
   const free=document.getElementById('freeBattleScreen');
   if(free)free.classList.remove('active');
+  const storyBattle=document.getElementById('storyBattleScreen');
+  if(storyBattle)storyBattle.classList.remove('active');
 }
 
 function openNovelStage(stage){
@@ -943,7 +1519,7 @@ function advanceNovel(){
   novelIdx += 1;
   if(novelIdx >= lines.length){
     sessionStorage.setItem('hd_story_stage', String(currentNovelStage));
-    setTimeout(()=>{ location.href='./freebattle.html'; },170);
+    setTimeout(()=>{ startStoryBattle(currentNovelStage); },170);
     return;
   }
   renderNovelLine();
@@ -1007,6 +1583,7 @@ window.addEventListener('pageshow',()=>{
     const gate=document.getElementById('tapStartScreen');
     if(gate)gate.classList.add('hidden');
     document.getElementById('novelScreen')?.classList.remove('active');
+    document.getElementById('storyBattleScreen')?.classList.remove('active');
     document.getElementById('storyScreen').classList.remove('active');
     document.getElementById('titleScreen').classList.add('active');
     startTitleBgm();
@@ -1032,7 +1609,9 @@ window.addEventListener('DOMContentLoaded',()=>{
     stopStoryBgm();
     if(gate)gate.classList.remove('hidden','starting');
     document.getElementById('novelScreen')?.classList.remove('active');
+    document.getElementById('storyBattleScreen')?.classList.remove('active');
     document.getElementById('storyScreen').classList.remove('active');
+    document.getElementById('storyBattleScreen')?.classList.remove('active');
     document.getElementById('freeBattleScreen')?.classList.remove('active');
     document.getElementById('titleScreen').classList.add('active');
     return;
@@ -1050,7 +1629,9 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(hdTitleUnlocked){
     if(gate)gate.classList.add('hidden');
     document.getElementById('novelScreen')?.classList.remove('active');
+    document.getElementById('storyBattleScreen')?.classList.remove('active');
     document.getElementById('storyScreen').classList.remove('active');
+    document.getElementById('storyBattleScreen')?.classList.remove('active');
     document.getElementById('freeBattleScreen')?.classList.remove('active');
     document.getElementById('titleScreen').classList.add('active');
     startTitleBgm();
