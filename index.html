@@ -24,9 +24,9 @@
 :root{--stage-w: min(100vw, calc(100svh * 2 / 3));}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#fff;overflow:hidden;}
-.screen{display:none;width:100%;height:100svh;min-height:100vh;background:#000;}
+.screen{display:none;width:100%;height:100dvh;min-height:100svh;background:#000;overflow:hidden;}
 .screen.active{display:block;}
-.title-scroll{width:100vw;height:100svh;min-height:100vh;overflow:auto;display:flex;justify-content:center;align-items:center;background:#000;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+.title-scroll{width:100vw;height:100%;min-height:0;overflow-x:hidden;overflow-y:auto;display:flex;justify-content:center;align-items:center;background:#000;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-padding-bottom:calc(28px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);}
 .title-stage{position:relative;width:var(--stage-w);aspect-ratio:2/3;flex:0 0 auto;}
 .title-stage img{width:100%;height:100%;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none;image-rendering:auto;}
 .hotspot{position:absolute;border:0;background:transparent;cursor:pointer;padding:0;touch-action:manipulation;}
@@ -37,7 +37,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   :root{--stage-w:min(100vw,1024px);}
   .title-scroll{align-items:flex-start;}
 }
-.story-screen{height:100svh;min-height:100vh;overflow:auto;background:radial-gradient(circle at 50% 0%,#281077 0%,#070012 38%,#000 100%);padding:18px 14px 28px;}
+.story-screen{height:100%;min-height:0;overflow-x:hidden;overflow-y:auto;background:radial-gradient(circle at 50% 0%,#281077 0%,#070012 38%,#000 100%);padding:18px 14px calc(28px + env(safe-area-inset-bottom));overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
 .story-wrap{max-width:980px;margin:0 auto;}
 .story-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
 .story-title{margin:0;font-size:clamp(25px,7vw,46px);font-weight:1000;line-height:1;text-shadow:0 3px 0 #000,0 0 18px #ff2f98;letter-spacing:.03em;}
