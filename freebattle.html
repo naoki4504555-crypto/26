@@ -1923,6 +1923,42 @@ body.sokkoo-special-shake {
 }
 
 
+/* ===== HDG remaining-count typography foundation =====
+   残りカードの枚数数字は、相手側(.mini-card)と自分側(.card-btn)で
+   要素種別(div/button)に依存させず、同じフォント規則から描画する。
+   PCでは button のUAフォントと div の継承フォント差で太さがズレやすいため、
+   数字を含む残りカードUI全体の書体・太さ・描画補正を共通変数化する。 */
+:root{
+  --remain-count-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --remain-count-font-weight: 900;
+  --remain-count-letter-spacing: 0;
+}
+
+#controls .card-btn,
+.controls .card-btn,
+.panel.enemy .mini-card,
+#controls .card-btn span,
+.controls .card-btn span,
+.panel.enemy .mini-card span,
+#controls .card-btn b,
+.controls .card-btn b,
+.panel.enemy .mini-card b,
+.panel.enemy .mini-card span b{
+  font-family: var(--remain-count-font-family) !important;
+  font-synthesis: weight !important;
+  -webkit-font-smoothing: antialiased !important;
+  text-rendering: geometricPrecision !important;
+}
+
+#controls .card-btn b,
+.controls .card-btn b,
+.panel.enemy .mini-card b,
+.panel.enemy .mini-card span b{
+  font-weight: var(--remain-count-font-weight) !important;
+  letter-spacing: var(--remain-count-letter-spacing) !important;
+}
+
+
 </style>
 </head>
 <body>
