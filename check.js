@@ -42,12 +42,12 @@ let sokkooMode = false;
 const AI_CALL_DELAY = 1500;
 
 const CARD_IMAGES = {
-  "短剣": "dagger.jpeg",
-  "盾": "shield.jpeg",
-  "心臓": "heart.jpeg",
-  "ソッコーダガー": "sokkoo_dagger.jpeg",
-  "ソッコーハート": "sokkoo_heart.jpeg",
-  "裏": "card_back.jpeg"
+  "短剣": "dagger.png",
+  "盾": "shield.png",
+  "心臓": "heart.png",
+  "ソッコーダガー": "sokkoo_dagger.png",
+  "ソッコーハート": "sokkoo_heart.png",
+  "裏": "card_back.png"
 };
 
 function setMode(isSokkoo){

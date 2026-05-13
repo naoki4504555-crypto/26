@@ -68,6 +68,13 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .enemy .nameplate{background:linear-gradient(#d94444,#7d1414);border:3px solid #ff6161}
 .card-stage{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-top:20px}
 .card-img{width:min(88%,270px);aspect-ratio:63/89;object-fit:cover;border-radius:14px;box-shadow:0 16px 26px rgba(0,0,0,.55);background:#fff}
+
+.card-img,
+.card-btn img,
+.mini-card img{
+  border-radius:0 !important;
+  clip-path:none !important;
+}
 .card-label{min-width:180px;padding:10px 22px;border-radius:6px;font-size:26px;font-weight:900;text-align:center}
 .player .card-label{background:linear-gradient(#1674d6,#083d89)}
 .enemy .card-label{background:linear-gradient(#d94545,#8e1616)}
@@ -1994,11 +2001,11 @@ body.sokkoo-special-shake {
       <div class="panel enemy">
         <h3>相手の残りカード</h3>
         <div class="counts">
-          <div id="eSokkooDaggerBox" data-card="ソッコーダガー" class="mini-card dagger-card sokkoo-dagger-card sokkoo-mini hidden"><img src="sokkoo_dagger.jpeg"><span><b id="eSokkooDagger">1</b></span></div>
-          <div data-card="短剣" class="mini-card dagger-card"><img src="dagger.jpeg"><span><b id="eDagger">5</b></span></div>
-          <div data-card="盾" class="mini-card shield-card"><img src="shield.jpeg"><span><b id="eShield">5</b></span></div>
-          <div data-card="心臓" class="mini-card heart-card"><img src="heart.jpeg"><span><b id="eHeart">5</b></span></div>
-          <div id="eSokkooHeartBox" data-card="ソッコーハート" class="mini-card heart-card sokkoo-heart-card sokkoo-mini hidden"><img src="sokkoo_heart.jpeg"><span><b id="eSokkooHeart">1</b></span></div>
+          <div id="eSokkooDaggerBox" data-card="ソッコーダガー" class="mini-card dagger-card sokkoo-dagger-card sokkoo-mini hidden"><img src="sokkoo_dagger.png"><span><b id="eSokkooDagger">1</b></span></div>
+          <div data-card="短剣" class="mini-card dagger-card"><img src="dagger.png"><span><b id="eDagger">5</b></span></div>
+          <div data-card="盾" class="mini-card shield-card"><img src="shield.png"><span><b id="eShield">5</b></span></div>
+          <div data-card="心臓" class="mini-card heart-card"><img src="heart.png"><span><b id="eHeart">5</b></span></div>
+          <div id="eSokkooHeartBox" data-card="ソッコーハート" class="mini-card heart-card sokkoo-heart-card sokkoo-mini hidden"><img src="sokkoo_heart.png"><span><b id="eSokkooHeart">1</b></span></div>
         
         
         </div>
@@ -2009,7 +2016,7 @@ body.sokkoo-special-shake {
       <div class="side player">
         <div class="nameplate">あなた</div>
         <div class="card-stage">
-          <img id="playerImg" class="card-img" src="card_back.jpeg" alt="あなたのカード">
+          <img id="playerImg" class="card-img" src="card_back.png" alt="あなたのカード">
           <div id="playerResultLabel" class="battle-result-label"></div>
           <div id="playerName" class="card-label">未選択</div>
         </div>
@@ -2020,7 +2027,7 @@ body.sokkoo-special-shake {
       <div class="side enemy">
         <div class="nameplate">相手</div>
         <div class="card-stage">
-          <img id="enemyImg" class="card-img" src="card_back.jpeg" alt="相手のカード">
+          <img id="enemyImg" class="card-img" src="card_back.png" alt="相手のカード">
           <div id="enemyResultLabel" class="battle-result-label"></div>
           <div id="enemyName" class="card-label">未選択</div>
         </div>
@@ -2040,19 +2047,19 @@ body.sokkoo-special-shake {
 
 <section id="controls" class="controls normal-layout">
       <button id="btnSokkooDagger" data-card="ソッコーダガー" class="card-btn dagger-card sokkoo-dagger-card hidden" onclick="buttonTap(); play('ソッコーダガー')">
-        <img src="sokkoo_dagger.jpeg"><span><b id="cSD">1</b></span>
+        <img src="sokkoo_dagger.png"><span><b id="cSD">1</b></span>
       </button>
       <button id="btnDagger" data-card="短剣" class="card-btn dagger-card" onclick="buttonTap(); play('短剣')">
-        <img src="dagger.jpeg"><span><b id="cDagger">5</b></span>
+        <img src="dagger.png"><span><b id="cDagger">5</b></span>
       </button>
       <button id="btnShield" data-card="盾" class="card-btn shield-card" onclick="buttonTap(); play('盾')">
-        <img src="shield.jpeg"><span><b id="cShield">5</b></span>
+        <img src="shield.png"><span><b id="cShield">5</b></span>
       </button>
       <button id="btnHeart" data-card="心臓" class="card-btn heart-card" onclick="buttonTap(); play('心臓')">
-        <img src="heart.jpeg"><span><b id="cHeart">5</b></span>
+        <img src="heart.png"><span><b id="cHeart">5</b></span>
       </button>
       <button id="btnSokkooHeart" data-card="ソッコーハート" class="card-btn heart-card sokkoo-heart-card hidden" onclick="buttonTap(); play('ソッコーハート')">
-        <img src="sokkoo_heart.jpeg"><span><b id="cSH">1</b></span>
+        <img src="sokkoo_heart.png"><span><b id="cSH">1</b></span>
       </button>
       <button id="callBtn" class="call-btn" onclick="buttonTap(); playerCall()">
         ハート＆ダガー<br>コール！
@@ -2080,12 +2087,12 @@ let sokkooMode = false;
 const AI_CALL_DELAY = 1500;
 
 const CARD_IMAGES = {
-  "短剣": "dagger.jpeg",
-  "盾": "shield.jpeg",
-  "心臓": "heart.jpeg",
-  "ソッコーダガー": "sokkoo_dagger.jpeg",
-  "ソッコーハート": "sokkoo_heart.jpeg",
-  "裏": "card_back.jpeg"
+  "短剣": "dagger.png",
+  "盾": "shield.png",
+  "心臓": "heart.png",
+  "ソッコーダガー": "sokkoo_dagger.png",
+  "ソッコーハート": "sokkoo_heart.png",
+  "裏": "card_back.png"
 };
 
 const REMAINING_CARD_CLASS_MAP = {

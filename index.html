@@ -653,6 +653,12 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 }
 .story-card-btn:disabled{filter:grayscale(.9) brightness(.72);opacity:.68;cursor:not-allowed;transform:none;}
 .story-card-btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 rgba(23,32,68,.75);}
+
+.story-reveal-card img,
+.story-card-btn img{
+  border-radius:0 !important;
+  clip-path:none !important;
+}
 .story-card-btn img{display:block;width:100%;max-height:64px;object-fit:contain;margin:0 auto 2px;border-radius:7px;}
 .story-card-count{font-size:12px;}
 .story-card-btn.selected{
@@ -896,8 +902,8 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
         </div>
         <div class="story-vs-medal">VS</div>
         <div class="story-reveal-row">
-          <div class="story-reveal-card"><img id="storyPlayerReveal" src="./card_back.jpeg" alt="あなたのカード"></div>
-          <div class="story-reveal-card"><img id="storyEnemyReveal" src="./card_back.jpeg" alt="相手のカード"></div>
+          <div class="story-reveal-card"><img id="storyPlayerReveal" src="./card_back.png" alt="あなたのカード"></div>
+          <div class="story-reveal-card"><img id="storyEnemyReveal" src="./card_back.png" alt="相手のカード"></div>
         </div>
         <div class="story-result-card" id="storyResultText">カードを選んで勝負！</div>
       </div>
@@ -1313,12 +1319,12 @@ const STORY_BATTLE_STAGES = {
 };
 
 const STORY_CARD_IMAGES = {
-  '短剣':'dagger.jpeg',
-  '盾':'shield.jpeg',
-  '心臓':'heart.jpeg',
-  'ソッコーダガー':'sokkoo_dagger.jpeg',
-  'ソッコーハート':'sokkoo_heart.jpeg',
-  '裏':'card_back.jpeg'
+  '短剣':'dagger.png',
+  '盾':'shield.png',
+  '心臓':'heart.png',
+  'ソッコーダガー':'sokkoo_dagger.png',
+  'ソッコーハート':'sokkoo_heart.png',
+  '裏':'card_back.png'
 };
 
 let storyBattleState = null;
