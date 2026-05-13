@@ -655,6 +655,55 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 .story-card-btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 rgba(23,32,68,.75);}
 .story-card-btn img{display:block;width:100%;max-height:64px;object-fit:contain;margin:0 auto 2px;border-radius:7px;}
 .story-card-count{font-size:12px;}
+.story-card-btn.selected{
+  transform:translateY(-8px) scale(1.04);
+  border-color:#ffec59;
+  background:linear-gradient(180deg,#fffef4,#ffe8f6);
+  box-shadow:0 8px 0 rgba(23,32,68,.75),0 0 18px rgba(255,236,89,.82);
+}
+.story-card-btn.waiting,.story-go-button:disabled{filter:brightness(.86) saturate(.8);cursor:not-allowed;}
+.story-command-panel{
+  margin-top:8px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  align-items:center;
+}
+.story-selected-label{
+  min-height:34px;
+  border:2px solid rgba(255,255,255,.88);
+  border-radius:999px;
+  background:rgba(255,255,255,.18);
+  color:#fff;
+  text-align:center;
+  font-size:12px;
+  font-weight:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:5px 8px;
+  text-shadow:0 2px 0 rgba(0,0,0,.45);
+}
+.story-go-button{
+  min-width:78px;
+  min-height:42px;
+  border:3px solid #172044;
+  border-radius:999px;
+  background:linear-gradient(180deg,#fff86f,#ff9d28);
+  color:#172044;
+  font-size:18px;
+  font-weight:1000;
+  letter-spacing:.06em;
+  box-shadow:0 5px 0 rgba(23,32,68,.78),0 0 16px rgba(255,248,111,.62);
+  cursor:pointer;
+}
+.story-go-button:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 rgba(23,32,68,.78);}
+.story-reveal-card.ready{box-shadow:0 0 20px rgba(255,255,255,.76), inset 0 0 0 2px rgba(255,255,255,.35);}
+.story-reveal-card.opened{animation:storyRevealPop .32s ease-out both;}
+.story-battle-center.silent .story-vs-medal{animation:storyPulse .55s ease-in-out infinite alternate;}
+.story-battle-center.silent .story-reveal-card{background:rgba(23,32,68,.62);}
+@keyframes storyPulse{from{transform:scale(1);filter:brightness(1);}to{transform:scale(1.08);filter:brightness(1.15);}}
+@keyframes storyRevealPop{0%{transform:scale(.88) rotate(-2deg);filter:brightness(1.55);}100%{transform:scale(1) rotate(0);filter:brightness(1);}}
 .story-battle-overlay{
   position:absolute;
   inset:0;
@@ -716,7 +765,11 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   .story-card-btn{padding:3px;border-radius:12px;border-width:2px;}
   .story-card-btn img{max-height:42px;}
   .story-card-count{font-size:10px;}
+  .story-command-panel{margin-top:5px;gap:5px;}
+  .story-selected-label{min-height:26px;font-size:10px;padding:3px 6px;}
+  .story-go-button{min-width:62px;min-height:32px;font-size:15px;border-width:2px;}
 }
+
 
 </style>
 </head>
@@ -862,6 +915,10 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
       <div class="story-hand-panel">
         <div class="story-hand-title">あなたの手札</div>
         <div class="story-card-buttons" id="storyCardButtons"></div>
+        <div class="story-command-panel">
+          <div class="story-selected-label" id="storySelectedLabel">カードを仮選択</div>
+          <button class="story-go-button" id="storyGoButton" onclick="confirmStorySelection()" disabled>GO</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1293,6 +1350,10 @@ function startStoryBattle(stage){
     eWins:0,
     playerHand:makeStoryHand(cfg.mode),
     enemyHand:makeStoryHand(cfg.mode),
+    selectedCard:null,
+    pendingEnemyCard:null,
+    phase:'select',
+    revealTimer:null,
     roundOver:false,
     matchOver:false
   };
@@ -1326,16 +1387,32 @@ function renderStoryBattle(){
   document.getElementById('storyTurnLine').textContent=`${s.roundNo}戦目 / ${s.turn}ターン目`;
   const box=document.getElementById('storyCardButtons');
   box.innerHTML='';
+  const isLocked = s.roundOver || s.matchOver || s.phase !== 'select';
   const order = cfg.mode==='sokkoo' ? ['短剣','盾','心臓','ソッコーダガー','ソッコーハート'] : ['短剣','盾','心臓'];
   order.forEach(card=>{
     const btn=document.createElement('button');
     btn.className='story-card-btn';
+    if(s.selectedCard===card) btn.classList.add('selected');
+    if(s.phase !== 'select') btn.classList.add('waiting');
     const count=s.playerHand[card]||0;
-    btn.disabled=count<=0 || s.roundOver || s.matchOver;
+    btn.disabled=count<=0 || isLocked;
     btn.innerHTML=`<img src="${storyCardImage(card)}" alt="${card}"><div>${card}</div><div class="story-card-count">残り ${count}</div>`;
-    btn.onclick=()=>playStoryTurn(card);
+    btn.onclick=()=>selectStoryCard(card);
     box.appendChild(btn);
   });
+  const selectedLabel=document.getElementById('storySelectedLabel');
+  const goButton=document.getElementById('storyGoButton');
+  if(selectedLabel){
+    if(s.phase==='revealing') selectedLabel.textContent='沈黙の時間…';
+    else if(s.selectedCard) selectedLabel.textContent=`仮選択：${s.selectedCard}`;
+    else selectedLabel.textContent='カードを仮選択';
+  }
+  if(goButton){
+    goButton.disabled=!s.selectedCard || s.phase!=='select' || s.roundOver || s.matchOver;
+    goButton.textContent=s.phase==='revealing'?'WAIT':'GO';
+  }
+  const center=document.querySelector('.story-battle-center');
+  if(center) center.classList.toggle('silent', s.phase==='revealing');
 }
 
 function setStoryMessage(speaker,text){
@@ -1359,16 +1436,49 @@ function storyPointResult(pCard,eCard,mode){
   return {point:'none', text:'ポイントなし！'};
 }
 
-function playStoryTurn(pCard){
+function selectStoryCard(card){
   const s=storyBattleState;
-  if(!s || s.roundOver || s.matchOver || !s.playerHand[pCard]) return;
+  if(!s || s.roundOver || s.matchOver || s.phase!=='select' || !s.playerHand[card]) return;
   playClick();
-  const eCard=storyPickEnemyCard(s.enemyHand);
+  s.selectedCard=card;
+  s.pendingEnemyCard=null;
+  document.getElementById('storyPlayerReveal').src=storyCardImage('裏');
+  document.getElementById('storyEnemyReveal').src=storyCardImage('裏');
+  document.getElementById('storyResultText').textContent='GOで確定！ まだ選び直せる。';
+  setStoryMessage(s.cfg.player.name, 'このカードでいくか…？');
+  renderStoryBattle();
+}
+
+function confirmStorySelection(){
+  const s=storyBattleState;
+  if(!s || s.roundOver || s.matchOver || s.phase!=='select' || !s.selectedCard || !s.playerHand[s.selectedCard]) return;
+  playClick();
+  s.phase='revealing';
+  s.pendingEnemyCard=storyPickEnemyCard(s.enemyHand);
+  document.getElementById('storyPlayerReveal').src=storyCardImage('裏');
+  document.getElementById('storyEnemyReveal').src=storyCardImage('裏');
+  document.querySelectorAll('.story-reveal-card').forEach(el=>{el.classList.add('ready');el.classList.remove('opened');});
+  document.getElementById('storyResultText').textContent='両者、カードを伏せた…';
+  setStoryMessage(s.cfg.enemy.name, '……。');
+  renderStoryBattle();
+  clearTimeout(s.revealTimer);
+  s.revealTimer=setTimeout(resolveStoryTurn, 1350);
+}
+
+function resolveStoryTurn(){
+  const s=storyBattleState;
+  if(!s || s.phase!=='revealing' || !s.selectedCard || !s.pendingEnemyCard) return;
+  const pCard=s.selectedCard;
+  const eCard=s.pendingEnemyCard;
   s.playerHand[pCard]--;
   s.enemyHand[eCard]--;
   s.turn++;
+  s.selectedCard=null;
+  s.pendingEnemyCard=null;
+  s.phase='result';
   document.getElementById('storyPlayerReveal').src=storyCardImage(pCard);
   document.getElementById('storyEnemyReveal').src=storyCardImage(eCard);
+  document.querySelectorAll('.story-reveal-card').forEach(el=>{el.classList.remove('ready');el.classList.add('opened');});
   const result=storyPointResult(pCard,eCard,s.cfg.mode);
   if(result.instant==='player'){s.pScore=99; endStoryRound('player', result.text); return;}
   if(result.instant==='enemy'){s.eScore=99; endStoryRound('enemy', result.text); return;}
@@ -1384,6 +1494,7 @@ function playStoryTurn(pCard){
     else endStoryRound('draw', 'この勝負は引き分け！もう一戦！');
     return;
   }
+  s.phase='select';
   renderStoryBattle();
 }
 
@@ -1407,7 +1518,7 @@ function startNextStoryRound(){
   playClick();
   document.getElementById('storyBattleOverlay').classList.remove('show');
   s.roundNo++;
-  s.turn=0; s.pScore=0; s.eScore=0; s.roundOver=false;
+  s.turn=0; s.pScore=0; s.eScore=0; s.roundOver=false; s.selectedCard=null; s.pendingEnemyCard=null; s.phase='select'; clearTimeout(s.revealTimer);
   s.playerHand=makeStoryHand(s.cfg.mode);
   s.enemyHand=makeStoryHand(s.cfg.mode);
   document.getElementById('storyPlayerReveal').src=storyCardImage('裏');
@@ -1440,6 +1551,7 @@ function backToStageSelectFromStoryBattle(){
   playClick();
   const overlay=document.getElementById('storyBattleOverlay');
   if(overlay)overlay.classList.remove('show');
+  if(storyBattleState) clearTimeout(storyBattleState.revealTimer);
   hideAllScreens();
   renderStages();
   document.getElementById('storyScreen').classList.add('active');
