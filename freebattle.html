@@ -3226,9 +3226,19 @@ function toggleFreeBattleSkin(card){
   }
 }
 
-function handleCollectionTap(target){
+function getCollectionTapTarget(input){
+  if(!input) return null;
+  // click handler receives an Event, keyboard handler may pass either Event or Element.
+  // Always resolve to the actual tapped/focused element before looking for the card.
+  if(input.target && input.target.closest) return input.target;
+  if(input.closest) return input;
+  return null;
+}
+
+function handleCollectionTap(input){
+  const target = getCollectionTapTarget(input);
   const cardEl = target && target.closest ? target.closest(".collection-card") : null;
-  if(!cardEl) return;
+  if(!cardEl || cardEl.classList.contains("locked")) return;
   const card = cardEl.getAttribute("data-skin-card");
   if(!card) return;
   buttonTap();
@@ -3321,7 +3331,7 @@ function toggleBgm(){
 <div id="collectionScreen" class="collection-screen hidden" aria-hidden="true">
   <div class="collection-panel">
     <h2 class="collection-title">ストーリーモードをクリアしてカードスキンを解放しよう！</h2>
-    <div id="collectionGrid" class="collection-grid" onclick="handleCollectionTap(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleCollectionTap(event.target);}"></div>
+    <div id="collectionGrid" class="collection-grid" onclick="handleCollectionTap(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleCollectionTap(event);}"></div>
     <button class="howto-btn collection-back" type="button" onclick="buttonTap(); closeCollection()">フリーバトルへ戻る</button>
   </div>
 </div>
