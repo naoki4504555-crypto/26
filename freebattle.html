@@ -38,7 +38,7 @@ try{
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ハート＆ダガー</title>
 <style>
-:root{--blue:#39a8ff;--red:#e04248;--gold:#f0c35a;}
+:root{--blue:#39a8ff;--red:#e04248;--gold:#f0c35a;--hd-card-art-radius:0px;}
 *{box-sizing:border-box}
 html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 body{margin:0;flex: 0 0 auto;
@@ -67,14 +67,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .player .nameplate{background:linear-gradient(#1c6bd2,#083b83);border:3px solid #45b8ff}
 .enemy .nameplate{background:linear-gradient(#d94444,#7d1414);border:3px solid #ff6161}
 .card-stage{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-top:20px}
-.card-img{width:min(88%,270px);aspect-ratio:63/89;object-fit:cover;border-radius:14px;box-shadow:0 16px 26px rgba(0,0,0,.55);background:#fff}
-
-.card-img,
-.card-btn img,
-.mini-card img{
-  border-radius:0 !important;
-  clip-path:none !important;
-}
+.card-img{width:min(88%,270px);aspect-ratio:63/89;object-fit:contain;border:0;border-radius:0;box-shadow:none;background:transparent;filter:drop-shadow(0 16px 18px rgba(0,0,0,.55))}
 .card-label{min-width:180px;padding:10px 22px;border-radius:6px;font-size:26px;font-weight:900;text-align:center}
 .player .card-label{background:linear-gradient(#1674d6,#083d89)}
 .enemy .card-label{background:linear-gradient(#d94545,#8e1616)}
@@ -87,17 +80,17 @@ button:disabled{opacity:.4;cursor:not-allowed}
 
 .card-btn,.call-btn{flex: 0 0 auto;
   min-height:142px;border-radius:16px;background:rgba(255,255,255,.08);border:3px solid rgba(255,255,255,.25);color:#fff;padding:8px;box-shadow:0 10px 18px rgba(0,0,0,.3)}
-.card-btn img{height:94px;aspect-ratio:63/89;object-fit:cover;border-radius:8px;display:block;margin:0 auto 5px}
+.card-btn img{height:94px;aspect-ratio:63/89;object-fit:cover;border-radius:var(--hd-card-art-radius);display:block;margin:0 auto 5px}
 .card-btn span{display:block;font-size:23px;font-weight:900}
 .card-btn.dagger{border-color:#39a8ff}.card-btn.shield{border-color:#68cf55}.card-btn.heart{border-color:#ff6d83}
 .call-btn{background:linear-gradient(135deg,#ffe990,#b56f0d);color:#2a1007;font-size:24px;font-weight:1000;border-color:#fff0a8}
 .call-hidden{animation:callPulse .55s infinite alternate}
 .log{width:var(--hd-game-row-w);max-width:100%;height:140px;overflow-y:auto;margin:14px auto 0;padding:12px 16px;border-radius:14px;background:rgba(0,0,0,.55);border:1px solid rgba(240,195,90,.5);font-weight:800;line-height:1.55}
 .hidden{display:none}
-.card-enter-player{animation:enterLeft .36s ease-out}.card-enter-enemy{animation:enterRight .36s ease-out}.card-win{animation:winFlash .65s ease-out;border:5px solid gold}.card-lose{filter:brightness(.65);transform:scale(.97)}
+.card-enter-player{animation:enterLeft .36s ease-out}.card-enter-enemy{animation:enterRight .36s ease-out}.card-win{animation:winFlash .65s ease-out;border:0}.card-lose{filter:brightness(.65) drop-shadow(0 12px 16px rgba(0,0,0,.5));transform:scale(.97)}
 @keyframes enterLeft{0%{transform:translateX(-80px) rotate(-8deg) scale(.7);opacity:0}70%{transform:translateX(8px) rotate(2deg) scale(1.04);opacity:1}100%{transform:translateX(0) rotate(0) scale(1)}}
 @keyframes enterRight{0%{transform:translateX(80px) rotate(8deg) scale(.7);opacity:0}70%{transform:translateX(-8px) rotate(-2deg) scale(1.04);opacity:1}100%{transform:translateX(0) rotate(0) scale(1)}}
-@keyframes winFlash{0%{box-shadow:0 16px 26px rgba(0,0,0,.55)}45%{transform:scale(1.08);box-shadow:0 0 36px gold}100%{box-shadow:0 16px 26px rgba(0,0,0,.55)}}
+@keyframes winFlash{0%{filter:drop-shadow(0 16px 18px rgba(0,0,0,.55))}45%{transform:scale(1.08);filter:drop-shadow(0 0 18px gold) drop-shadow(0 16px 18px rgba(0,0,0,.45))}100%{filter:drop-shadow(0 16px 18px rgba(0,0,0,.55))}}
 to{box-shadow:0 0 34px gold;transform:scale(1.035)}}
 @media(max-width:760px){.top-panels{grid-template-columns:1fr}.battle{grid-template-columns:1fr;gap:8px}.vs{font-size:42px}.side{flex: 0 0 auto;
   min-height:300px}.card-img{width:min(72%,210px)}
@@ -571,14 +564,23 @@ body {
   100% { opacity: 0; background: transparent; }
 }
 
-/* ===== さらに鋭利なカード角丸・自分/相手共通 ===== */
+/* ===== カードPNG表示ルール =====
+   カード画像は角丸込みの完成PNGをそのまま表示する。
+   システム側ではカード画像に背景色・角丸・白枠を付けない。 */
 .controls .card-btn{
   border-radius: 3px !important;
 }
 
 .controls .card-btn img,
 .card-img{
-  border-radius: 3px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.card-img{
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 16px 18px rgba(0,0,0,.55));
 }
 
 /* ===== モード選択ボタン画像化 ===== */
@@ -629,11 +631,28 @@ body {
   }
 }
 
-/* 場のカード微調整 */
+/* 場のカード微調整
+   VS大カードは完成PNGの透明角を活かすため、白い矩形背景/白枠/追加角丸を付けない。 */
 .play-area .card img,
 .card-img{
-  border: 2px solid #fff !important;
-  border-radius: 10px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  object-fit: contain !important;
+}
+
+.card-img{
+  filter: drop-shadow(0 16px 18px rgba(0,0,0,.55));
+}
+.card-img.card-win{
+  border:0 !important;
+  box-shadow:none !important;
+}
+.card-img.card-lose{
+  border:0 !important;
+  box-shadow:none !important;
+  filter:brightness(.65) drop-shadow(0 12px 16px rgba(0,0,0,.5));
 }
 
 
@@ -1526,8 +1545,10 @@ body.sokkoo-special-shake {
   --remain-card-radius: 16px;
   --remain-card-pad: 4px;
   --remain-card-img-h: 48px;
-  --remain-image-radius: 4px;
+  --remain-image-radius: var(--hd-card-art-radius);
   --remain-count-size: 15px;
+  --remain-count-weight: 900;
+  --remain-count-font: system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
   --remain-count-y: 4px;
   --remain-label-size: 11px;
   --remain-gap: 6px;
@@ -1687,7 +1708,7 @@ body.sokkoo-special-shake {
   max-width: 100% !important;
   aspect-ratio: 63 / 89 !important;
   object-fit: contain !important;
-  /* 画像データは加工せず、カード画像の白フチ外周だけが自然に丸く見える最小半径にする。 */
+  /* カードPNG側に角丸が入っているため、システム側では画像を丸めない。 */
   border-radius: var(--remain-image-radius) !important;
   clip-path: none !important;
   display: block !important;
@@ -1781,7 +1802,7 @@ body.sokkoo-special-shake {
     --remain-count-size: 18px;
     --remain-count-y: 4px;
     --remain-label-size: 22px;
-    --remain-image-radius: 6px;
+    --remain-image-radius: 0px;
     --remain-gap: 12px;
     --hd-call-font-size: 24px;
     --hd-call-min-h: 80px;
@@ -1833,7 +1854,7 @@ body.sokkoo-special-shake {
     --remain-row-w: var(--hd-game-row-w);
     --remain-card-h: 88px;
     --remain-card-img-h: 48px;
-    --remain-image-radius: 4px;
+    --remain-image-radius: 0px;
     --remain-card-radius: 16px;
     --remain-count-size: 15px;
     --remain-count-y: 4px;
@@ -1965,6 +1986,56 @@ body.sokkoo-special-shake {
   letter-spacing: var(--remain-count-letter-spacing) !important;
 }
 
+
+
+/* ===== HDG PNG card rendering root rule =====
+   すべてのカード画像は「完成済みPNG」をそのまま表示する。
+   角丸・白背景・切り抜きは画像側の責任に統一し、CSSでは加工しない。 */
+.card-img,
+.card-btn img,
+.mini-card img,
+.story-reveal-card img,
+.story-card-btn img{
+  border-radius: 0 !important;
+  clip-path: none !important;
+  -webkit-clip-path: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+  background: transparent !important;
+  object-fit: contain !important;
+}
+.card-img{
+  border: 0 !important;
+}
+
+
+/* ===== HDG PNG card final source-of-truth =====
+   完成PNGの角丸を使うため、カード画像そのものにはCSS角丸・白背景・矩形影を付けない。
+   影は画像の透明部分を尊重する drop-shadow で描画する。 */
+.card-img,
+#controls .card-btn img,
+.controls .card-btn img,
+.mini-card img,
+.panel.enemy .mini-card img{
+  border-radius: var(--hd-card-art-radius) !important;
+  clip-path: none !important;
+  background: transparent !important;
+}
+.card-img{
+  border:0 !important;
+  box-shadow:none !important;
+  object-fit:contain !important;
+  filter:drop-shadow(0 16px 18px rgba(0,0,0,.55));
+}
+.card-img.card-win{
+  border:0 !important;
+  box-shadow:none !important;
+}
+.card-img.card-lose{
+  border:0 !important;
+  box-shadow:none !important;
+  filter:brightness(.65) drop-shadow(0 12px 16px rgba(0,0,0,.5));
+}
 
 </style>
 </head>
