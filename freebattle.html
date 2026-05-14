@@ -2209,6 +2209,9 @@ const CARD_IMAGES = {
 
 const FREE_BATTLE_SKIN_STORAGE_KEY = "hd_freebattle_card_skins_v1";
 const STORY_CLEARED_STORAGE_KEY = "hd_story_cleared";
+const STORY_UNLOCKED_STORAGE_KEY = "hd_story_unlocked";
+const STORY_PROGRESS_STORAGE_KEY = "hd_story_progress_v1";
+let runtimeClearedStoryStage = 0;
 const FREE_BATTLE_SKINS = [
   { card: "短剣", label: "短剣", stage: 3, src: "skin_dagger.png" },
   { card: "心臓", label: "心臓", stage: 4, src: "skin_heart.png" },
@@ -2222,10 +2225,63 @@ const FREE_BATTLE_SKIN_BY_CARD = FREE_BATTLE_SKINS.reduce((map, skin) => {
   return map;
 }, {});
 
-function getClearedStoryStage(){
-  const value = Number(localStorage.getItem(STORY_CLEARED_STORAGE_KEY) || "0");
-  return Number.isFinite(value) ? value : 0;
+function readStoredNumber(key, fallback = 0){
+  const value = Number(localStorage.getItem(key) || String(fallback));
+  return Number.isFinite(value) ? value : fallback;
 }
+
+function readStoryProgressObjectClearedStage(){
+  try{
+    const raw = localStorage.getItem(STORY_PROGRESS_STORAGE_KEY);
+    if(!raw) return 0;
+    const parsed = JSON.parse(raw);
+    const value = Number(parsed && parsed.clearedStage);
+    return Number.isFinite(value) ? value : 0;
+  } catch(e){
+    return 0;
+  }
+}
+
+function normalizeClearedStage(value){
+  const n = Number(value);
+  if(!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(8, Math.floor(n)));
+}
+
+function getClearedStoryStage(){
+  const directCleared = readStoredNumber(STORY_CLEARED_STORAGE_KEY, 0);
+  const progressCleared = readStoryProgressObjectClearedStage();
+  const unlockedBasedCleared = Math.max(0, readStoredNumber(STORY_UNLOCKED_STORAGE_KEY, 1) - 1);
+  return normalizeClearedStage(Math.max(directCleared, progressCleared, unlockedBasedCleared, runtimeClearedStoryStage));
+}
+
+function receiveStoryProgress(progress){
+  if(!progress || typeof progress !== "object") return;
+  runtimeClearedStoryStage = Math.max(runtimeClearedStoryStage, normalizeClearedStage(progress.clearedStage));
+  try{
+    const cleared = getClearedStoryStage();
+    localStorage.setItem(STORY_CLEARED_STORAGE_KEY, String(cleared));
+    localStorage.setItem(STORY_PROGRESS_STORAGE_KEY, JSON.stringify({
+      clearedStage: cleared,
+      unlockedStage: Math.max(1, Math.min(8, Number(progress.unlockedStage) || cleared + 1)),
+      updatedAt: Date.now()
+    }));
+  }catch(e){}
+  renderCollection();
+}
+
+window.addEventListener("message", event => {
+  const data = event && event.data;
+  if(data && data.type === "HDG_STORY_PROGRESS_UPDATED"){
+    receiveStoryProgress(data.progress);
+  }
+});
+
+window.addEventListener("storage", event => {
+  if(!event || [STORY_CLEARED_STORAGE_KEY, STORY_UNLOCKED_STORAGE_KEY, STORY_PROGRESS_STORAGE_KEY].includes(event.key)){
+    renderCollection();
+  }
+});
 
 function loadFreeBattleSkinState(){
   try{
@@ -3186,6 +3242,9 @@ function openCollection(){
   screen.classList.remove("hidden");
   screen.setAttribute("aria-hidden", "false");
 }
+
+window.addEventListener("pageshow", renderCollection);
+window.addEventListener("focus", renderCollection);
 
 function closeCollection(){
   const screen = document.getElementById("collectionScreen");

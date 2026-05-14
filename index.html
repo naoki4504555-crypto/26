@@ -1246,6 +1246,7 @@ function preloadFreeBattleFrame(){
   if(!frame) return;
   if(frame.dataset.loaded === '1') return;
   frame.dataset.loaded = '1';
+  frame.onload = notifyFreeBattleStoryProgress;
   frame.src = './freebattle.html?v=preload';
 }
 
@@ -1296,7 +1297,10 @@ function goBattle(){
   if(frame){
     if(!frame.src || frame.src === 'about:blank'){
       frame.dataset.loaded = '1';
+      frame.onload = notifyFreeBattleStoryProgress;
       frame.src = './freebattle.html?v=preload';
+    } else {
+      notifyFreeBattleStoryProgress();
     }
     try{
       frame.contentWindow.postMessage({type:'HDG_STOP_FREE_BGM'}, '*');
@@ -1553,8 +1557,7 @@ function endStoryMatch(playerWon){
   if(playerWon){
     clearedStage=Math.max(clearedStage,s.cfg.stage);
     unlockedStage=Math.min(8,Math.max(unlockedStage,s.cfg.stage+1));
-    localStorage.setItem('hd_story_cleared',String(clearedStage));
-    localStorage.setItem('hd_story_unlocked',String(unlockedStage));
+    saveStoryProgress();
     showStoryBattleOverlay('STAGE CLEAR!', `${s.cfg.player.name} ${s.pWins}勝　${s.cfg.enemy.name} ${s.eWins}勝`, `<button class="story-battle-stage-select" onclick="backToStageSelectFromStoryBattle()">ステージ選択へ</button>`);
   }else{
     showStoryBattleOverlay('敗北…', `${s.cfg.player.name} ${s.pWins}勝　${s.cfg.enemy.name} ${s.eWins}勝`, `<button class="story-battle-next-round" onclick="startStoryBattle(${s.cfg.stage})">もう一度挑戦</button><button class="story-battle-stage-select" onclick="backToStageSelectFromStoryBattle()">ステージ選択へ</button>`);
@@ -1670,6 +1673,32 @@ let unlockedStage = Number(localStorage.getItem("hd_story_unlocked") || "1");
 if(!Number.isFinite(clearedStage)) clearedStage = 0;
 if(!Number.isFinite(unlockedStage) || unlockedStage < 1) unlockedStage = 1;
 
+const STORY_PROGRESS_STORAGE_KEY = "hd_story_progress_v1";
+
+function getStoryProgressSnapshot(){
+  return {
+    clearedStage: Math.max(0, Math.min(8, Number(clearedStage) || 0)),
+    unlockedStage: Math.max(1, Math.min(8, Number(unlockedStage) || 1)),
+    updatedAt: Date.now()
+  };
+}
+
+function notifyFreeBattleStoryProgress(){
+  const frame = document.getElementById('freeBattleFrame');
+  if(!frame || !frame.contentWindow) return;
+  try{
+    frame.contentWindow.postMessage({type:'HDG_STORY_PROGRESS_UPDATED', progress:getStoryProgressSnapshot()}, '*');
+  }catch(e){}
+}
+
+function saveStoryProgress(){
+  const progress = getStoryProgressSnapshot();
+  localStorage.setItem("hd_story_cleared", String(progress.clearedStage));
+  localStorage.setItem("hd_story_unlocked", String(progress.unlockedStage));
+  localStorage.setItem(STORY_PROGRESS_STORAGE_KEY, JSON.stringify(progress));
+  notifyFreeBattleStoryProgress();
+}
+
 function renderStages(){
   const grid=document.getElementById('stageGrid'); grid.innerHTML='';
   for(let i=1;i<=8;i++){
@@ -1690,8 +1719,7 @@ function clearStage(i){
   if(i>unlockedStage)return;
   clearedStage=Math.max(clearedStage,i);
   unlockedStage=Math.min(8,Math.max(unlockedStage,i+1));
-  localStorage.setItem("hd_story_cleared",String(clearedStage));
-  localStorage.setItem("hd_story_unlocked",String(unlockedStage));
+  saveStoryProgress();
   document.getElementById('clearMsg').textContent = i===8 ? "全ステージクリア！" : `STAGE ${i} CLEAR！ 次のステージが解放された！`;
   renderStages();
 }
