@@ -656,6 +656,7 @@ body {
 }
 
 
+
 /* ===== コレクション画面 ===== */
 .collection-screen {
   position: fixed;
@@ -705,6 +706,21 @@ body {
   background: rgba(0,0,0,.42);
   box-shadow: inset 0 0 0 2px rgba(255,255,255,.06), 0 8px 20px rgba(0,0,0,.35);
 }
+.collection-card.unlocked {
+  cursor: pointer;
+  border-color: #fff4b0;
+}
+.collection-card.active {
+  border-color: #74ff91;
+  box-shadow: inset 0 0 0 3px rgba(116,255,145,.34), 0 0 24px rgba(116,255,145,.34), 0 8px 20px rgba(0,0,0,.35);
+}
+.collection-card.locked {
+  opacity: .74;
+}
+.collection-card:focus-visible {
+  outline: 4px solid #fff36a;
+  outline-offset: 3px;
+}
 .collection-thumb {
   width: min(100%, 112px);
   aspect-ratio: 5 / 7;
@@ -720,6 +736,17 @@ body {
   font-weight: 1000;
   line-height: 1;
   text-shadow: 0 0 12px rgba(255,220,80,.45);
+  overflow: hidden;
+}
+.collection-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  display: block;
 }
 .collection-name {
   font-size: clamp(13px, 2.1vw, 17px);
@@ -737,6 +764,20 @@ body {
   line-height: 1.25;
   font-weight: 900;
   color: #ffe084;
+}
+.collection-state {
+  margin-top: 7px;
+  min-height: 1.35em;
+  font-size: clamp(12px, 1.9vw, 15px);
+  line-height: 1.2;
+  font-weight: 1000;
+  color: #a6ffad;
+}
+.collection-card.locked .collection-state {
+  color: #ddd;
+}
+.collection-card.active .collection-state {
+  color: #74ff91;
 }
 .collection-back {
   margin-top: 4px;
@@ -2166,6 +2207,65 @@ const CARD_IMAGES = {
   "裏": "card_back.png"
 };
 
+const FREE_BATTLE_SKIN_STORAGE_KEY = "hd_freebattle_card_skins_v1";
+const STORY_CLEARED_STORAGE_KEY = "hd_story_cleared";
+const FREE_BATTLE_SKINS = [
+  { card: "短剣", label: "短剣", stage: 3, src: "skin_dagger.png" },
+  { card: "心臓", label: "心臓", stage: 4, src: "skin_heart.png" },
+  { card: "盾", label: "盾", stage: 5, src: "skin_shield.jpeg" },
+  { card: "ソッコーハート", label: "ソッコー<br>ハート", stage: 6, src: "skin_sokkoo_heart.jpeg" },
+  { card: "ソッコーダガー", label: "ソッコー<br>ダガー", stage: 7, src: "skin_sokkoo_dagger.jpeg" }
+];
+
+const FREE_BATTLE_SKIN_BY_CARD = FREE_BATTLE_SKINS.reduce((map, skin) => {
+  map[skin.card] = skin;
+  return map;
+}, {});
+
+function getClearedStoryStage(){
+  const value = Number(localStorage.getItem(STORY_CLEARED_STORAGE_KEY) || "0");
+  return Number.isFinite(value) ? value : 0;
+}
+
+function loadFreeBattleSkinState(){
+  try{
+    const raw = localStorage.getItem(FREE_BATTLE_SKIN_STORAGE_KEY);
+    if(!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch(e){
+    return {};
+  }
+}
+
+function saveFreeBattleSkinState(state){
+  localStorage.setItem(FREE_BATTLE_SKIN_STORAGE_KEY, JSON.stringify(state || {}));
+}
+
+function isFreeBattleSkinUnlocked(card){
+  const skin = FREE_BATTLE_SKIN_BY_CARD[card];
+  return !!skin && getClearedStoryStage() >= skin.stage;
+}
+
+function isFreeBattleSkinActive(card){
+  const skin = FREE_BATTLE_SKIN_BY_CARD[card];
+  if(!skin || !isFreeBattleSkinUnlocked(card)) return false;
+  const state = loadFreeBattleSkinState();
+  return state[card] === true;
+}
+
+function getCardImage(card){
+  const skin = FREE_BATTLE_SKIN_BY_CARD[card];
+  if(skin && isFreeBattleSkinActive(card)) return skin.src;
+  return CARD_IMAGES[card] || CARD_IMAGES["裏"];
+}
+
+function setCardImageForElement(img, card){
+  if(!img) return;
+  img.src = getCardImage(card);
+  img.alt = card === "裏" ? "カード裏面" : card;
+}
+
 const REMAINING_CARD_CLASS_MAP = {
   "短剣": ["dagger-card"],
   "盾": ["shield-card"],
@@ -2353,8 +2453,8 @@ clearEnemyCallTimer();
 
   document.getElementById("startScreen").classList.add("hidden");
   document.getElementById("gameArea").classList.remove("hidden");
-  document.getElementById("playerImg").src = CARD_IMAGES["裏"];
-  document.getElementById("enemyImg").src = CARD_IMAGES["裏"];
+  setCardImageForElement(document.getElementById("playerImg"), "裏");
+  setCardImageForElement(document.getElementById("enemyImg"), "裏");
   document.getElementById("playerName").innerText = "未選択";
   document.getElementById("enemyName").innerText = "未選択";
   document.getElementById("turnText").innerText = "0ターン目";
@@ -2415,6 +2515,7 @@ function updateRemainingCardUI(){
     if(box){
       if(!box.getAttribute("data-card")) box.setAttribute("data-card", item.card);
       syncRemainingCardKindClass(box, item.card);
+      setCardImageForElement(box.querySelector("img"), item.card);
       box.classList.toggle("hidden", !visible);
       box.classList.toggle("card-empty", visible && count === 0);
       box.removeAttribute("style");
@@ -2534,8 +2635,8 @@ function showCards(pCard, eCard){
   const pImg = document.getElementById("playerImg");
   const eImg = document.getElementById("enemyImg");
 
-  pImg.src = CARD_IMAGES[pCard];
-  eImg.src = CARD_IMAGES[eCard];
+  setCardImageForElement(pImg, pCard);
+  setCardImageForElement(eImg, eCard);
   document.getElementById("playerName").innerText = cardLabel(pCard);
   document.getElementById("enemyName").innerText = cardLabel(eCard);
 
@@ -3022,9 +3123,66 @@ window.addEventListener("focus", () => {
 });
 
 
+function renderCollection(){
+  const grid = document.getElementById("collectionGrid");
+  if(!grid) return;
+
+  const state = loadFreeBattleSkinState();
+  const cleared = getClearedStoryStage();
+
+  grid.innerHTML = FREE_BATTLE_SKINS.map(skin => {
+    const unlocked = cleared >= skin.stage;
+    const active = unlocked && state[skin.card] === true;
+    const classes = ["collection-card", unlocked ? "unlocked" : "locked", active ? "active" : ""].filter(Boolean).join(" ");
+    const thumb = unlocked
+      ? `<img src="${skin.src}" alt="${skin.card}スキン">`
+      : "?";
+    const condition = unlocked ? "解放済み" : `STAGE${skin.stage}クリアで解放！`;
+    const stateText = unlocked ? (active ? "ON" : "OFF") : "LOCK";
+    const tabIndex = unlocked ? "0" : "-1";
+    return `
+      <div class="${classes}" data-skin-card="${skin.card}" tabindex="${tabIndex}" role="button" aria-pressed="${active ? "true" : "false"}" aria-disabled="${unlocked ? "false" : "true"}">
+        <div class="collection-thumb">${thumb}</div>
+        <div class="collection-name">${skin.label}</div>
+        <div class="collection-condition">${condition}</div>
+        <div class="collection-state">${stateText}</div>
+      </div>`;
+  }).join("");
+}
+
+function toggleFreeBattleSkin(card){
+  if(!isFreeBattleSkinUnlocked(card)) return;
+  const state = loadFreeBattleSkinState();
+  state[card] = state[card] !== true;
+  saveFreeBattleSkinState(state);
+  renderCollection();
+  updateRemainingCardUI();
+
+  const playerName = document.getElementById("playerName");
+  const enemyName = document.getElementById("enemyName");
+  const playerImg = document.getElementById("playerImg");
+  const enemyImg = document.getElementById("enemyImg");
+  if(playerName && playerImg && playerName.innerText === card){
+    setCardImageForElement(playerImg, card);
+  }
+  if(enemyName && enemyImg && enemyName.innerText === card){
+    setCardImageForElement(enemyImg, card);
+  }
+}
+
+function handleCollectionTap(target){
+  const cardEl = target && target.closest ? target.closest(".collection-card") : null;
+  if(!cardEl) return;
+  const card = cardEl.getAttribute("data-skin-card");
+  if(!card) return;
+  buttonTap();
+  toggleFreeBattleSkin(card);
+}
+
 function openCollection(){
   const screen = document.getElementById("collectionScreen");
   if(!screen) return;
+  renderCollection();
   screen.classList.remove("hidden");
   screen.setAttribute("aria-hidden", "false");
 }
@@ -3035,6 +3193,8 @@ function closeCollection(){
   screen.classList.add("hidden");
   screen.setAttribute("aria-hidden", "true");
 }
+
+document.addEventListener("DOMContentLoaded", renderCollection);
 
 function openRules(){
   document.getElementById("rulesModal").classList.remove("hidden");
@@ -3102,33 +3262,7 @@ function toggleBgm(){
 <div id="collectionScreen" class="collection-screen hidden" aria-hidden="true">
   <div class="collection-panel">
     <h2 class="collection-title">ストーリーモードをクリアしてカードスキンを解放しよう！</h2>
-    <div class="collection-grid">
-      <div class="collection-card">
-        <div class="collection-thumb">?</div>
-        <div class="collection-name">短剣</div>
-        <div class="collection-condition">STAGE3クリアで解放！</div>
-      </div>
-      <div class="collection-card">
-        <div class="collection-thumb">?</div>
-        <div class="collection-name">心臓</div>
-        <div class="collection-condition">STAGE4クリアで解放！</div>
-      </div>
-      <div class="collection-card">
-        <div class="collection-thumb">?</div>
-        <div class="collection-name">盾</div>
-        <div class="collection-condition">STAGE5クリアで解放！</div>
-      </div>
-      <div class="collection-card">
-        <div class="collection-thumb">?</div>
-        <div class="collection-name">ソッコー<br>ハート</div>
-        <div class="collection-condition">STAGE6クリアで解放！</div>
-      </div>
-      <div class="collection-card">
-        <div class="collection-thumb">?</div>
-        <div class="collection-name">ソッコー<br>ダガー</div>
-        <div class="collection-condition">STAGE7クリアで解放！</div>
-      </div>
-    </div>
+    <div id="collectionGrid" class="collection-grid" onclick="handleCollectionTap(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleCollectionTap(event.target);}"></div>
     <button class="howto-btn collection-back" type="button" onclick="buttonTap(); closeCollection()">フリーバトルへ戻る</button>
   </div>
 </div>

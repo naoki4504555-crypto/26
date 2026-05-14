@@ -1,8 +1,13 @@
 通常モード: mode_normal.jpeg
 ソッコーモード: mode_sokkoo.jpeg
-裏面: card_back.jpeg
-短剣: dagger.jpeg
-盾: shield.jpeg
-心臓: heart.jpeg
-ソッコーダガー: sokkoo_dagger.jpeg
-ソッコーハート: sokkoo_heart.jpeg
+裏面: card_back.png
+短剣: dagger.png
+盾: shield.png
+心臓: heart.png
+ソッコーダガー: sokkoo_dagger.png
+ソッコーハート: sokkoo_heart.png
+フリーバトル用カードスキン 短剣: skin_dagger.png
+フリーバトル用カードスキン 心臓: skin_heart.png
+フリーバトル用カードスキン 盾: skin_shield.jpeg
+フリーバトル用カードスキン ソッコーハート: skin_sokkoo_heart.jpeg
+フリーバトル用カードスキン ソッコーダガー: skin_sokkoo_dagger.jpeg
