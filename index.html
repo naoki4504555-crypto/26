@@ -583,6 +583,9 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 .story-turn-line{font-size:12px;margin-top:4px;color:#5b5276;}
 .story-vs-medal{
   --story-vs-ring-width:5px;
+  --story-vs-charge-angle:0deg;
+  --story-vs-ring-idle:#fff;
+  --story-vs-ring-active:#fff36a;
   position:relative;
   justify-self:center;
   align-self:center;
@@ -592,7 +595,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   width:clamp(62px,10vw,104px);
   aspect-ratio:1;
   border-radius:50%;
-  border:var(--story-vs-ring-width) solid #fff;
+  border:0;
   background:radial-gradient(circle,#fff36a 0%,#ff8f38 52%,#e42a7b 100%);
   color:#fff;
   font-weight:1000;
@@ -607,17 +610,15 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   position:absolute;
   inset:calc(-1 * var(--story-vs-ring-width));
   border-radius:50%;
-  background:conic-gradient(from 0deg,transparent 0deg,transparent 292deg,#fff36a 318deg,#ffd02f 344deg,transparent 360deg);
-  opacity:0;
+  background:conic-gradient(from -90deg,var(--story-vs-ring-active) 0deg,var(--story-vs-ring-active) var(--story-vs-charge-angle),var(--story-vs-ring-idle) var(--story-vs-charge-angle),var(--story-vs-ring-idle) 360deg);
   pointer-events:none;
-  filter:drop-shadow(0 0 7px rgba(255,238,60,.95));
+  filter:none;
   z-index:3;
   -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - var(--story-vs-ring-width) - 1px),#000 calc(100% - var(--story-vs-ring-width)),#000 100%);
   mask:radial-gradient(farthest-side,transparent calc(100% - var(--story-vs-ring-width) - 1px),#000 calc(100% - var(--story-vs-ring-width)),#000 100%);
 }
 .story-battle-center.charging .story-vs-medal::before{
-  opacity:1;
-  animation:storyChargeRing 1.35s linear both;
+  filter:drop-shadow(0 0 7px rgba(255,238,60,.95));
 }
 .story-reveal-row{
   display:grid;
@@ -732,7 +733,6 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 .story-reveal-card.ready img{filter:drop-shadow(0 0 14px rgba(255,243,106,.95)) drop-shadow(0 5px 3px rgba(0,0,0,.35));}
 .story-reveal-card.opened{animation:storyRevealPop .32s ease-out both;}
 @keyframes storyPulse{from{transform:scale(1);filter:brightness(1);}to{transform:scale(1.08);filter:brightness(1.15);}}
-@keyframes storyChargeRing{0%{transform:rotate(0deg);opacity:0;}8%{opacity:1;}92%{opacity:1;}100%{transform:rotate(360deg);opacity:0;}}
 @keyframes storyRevealPop{0%{transform:scale(.88) rotate(-2deg);filter:brightness(1.55);}100%{transform:scale(1) rotate(0);filter:brightness(1);}}
 .story-battle-overlay{
   position:absolute;
@@ -766,7 +766,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   .story-battle-arena{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr) auto;gap:7px;}
   .story-battle-center{grid-column:1/3;grid-row:2;grid-template-columns:1fr;grid-template-rows:auto 1fr auto;align-items:center;}
   .story-score-card{grid-column:auto;}
-  .story-vs-medal{--story-vs-ring-width:4px;width:58px;font-size:22px;border-width:4px;}
+  .story-vs-medal{--story-vs-ring-width:4px;width:58px;font-size:22px;}
   .story-reveal-row{grid-column:auto;width:100%;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);}
   .story-result-card{grid-column:auto;min-height:42px;}
   .story-fighter{min-height:0;}
@@ -1487,6 +1487,36 @@ function playStoryResultSfx(result){
   }catch(e){}
 }
 
+const STORY_REVEAL_CHARGE_MS = 1350;
+let storyVsChargeFrame = null;
+function setStoryVsChargeAngle(angle){
+  const medal=document.querySelector('.story-vs-medal');
+  if(medal) medal.style.setProperty('--story-vs-charge-angle', `${Math.max(0,Math.min(360,angle))}deg`);
+}
+function startStoryVsChargeRing(duration=STORY_REVEAL_CHARGE_MS){
+  stopStoryVsChargeRing(true);
+  const started=performance.now();
+  const step=(now)=>{
+    const progress=Math.min(1,(now-started)/duration);
+    setStoryVsChargeAngle(progress*360);
+    if(progress<1){
+      storyVsChargeFrame=requestAnimationFrame(step);
+    }else{
+      storyVsChargeFrame=null;
+      setStoryVsChargeAngle(360);
+    }
+  };
+  setStoryVsChargeAngle(0);
+  storyVsChargeFrame=requestAnimationFrame(step);
+}
+function stopStoryVsChargeRing(reset=true){
+  if(storyVsChargeFrame){
+    cancelAnimationFrame(storyVsChargeFrame);
+    storyVsChargeFrame=null;
+  }
+  if(reset) setStoryVsChargeAngle(0);
+}
+
 let storyBattleState = null;
 
 function makeStoryHand(mode){
@@ -1630,9 +1660,10 @@ function confirmStorySelection(){
   document.getElementById('storyResultText').textContent='両者、カードを伏せた…';
   setStoryMessage(s.cfg.enemy.name, '……。');
   renderStoryBattle();
+  startStoryVsChargeRing(STORY_REVEAL_CHARGE_MS);
   playStoryChargeSfx();
   clearTimeout(s.revealTimer);
-  s.revealTimer=setTimeout(resolveStoryTurn, 1350);
+  s.revealTimer=setTimeout(resolveStoryTurn, STORY_REVEAL_CHARGE_MS);
 }
 
 function resolveStoryTurn(){
@@ -1646,6 +1677,7 @@ function resolveStoryTurn(){
   s.selectedCard=null;
   s.pendingEnemyCard=null;
   s.phase='result';
+  stopStoryVsChargeRing(true);
   stopStoryChargeSfx();
   playStoryOpenSfx();
   document.getElementById('storyPlayerReveal').src=storyCardImage(pCard);
@@ -1689,6 +1721,7 @@ function endStoryRound(winner,text){
 function startNextStoryRound(){
   const s=storyBattleState;
   playClick();
+  stopStoryVsChargeRing(true);
   stopStoryChargeSfx();
   document.getElementById('storyBattleOverlay').classList.remove('show');
   s.roundNo++;
@@ -1724,6 +1757,7 @@ function backToStageSelectFromStoryBattle(){
   playClick();
   const overlay=document.getElementById('storyBattleOverlay');
   if(overlay)overlay.classList.remove('show');
+  stopStoryVsChargeRing(true);
   stopStoryChargeSfx();
   if(storyBattleState) clearTimeout(storyBattleState.revealTimer);
   hideAllScreens();
