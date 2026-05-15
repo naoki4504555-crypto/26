@@ -565,7 +565,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 .story-battle-center{
   min-width:0;
   display:grid;
-  grid-template-rows:auto auto 1fr auto;
+  grid-template-rows:auto 1fr auto;
   gap:8px;
   align-content:center;
 }
@@ -582,37 +582,60 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
 .story-score-line{font-size:clamp(22px,5.2vw,42px);line-height:1;}
 .story-turn-line{font-size:12px;margin-top:4px;color:#5b5276;}
 .story-vs-medal{
+  position:relative;
   justify-self:center;
+  align-self:center;
   display:flex;
   align-items:center;
   justify-content:center;
-  width:clamp(74px,13vw,118px);
+  width:clamp(62px,10vw,104px);
   aspect-ratio:1;
   border-radius:50%;
   border:5px solid #fff;
   background:radial-gradient(circle,#fff36a 0%,#ff8f38 52%,#e42a7b 100%);
   color:#fff;
   font-weight:1000;
-  font-size:clamp(26px,5vw,46px);
+  font-size:clamp(22px,4vw,40px);
   text-shadow:0 3px 0 #172044;
   box-shadow:0 8px 0 rgba(23,32,68,.4),0 0 24px rgba(255,255,255,.7);
+  z-index:2;
+}
+.story-vs-medal::before{
+  content:"";
+  position:absolute;
+  inset:-9px;
+  border-radius:50%;
+  background:conic-gradient(from 0deg,rgba(255,238,60,0),rgba(255,238,60,0) 68%,#fff36a 80%,#ffd02f 92%,rgba(255,238,60,0) 100%);
+  opacity:0;
+  filter:drop-shadow(0 0 9px rgba(255,238,60,.95));
+  z-index:-1;
+}
+.story-battle-center.charging .story-vs-medal::before{
+  opacity:1;
+  animation:storyChargeRing 1.35s linear both;
+}
+.story-battle-center.charging .story-vs-medal{
+  animation:storyVsChargePulse .24s ease-in-out infinite alternate;
 }
 .story-reveal-row{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
   gap:8px;
+  align-items:center;
 }
 .story-reveal-card{
   min-height:90px;
-  border:3px solid rgba(255,255,255,.9);
-  border-radius:18px;
-  background:rgba(23,32,68,.38);
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:8px;
+  padding:0;
+  overflow:visible;
 }
-.story-reveal-card img{max-width:100%;max-height:110px;border-radius:0 !important;clip-path:none !important;background:transparent !important;object-fit:contain !important;box-shadow:0 4px 0 rgba(0,0,0,.35);}
+.story-reveal-card img{max-width:100%;max-height:118px;border-radius:0 !important;clip-path:none !important;background:transparent !important;object-fit:contain !important;box-shadow:none !important;filter:drop-shadow(0 5px 3px rgba(0,0,0,.35));}
 .story-result-card{min-height:58px;display:flex;align-items:center;justify-content:center;font-size:clamp(13px,2.8vw,18px);}
 .story-battle-bottom{
   display:grid;
@@ -704,11 +727,11 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   cursor:pointer;
 }
 .story-go-button:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 rgba(23,32,68,.78);}
-.story-reveal-card.ready{box-shadow:0 0 20px rgba(255,255,255,.76), inset 0 0 0 2px rgba(255,255,255,.35);}
+.story-reveal-card.ready img{filter:drop-shadow(0 0 14px rgba(255,243,106,.95)) drop-shadow(0 5px 3px rgba(0,0,0,.35));}
 .story-reveal-card.opened{animation:storyRevealPop .32s ease-out both;}
-.story-battle-center.silent .story-vs-medal{animation:storyPulse .55s ease-in-out infinite alternate;}
-.story-battle-center.silent .story-reveal-card{background:rgba(23,32,68,.62);}
 @keyframes storyPulse{from{transform:scale(1);filter:brightness(1);}to{transform:scale(1.08);filter:brightness(1.15);}}
+@keyframes storyChargeRing{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes storyVsChargePulse{from{filter:brightness(1);}to{filter:brightness(1.35);}}
 @keyframes storyRevealPop{0%{transform:scale(.88) rotate(-2deg);filter:brightness(1.55);}100%{transform:scale(1) rotate(0);filter:brightness(1);}}
 .story-battle-overlay{
   position:absolute;
@@ -740,11 +763,11 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   .story-battle-top{grid-template-columns:auto 1fr;}
   .story-battle-match{grid-column:1/3;}
   .story-battle-arena{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr) auto;gap:7px;}
-  .story-battle-center{grid-column:1/3;grid-row:2;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;align-items:center;}
-  .story-score-card{grid-column:1/4;}
-  .story-vs-medal{width:62px;font-size:24px;}
-  .story-reveal-row{grid-column:2;}
-  .story-result-card{grid-column:1/4;min-height:42px;}
+  .story-battle-center{grid-column:1/3;grid-row:2;grid-template-columns:1fr;grid-template-rows:auto 1fr auto;align-items:center;}
+  .story-score-card{grid-column:auto;}
+  .story-vs-medal{width:58px;font-size:22px;border-width:4px;}
+  .story-reveal-row{grid-column:auto;width:100%;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);}
+  .story-result-card{grid-column:auto;min-height:42px;}
   .story-fighter{min-height:0;}
   .story-fighter-img{height:100%;max-height:33vh;}
   .story-battle-bottom{grid-template-columns:1fr;gap:7px;}
@@ -761,8 +784,8 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   .story-fighter{border-radius:18px;border-width:3px;}
   .story-fighter-name{top:5px;left:5px;right:5px;font-size:14px;}
   .story-score-card,.story-result-card{padding:6px;border-radius:16px;border-width:3px;}
-  .story-reveal-card{min-height:54px;padding:4px;}
-  .story-reveal-card img{max-height:62px;}
+  .story-reveal-card{min-height:54px;padding:0;}
+  .story-reveal-card img{max-height:70px;}
   .story-battle-bottom{grid-template-columns:minmax(0,1fr) minmax(210px,.58fr);}
   .story-message-window{min-height:50px;padding:6px 9px;border-radius:16px;border-width:3px;}
   .story-message-text{font-size:13px;line-height:1.25;}
@@ -913,9 +936,9 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
           <div class="story-score-line" id="storyRoundScore">0 - 0</div>
           <div class="story-turn-line" id="storyTurnLine">1戦目 / 0ターン目</div>
         </div>
-        <div class="story-vs-medal">VS</div>
         <div class="story-reveal-row">
           <div class="story-reveal-card"><img id="storyPlayerReveal" src="./card_back.png" alt="あなたのカード"></div>
+          <div class="story-vs-medal">VS</div>
           <div class="story-reveal-card"><img id="storyEnemyReveal" src="./card_back.png" alt="相手のカード"></div>
         </div>
         <div class="story-result-card" id="storyResultText">カードを選んで勝負！</div>
@@ -1344,6 +1367,92 @@ const STORY_CARD_IMAGES = {
   '裏':'card_back.png'
 };
 
+
+const HDG_STORY_SFX = (()=>{
+  let ctx=null;
+  let chargeNodes=null;
+  function getCtx(){
+    if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if(ctx.state === 'suspended') ctx.resume().catch(()=>{});
+    return ctx;
+  }
+  function envGain(c, start, peak, attack, decay){
+    const g=c.createGain();
+    g.gain.setValueAtTime(0.0001,start);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002,peak),start+attack);
+    g.gain.exponentialRampToValueAtTime(0.0001,start+attack+decay);
+    return g;
+  }
+  function tone(freq, dur, type='sine', vol=.16, slideTo=null){
+    const c=getCtx(), t=c.currentTime;
+    const o=c.createOscillator();
+    const g=envGain(c,t,vol,.012,Math.max(.03,dur-.012));
+    o.type=type;
+    o.frequency.setValueAtTime(freq,t);
+    if(slideTo) o.frequency.exponentialRampToValueAtTime(slideTo,t+dur);
+    o.connect(g).connect(c.destination);
+    o.start(t); o.stop(t+dur+.04);
+  }
+  function noiseBurst(dur=.16, vol=.12, highpass=700){
+    const c=getCtx(), t=c.currentTime;
+    const buffer=c.createBuffer(1,Math.max(1,Math.floor(c.sampleRate*dur)),c.sampleRate);
+    const data=buffer.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*(1-i/data.length);
+    const src=c.createBufferSource(); src.buffer=buffer;
+    const f=c.createBiquadFilter(); f.type='highpass'; f.frequency.value=highpass;
+    const g=envGain(c,t,vol,.005,dur);
+    src.connect(f).connect(g).connect(c.destination);
+    src.start(t); src.stop(t+dur+.03);
+  }
+  function startCharge(){
+    const c=getCtx();
+    stopCharge();
+    const t=c.currentTime;
+    const osc=c.createOscillator();
+    const lfo=c.createOscillator();
+    const lfoGain=c.createGain();
+    const gain=c.createGain();
+    osc.type='sawtooth';
+    osc.frequency.setValueAtTime(95,t);
+    osc.frequency.exponentialRampToValueAtTime(620,t+1.28);
+    lfo.type='sine'; lfo.frequency.value=34;
+    lfoGain.gain.value=28;
+    lfo.connect(lfoGain).connect(osc.frequency);
+    gain.gain.setValueAtTime(0.0001,t);
+    gain.gain.exponentialRampToValueAtTime(.085,t+.08);
+    gain.gain.linearRampToValueAtTime(.12,t+1.15);
+    gain.gain.exponentialRampToValueAtTime(0.0001,t+1.35);
+    osc.connect(gain).connect(c.destination);
+    osc.start(t); lfo.start(t);
+    osc.stop(t+1.38); lfo.stop(t+1.38);
+    chargeNodes={osc,lfo,gain};
+  }
+  function stopCharge(){
+    if(!chargeNodes) return;
+    try{ chargeNodes.gain.gain.cancelScheduledValues(getCtx().currentTime); chargeNodes.gain.gain.setTargetAtTime(0.0001,getCtx().currentTime,.025); }catch(e){}
+    chargeNodes=null;
+  }
+  return {
+    charge:startCharge,
+    open(){ tone(520,.08,'triangle',.13,980); setTimeout(()=>tone(780,.09,'triangle',.11,1320),60); },
+    draw(){ tone(320,.10,'square',.07,260); setTimeout(()=>tone(320,.12,'square',.06,260),115); },
+    stab(){ noiseBurst(.12,.12,1500); tone(820,.09,'sawtooth',.12,420); setTimeout(()=>tone(1180,.07,'triangle',.09,720),70); },
+    stabbed(){ noiseBurst(.18,.13,520); tone(260,.22,'sawtooth',.13,92); },
+    stopCharge
+  };
+})();
+
+function playStoryChargeSfx(){ try{ HDG_STORY_SFX.charge(); }catch(e){} }
+function stopStoryChargeSfx(){ try{ HDG_STORY_SFX.stopCharge(); }catch(e){} }
+function playStoryOpenSfx(){ try{ HDG_STORY_SFX.open(); }catch(e){} }
+function playStoryResultSfx(result){
+  try{
+    if(result && (result.instant==='player' || result.point==='player')) HDG_STORY_SFX.stab();
+    else if(result && (result.instant==='enemy' || result.point==='enemy')) HDG_STORY_SFX.stabbed();
+    else HDG_STORY_SFX.draw();
+  }catch(e){}
+}
+
 let storyBattleState = null;
 
 function makeStoryHand(mode){
@@ -1435,7 +1544,10 @@ function renderStoryBattle(){
     goButton.textContent=s.phase==='revealing'?'WAIT':'GO';
   }
   const center=document.querySelector('.story-battle-center');
-  if(center) center.classList.toggle('silent', s.phase==='revealing');
+  if(center){
+    center.classList.toggle('silent', s.phase==='revealing');
+    center.classList.toggle('charging', s.phase==='revealing');
+  }
 }
 
 function setStoryMessage(speaker,text){
@@ -1484,6 +1596,7 @@ function confirmStorySelection(){
   document.getElementById('storyResultText').textContent='両者、カードを伏せた…';
   setStoryMessage(s.cfg.enemy.name, '……。');
   renderStoryBattle();
+  playStoryChargeSfx();
   clearTimeout(s.revealTimer);
   s.revealTimer=setTimeout(resolveStoryTurn, 1350);
 }
@@ -1499,10 +1612,13 @@ function resolveStoryTurn(){
   s.selectedCard=null;
   s.pendingEnemyCard=null;
   s.phase='result';
+  stopStoryChargeSfx();
+  playStoryOpenSfx();
   document.getElementById('storyPlayerReveal').src=storyCardImage(pCard);
   document.getElementById('storyEnemyReveal').src=storyCardImage(eCard);
   document.querySelectorAll('.story-reveal-card').forEach(el=>{el.classList.remove('ready');el.classList.add('opened');});
   const result=storyPointResult(pCard,eCard,s.cfg.mode);
+  playStoryResultSfx(result);
   if(result.instant==='player'){s.pScore=99; endStoryRound('player', result.text); return;}
   if(result.instant==='enemy'){s.eScore=99; endStoryRound('enemy', result.text); return;}
   if(result.point==='player') s.pScore++;
@@ -1539,6 +1655,7 @@ function endStoryRound(winner,text){
 function startNextStoryRound(){
   const s=storyBattleState;
   playClick();
+  stopStoryChargeSfx();
   document.getElementById('storyBattleOverlay').classList.remove('show');
   s.roundNo++;
   s.turn=0; s.pScore=0; s.eScore=0; s.roundOver=false; s.selectedCard=null; s.pendingEnemyCard=null; s.phase='select'; clearTimeout(s.revealTimer);
@@ -1573,6 +1690,7 @@ function backToStageSelectFromStoryBattle(){
   playClick();
   const overlay=document.getElementById('storyBattleOverlay');
   if(overlay)overlay.classList.remove('show');
+  stopStoryChargeSfx();
   if(storyBattleState) clearTimeout(storyBattleState.revealTimer);
   hideAllScreens();
   renderStages();
