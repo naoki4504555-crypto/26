@@ -10,4 +10,4 @@
 フリーバトル用カードスキン 心臓: skin_heart.png
 フリーバトル用カードスキン 盾: skin_shield.png
 フリーバトル用カードスキン ソッコーハート: skin_sokkoo_heart.png
-フリーバトル用カードスキン ソッコーダガー: skin_sokkoo_dagger.png
+フリーバトル用カードスキン ソッコーダガー: skin_master_dagger.png
