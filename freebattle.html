@@ -2105,9 +2105,13 @@ body.sokkoo-special-shake {
 .controls .card-btn img,
 .mini-card img,
 .panel.enemy .mini-card img{
-  border-radius: var(--hd-card-art-radius) !important;
+  border-radius: 0 !important;
   clip-path: none !important;
+  -webkit-clip-path: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
   background: transparent !important;
+  object-fit: contain !important;
 }
 .card-img{
   border:0 !important;
@@ -2260,11 +2264,11 @@ const STORY_UNLOCKED_STORAGE_KEY = "hd_story_unlocked";
 const STORY_PROGRESS_STORAGE_KEY = "hd_story_progress_v1";
 let runtimeClearedStoryStage = 0;
 const FREE_BATTLE_SKINS = [
-  { card: "短剣", label: "短剣", stage: 3, src: "skin_dagger.png" },
+  { card: "短剣", label: "短剣", stage: 3, src: "skin_master_dagger.png" },
   { card: "心臓", label: "心臓", stage: 4, src: "skin_heart.png" },
   { card: "盾", label: "盾", stage: 5, src: "skin_shield.png" },
   { card: "ソッコーハート", label: "ソッコー<br>ハート", stage: 6, src: "skin_sokkoo_heart.png" },
-  { card: "ソッコーダガー", label: "ソッコー<br>ダガー", stage: 7, src: "skin_master_dagger.png" }
+  { card: "ソッコーダガー", label: "ソッコー<br>ダガー", stage: 7, src: "skin_master_sokkoo_dagger.png" }
 ];
 
 const FREE_BATTLE_SKIN_BY_CARD = FREE_BATTLE_SKINS.reduce((map, skin) => {

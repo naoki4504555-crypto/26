@@ -6,8 +6,11 @@
 心臓: heart.png
 ソッコーダガー: sokkoo_dagger.png
 ソッコーハート: sokkoo_heart.png
-フリーバトル用カードスキン 短剣: skin_dagger.png
+フリーバトル用カードスキン 短剣: skin_master_dagger.png
 フリーバトル用カードスキン 心臓: skin_heart.png
 フリーバトル用カードスキン 盾: skin_shield.png
 フリーバトル用カードスキン ソッコーハート: skin_sokkoo_heart.png
-フリーバトル用カードスキン ソッコーダガー: skin_master_dagger.png
+フリーバトル用カードスキン ソッコーダガー: skin_master_sokkoo_dagger.png
+
+skin_master_dagger.png
+skin_master_sokkoo_dagger.png
