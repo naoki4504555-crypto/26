@@ -625,7 +625,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   --story-vs-ring-width:5px;
   --story-vs-charge-angle:0deg;
   --story-vs-ring-idle:#fff;
-  --story-vs-ring-active:#fff36a;
+  --story-vs-ring-active:#ff5a1f;
   position:relative;
   justify-self:center;
   align-self:center;
@@ -658,7 +658,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   mask:radial-gradient(farthest-side,transparent calc(100% - var(--story-vs-ring-width) - 1px),#000 calc(100% - var(--story-vs-ring-width)),#000 100%);
 }
 .story-battle-center.charging .story-vs-medal::before{
-  filter:drop-shadow(0 0 7px rgba(255,238,60,.95));
+  filter:drop-shadow(0 0 7px rgba(255,90,31,.95));
 }
 .story-reveal-row{
   display:grid;
@@ -969,7 +969,7 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
   <div class="novel-scene">
     <div class="novel-character-wrap">
       <img id="novelTsurugi" class="novel-character" src="./tsurugi.png?v=single-page-novel" alt="ツルギ">
-      <img id="novelMamoru" class="novel-character" src="./mamoru.png?v=single-page-novel" alt="マモル">
+      <img id="novelMamoru" class="novel-character" src="./mamoru.png?v=single-page-novel" alt="カナメ">
     </div>
     <div class="novel-textbox" id="novelTextbox">
       <div class="novel-dialog-main">
@@ -990,8 +990,8 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
       <button class="story-battle-back" onclick="backToStageSelectFromStoryBattle()">← ステージ選択</button>
       <div class="story-battle-title" id="storyBattleTitle">STAGE 1 STORY BATTLE</div>
       <div class="story-battle-match">
-        <div class="story-battle-rule" id="storyBattleRule">先に3勝した方が勝ち</div>
-        <div class="story-battle-wins" id="storyBattleWins">ツルギ 0勝　マモル 0勝</div>
+        <div class="story-battle-rule" id="storyBattleRule">先に1勝した方が勝ち</div>
+        <div class="story-battle-wins" id="storyBattleWins">ツルギ 0勝　カナメ 0勝</div>
       </div>
     </div>
     <div class="story-battle-arena">
@@ -1013,15 +1013,15 @@ html,body{margin:0;width:100%;height:100%;background:#000;font-family:system-ui,
         <div class="story-result-card" id="storyResultText">カードを選んで勝負！</div>
       </div>
       <div class="story-fighter enemy">
-        <div class="story-fighter-name"><span class="story-fighter-badge" id="storyEnemyName">マモル</span><span class="story-fighter-mode" id="storyEnemyMode">通常</span></div>
+        <div class="story-fighter-name"><span class="story-fighter-badge" id="storyEnemyName">カナメ</span><span class="story-fighter-mode" id="storyEnemyMode">通常</span></div>
         <div class="story-fighter-shadow"></div>
-        <img class="story-fighter-img" id="storyEnemyImage" src="./mamoru.png" alt="マモル">
+        <img class="story-fighter-img" id="storyEnemyImage" src="./mamoru.png" alt="カナメ">
       </div>
     </div>
     <div class="story-battle-bottom">
       <div class="story-message-window">
-        <div class="story-message-speaker" id="storyMessageSpeaker">マモル</div>
-        <div class="story-message-text" id="storyMessageText">いくぞ、ツルギ！ まずは3勝先取で勝負だ！</div>
+        <div class="story-message-speaker" id="storyMessageSpeaker">カナメ</div>
+        <div class="story-message-text" id="storyMessageText">いくぞ、ツルギ！ まずは1勝先取で勝負だ！</div>
       </div>
       <div class="story-hand-panel">
         <div class="story-hand-title">あなたの手札</div>
@@ -1408,21 +1408,21 @@ function goBattle(){
 const novelLinesByStage = {
   1: [
     {speaker:'ツルギ', char:'tsurugi', text:'よし、ついに最初のバトルだな！'},
-    {speaker:'マモル', char:'mamoru', text:'油断するなよ、ツルギ。ハート＆ダガーは読み合いが命だ。'},
-    {speaker:'ツルギ', char:'tsurugi', text:'分かってる！ 先に3勝した方が勝ちってことでいこう！'},
-    {speaker:'マモル', char:'mamoru', text:'いいだろう。まずは通常ルールで勝負だ！'}
+    {speaker:'カナメ', char:'mamoru', text:'油断するなよ、ツルギ。ハート＆ダガーは読み合いが命だ。'},
+    {speaker:'ツルギ', char:'tsurugi', text:'分かってる！ 先に1勝した方が勝ちってことでいこう！'},
+    {speaker:'カナメ', char:'mamoru', text:'いいだろう。まずは通常ルールで勝負だ！'}
   ]
 };
 
 const STORY_BATTLE_STAGES = {
   1: {
     stage:1,
-    title:'STAGE 1　ツルギ VS マモル',
+    title:'STAGE 1　ツルギ VS カナメ',
     mode:'normal',
-    targetWins:3,
+    targetWins:1,
     player:{name:'ツルギ', image:'./tsurugi.png'},
-    enemy:{name:'マモル', image:'./mamoru.png'},
-    opening:{speaker:'マモル', text:'いくぞ、ツルギ！ まずは3勝先取で勝負だ！'},
+    enemy:{name:'カナメ', image:'./mamoru.png'},
+    opening:{speaker:'カナメ', text:'いくぞ、ツルギ！ まずは1勝先取で勝負だ！'},
     enemyLines:{
       start:['守りだけじゃないところを見せてやる！','ここはじっくり読むぞ。','シールドのタイミング、見切れるかな？'],
       point:['よし、一本取った！','この流れ、もらったぞ！'],
@@ -1596,6 +1596,7 @@ function startStoryBattle(stage){
   hideAllScreens();
   stopTitleBgm();
   startStoryBgm();
+  stopStoryVsChargeRing(true);
   const screen=document.getElementById('storyBattleScreen');
   if(screen)screen.classList.add('active');
   setupStoryBattleVisuals();
@@ -1671,7 +1672,7 @@ function storyPointResult(pCard,eCard,mode){
   const pH = pCard==='心臓' || pCard==='ソッコーハート';
   const eH = eCard==='心臓' || eCard==='ソッコーハート';
   if(pD && eH) return {point:'player', text:'ツルギが1ポイント獲得！'};
-  if(eD && pH) return {point:'enemy', text:'マモルが1ポイント獲得！'};
+  if(eD && pH) return {point:'enemy', text:'カナメが1ポイント獲得！'};
   return {point:'none', text:'ポイントなし！'};
 }
 
@@ -1681,6 +1682,7 @@ function selectStoryCard(card){
   playClick();
   s.selectedCard=card;
   s.pendingEnemyCard=null;
+  stopStoryVsChargeRing(true);
   document.getElementById('storyPlayerReveal').src=storyCardImage('裏');
   document.getElementById('storyEnemyReveal').src=storyCardImage('裏');
   document.getElementById('storyResultText').textContent='GOで確定！ まだ選び直せる。';
@@ -1717,7 +1719,8 @@ function resolveStoryTurn(){
   s.selectedCard=null;
   s.pendingEnemyCard=null;
   s.phase='result';
-  stopStoryVsChargeRing(true);
+  stopStoryVsChargeRing(false);
+  setStoryVsChargeAngle(360);
   stopStoryChargeSfx();
   playStoryOpenSfx();
   document.getElementById('storyPlayerReveal').src=storyCardImage(pCard);
@@ -1761,7 +1764,8 @@ function endStoryRound(winner,text){
 function startNextStoryRound(){
   const s=storyBattleState;
   playClick();
-  stopStoryVsChargeRing(true);
+  stopStoryVsChargeRing(false);
+  setStoryVsChargeAngle(360);
   stopStoryChargeSfx();
   document.getElementById('storyBattleOverlay').classList.remove('show');
   s.roundNo++;
@@ -1850,7 +1854,7 @@ function renderNovelLine(){
   const lines = novelLinesByStage[currentNovelStage] || [];
   const line = lines[novelIdx];
   if(!line)return;
-  const currentChar = line.char || (line.speaker === 'マモル' ? 'mamoru' : 'tsurugi');
+  const currentChar = line.char || (line.speaker === 'カナメ' ? 'mamoru' : 'tsurugi');
   const tsurugi = document.getElementById('novelTsurugi');
   const mamoru = document.getElementById('novelMamoru');
   if(currentChar === 'none'){
@@ -1863,7 +1867,7 @@ function renderNovelLine(){
   }
   const name = document.getElementById('novelName');
   name.textContent = line.speaker;
-  name.className = 'novel-nameplate ' + (line.speaker === 'マモル' ? 'mamoru' : line.speaker === 'ツルギ' ? 'tsurugi' : 'mystery');
+  name.className = 'novel-nameplate ' + (line.speaker === 'カナメ' ? 'mamoru' : line.speaker === 'ツルギ' ? 'tsurugi' : 'mystery');
   document.getElementById('novelText').textContent = line.text;
 }
 
